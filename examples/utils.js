@@ -1,25 +1,40 @@
 
 
-function getDownloadTimes( stats ){}
+// from http://stackoverflow.com/a/20463021/1435042
+function fileSizeSI(a,b,c,d,e){
+    return (b=Math,c=b.log,d=1e3,e=c(a)/c(d)|0,a/b.pow(d,e)).toFixed(2)
+        +String.fromCharCode(160)+(e?'kMGTPEZY'[--e]+'B':'Bytes')
+}
+
+function formatMilliseconds( ms ){
+	var l = [];
+	var seconds = Math.floor( ms / 1000 );
+	var minutes = Math.floor( seconds / 60 );
+	if( minutes >= 1 ){
+		l.push( minutes + "m" );
+		ms -= seconds * 1000;
+		seconds -= minutes * 60;
+	}
+	if( seconds >= 1 ){
+		l.push( seconds + "s" );
+		ms -= seconds * 1000;
+	}
+	if( ms !== 0 ){
+		l.push( ms.toFixed( 2 ) + "ms" );
+	}
+	return l.join( " " );
+}
+
+function getStoreByteLength( store ){
+    var bytes = 0;
+    for( var name in store ){
+        bytes += store[ name ].buffer.byteLength;
+    }
+    return bytes;
+}
 
 function getStats( structureDecoder ){
-
     var sd = structureDecoder;
-
-    // from http://stackoverflow.com/a/20463021/1435042
-    function fileSizeSI(a,b,c,d,e){
-        return (b=Math,c=b.log,d=1e3,e=c(a)/c(d)|0,a/b.pow(d,e)).toFixed(2)
-            +String.fromCharCode(160)+(e?'kMGTPEZY'[--e]+'B':'Bytes')
-    }
-
-    function getStoreByteLength( store ){
-        var bytes = 0;
-        for( var name in store ){
-            bytes += store[ name ].buffer.byteLength;
-        }
-        return bytes;
-    }
-
     var unpackedBytes = (
         getStoreByteLength( sd.bondStore ) +
         getStoreByteLength( sd.atomStore ) +
@@ -27,11 +42,10 @@ function getStats( structureDecoder ){
         getStoreByteLength( sd.chainStore ) +
         getStoreByteLength( sd.modelStore )
     );
-
     return {
         pdbId: "???",
         msgpackByteLength: sd.buffer.byteLength,
-        unpackedByteLength: fileSizeSI( unpackedBytes ),
+        unpackedByteLength: unpackedBytes,
         msgpackSize: fileSizeSI( sd.buffer.byteLength ),
         unpackedSize: fileSizeSI( unpackedBytes ),
         compressionRatio: unpackedBytes / sd.buffer.byteLength,
@@ -43,7 +57,6 @@ function getStats( structureDecoder ){
         msgpackDecodeTimeMs: sd.__msgpackDecodeTimeMs,
         structureDecodeTimeMs: sd.__structureDecodeTimeMs,
     };
-
 }
 
 function getAtomInfo( structureDecoder, index ){
@@ -73,22 +86,21 @@ function getAtomInfo( structureDecoder, index ){
     };
 }
 
+function printObject( obj, id ){
+    var elm = document.getElementById( id );
+    var html = "";
+    for( var name in obj ){
+        html += name + ": " + obj[ name ] + "<br/>";
+    }
+    elm.innerHTML = html;
+}
+
 function showRandomAtomInfo( sd, id ){
     var atomInfo = getAtomInfo( sd, Math.floor( Math.random() * sd.atomCount ) );
-    var atomInfoElm = document.getElementById( id );
-    var atomInfoHtml = "";
-    for( var name in atomInfo ){
-        atomInfoHtml += name + ": " + atomInfo[ name ] + "<br/>";
-    }
-    atomInfoElm.innerHTML = atomInfoHtml;
+    printObject( atomInfo, id );
 }
 
 function showStats( sd, id ){
     var stats = getStats( sd );
-    var statsElm = document.getElementById( id );
-    var statsHtml = "";
-    for( var name in stats ){
-        statsHtml += name + ": " + stats[ name ] + "<br/>";
-    }
-    statsElm.innerHTML = statsHtml;
+    printObject( stats, id );
 }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Worker</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+</head>
+
+<body>
+
+    <script src="utils.js"></script>
+
+    <script>
+
+        var pdbIdList = [ "4CUP", "3SN6", "2L6N", "4V5A", "4V99" ];
+
+        var worker = new Worker( "worker.js" );
+
+        document.addEventListener( "DOMContentLoaded", function(){
+            worker.postMessage( pdbIdList );
+        } );
+
+        worker.onmessage = function( e ){
+            var statsList = e.data;
+            var sumStats = { count: statsList.length };
+            var nameList = [
+                "msgpackByteLength", "unpackedByteLength", "compressionRatio", "bondCount",
+                "atomCount", "residueCount", "chainCount", "modelCount", "msgpackDecodeTimeMs",
+                "structureDecodeTimeMs"
+            ];
+            nameList.forEach( function( name ){
+                sumStats[ name ] = 0;
+            } );
+            statsList.forEach( function( stats ){
+                nameList.forEach( function( name ){
+                    sumStats[ name ] += stats[ name ];
+                } );
+            } );
+            var avgStats = Object.assign( {}, sumStats );
+            nameList.forEach( function( name ){
+                avgStats[ name ] /= statsList.length;
+            } );
+            avgStats.msgpackSize = fileSizeSI( avgStats.msgpackByteLength );
+            avgStats.unpackedSize = fileSizeSI( avgStats.unpackedByteLength );
+            sumStats.msgpackSize = fileSizeSI( sumStats.msgpackByteLength );
+            sumStats.unpackedSize = fileSizeSI( sumStats.unpackedByteLength );
+            avgStats.msgpackDecodeTime = formatMilliseconds( avgStats.msgpackDecodeTimeMs );
+            avgStats.structureDecodeTime = formatMilliseconds( avgStats.structureDecodeTimeMs );
+            sumStats.msgpackDecodeTime = formatMilliseconds( sumStats.msgpackDecodeTimeMs );
+            sumStats.structureDecodeTime = formatMilliseconds( sumStats.structureDecodeTimeMs );
+            printObject( avgStats, "avgStats" );
+            printObject( sumStats, "sumStats" );
+        };
+
+    </script>
+
+    <div id="avgStats"></div>
+
+    <br/>
+
+    <div id="sumStats"></div>
+
+</body>
+
+</html>
