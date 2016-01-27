@@ -317,7 +317,6 @@ var StructureDecoder = function( bin ){
 
     var t0 = performance.now();
     var msgpack = decode( bin );
-    // console.log( msgpack )
     var t1 = performance.now();
     this.__msgpackDecodeTimeMs = t1 - t0;
 

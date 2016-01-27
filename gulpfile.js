@@ -22,7 +22,7 @@ gulp.task('test', function() {
         .pipe(qunit());
 });
 
-gulp.task('bundle', function(){
+gulp.task('bundle', ['clean'], function(){
   gulp.src('src/structure-decoder.js', {read: false})
     .pipe(rollup({
         sourceMap: true,
@@ -39,4 +39,14 @@ gulp.task('compress', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['bundle', 'compress']);
+gulp.task('scripts', ['clean'], function(){
+  gulp.src('src/structure-decoder.js', {read: false})
+    .pipe(rollup({
+        format: 'iife',
+        moduleName: 'StructureDecoder'
+    }))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('default', ['scripts']);
