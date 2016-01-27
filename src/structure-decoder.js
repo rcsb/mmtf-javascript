@@ -1,5 +1,5 @@
 
-import decode from "./msgpack-decode.js";
+import decodeMsgpack from "./msgpack-decode.js";
 
 
 
@@ -105,19 +105,12 @@ function decodeFloatCombined( bigArray, smallArray, divisor, dataArray ){
     return decodeFloat( int32, divisor, dataArray );
 }
 
-function getCounts( msgpack ){
+function getBondCount( msgpack ){
     var resOrder = getInt32( msgpack.resOrder );
     var bondCount = 0;
     for( var i = 0, il = resOrder.length; i < il; ++i ){
         bondCount += msgpack.groupMap[ resOrder[ i ] ].bondOrders.length;
     }
-    return {
-        bondCount: bondCount,
-        atomCount: msgpack.numAtoms,
-        residueCount: msgpack.resOrder.length / 4,
-        chainCount: msgpack.chainList.length / 4,
-        modelCount: msgpack.chainsPerModel.length
-    };
 }
 
 //
@@ -128,12 +121,11 @@ function decodeData( msgpack, dataStores, params ){
 
     var i, il, j, jl, k, kl;
 
-    var counts = getCounts( msgpack );
-    var bondCount = counts.bondCount;
-    var atomCount = counts.atomCount;
-    var residueCount = counts.residueCount;
-    var chainCount = counts.chainCount;
-    var modelCount = counts.modelCount;
+    var bondCount = getBondCount( msgpack );
+    var atomCount = msgpack.numAtoms;
+    var residueCount = msgpack.resOrder.length / 4;
+    var chainCount = msgpack.chainList.length / 4;
+    var modelCount = msgpack.chainsPerModel.length;
 
     var bondStore, atomStore, residueStore, chainStore, modelStore;
 
@@ -316,18 +308,17 @@ var StructureDecoder = function( bin ){
     }
 
     var t0 = performance.now();
-    var msgpack = decode( bin );
+    var msgpack = decodeMsgpack( bin );
     var t1 = performance.now();
     this.__msgpackDecodeTimeMs = t1 - t0;
 
-    var counts = getCounts( msgpack );
-    var bondCount = counts.bondCount;
-    var atomCount = counts.atomCount;
-    var residueCount = counts.residueCount;
-    var chainCount = counts.chainCount;
-    var modelCount = counts.modelCount;
+    var bondCount = getBondCount( msgpack );
+    var atomCount = msgpack.numAtoms;
+    var residueCount = msgpack.resOrder.length / 4;
+    var chainCount = msgpack.chainList.length / 4;
+    var modelCount = msgpack.chainsPerModel.length;
 
-    function sdecode( dataStores, params ){
+    function decode( dataStores, params ){
         var t0 = performance.now();
         var d = decodeData( msgpack, dataStores, params );
         var t1 = performance.now();
@@ -428,31 +419,31 @@ var StructureDecoder = function( bin ){
 
     function eachBond( callback ){
         for( var i = 0; i < bondCount; ++i ){
-            callback.apply( null, self.getBond( i ) );
+            callback.apply( null, getBond( i ) );
         }
     }
 
     function eachAtom( callback ){
         for( var i = 0; i < atomCount; ++i ){
-            callback.apply( null, self.getAtom( i ) );
+            callback.apply( null, getAtom( i ) );
         }
     }
 
     function eachResidue( callback ){
         for( var i = 0; i < residueCount; ++i ){
-            callback.apply( null, self.getResidue( i ) );
+            callback.apply( null, getResidue( i ) );
         }
     }
     
     function eachChain( callback ){
         for( var i = 0; i < chainCount; ++i ){
-            callback.apply( null, self.getChain( i ) );
+            callback.apply( null, getChain( i ) );
         }
     }
     
     function eachModel( callback ){
         for( var i = 0; i < modelCount; ++i ){
-            callback.apply( null, self.getModel( i ) );
+            callback.apply( null, getModel( i ) );
         }
     }
 
@@ -473,7 +464,7 @@ var StructureDecoder = function( bin ){
     this.chainStore = undefined;
     this.modelStore = undefined;
 
-    this.decode = sdecode;
+    this.decode = decode;
 
     this.getBond = getBond;
     this.getAtom = getAtom;
@@ -488,6 +479,5 @@ var StructureDecoder = function( bin ){
     this.eachModel = eachModel;
 
 };
-
 
 export default StructureDecoder;
