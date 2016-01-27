@@ -4,20 +4,6 @@
 //
 QUnit.module( "decoding helpers" );
 
-
-QUnit.test( "getBuffer", function( assert ) {
-    var buffer = new ArrayBuffer( 1 * 20 );
-    var view = new Uint8Array( buffer, 10 );
-    view[0] = 3;
-    view[3] = 8;
-    var buffer2 = getBuffer( view );
-    var view2 = new Uint8Array( buffer2 );
-    assert.equal( view2[0], 3, "Passed!" );
-    assert.equal( view2[1], 0, "Passed!" );
-    assert.equal( view2[2], 0, "Passed!" );
-    assert.equal( view2[3], 8, "Passed!" );
-});
-
 QUnit.test( "getInt8", function( assert ) {
     var buffer = new ArrayBuffer( 1 * 20 );
     var view = new Int8Array( buffer, 4 );
@@ -116,8 +102,8 @@ QUnit.test( "decodeFloatCombined", function( assert ) {
     var expected = new Float32Array([
         1.00, 1.00, 1.02, 1.01, -0.99, -1.02, -0.97
     ]);
-    var deltasBigUint8 = new Uint8Array( getBuffer( deltasBig ) );
-    var deltasSmallUint8 = new Uint8Array( getBuffer( deltasSmall ) );
+    var deltasBigUint8 = new Uint8Array( deltasBig.buffer );
+    var deltasSmallUint8 = new Uint8Array( deltasSmall.buffer );
     var divisor = 100;
     var decoded = decodeFloatCombined( deltasBigUint8, deltasSmallUint8, divisor, undefined, true );
     assert.equal( decoded.length, deltasBig.length/2 + deltasSmall.length, "Passed!" );
@@ -137,7 +123,7 @@ QUnit.test( "getBondCount", function( assert ) {
         { bondOrders: [ 1, 1, 1 ] }
     ];
     var msgpack = {
-        resOrder: new Uint8Array( getBuffer( resOrder ) ),
+        resOrder: new Uint8Array( resOrder.buffer ),
         groupMap: groupMap
     };
     var expectedBondCount = 2 * 4 + 1 * 3 ;

@@ -2,41 +2,35 @@
 import decodeMsgpack from "./msgpack-decode.js";
 
 
-
-function getBuffer( view ){
-    var buf = view.buffer;
-    var offset = view.byteOffset;
-    var length = view.byteLength;
-    return buf.slice( offset, offset + length );
-}
-
 function getInt8( view, dataArray ){
-    if( !dataArray ){
-        dataArray = new Int8Array( getBuffer( view ) );
-    }else{
-        dataArray.set( new Int8Array( getBuffer( view ) ) );
+    var dv = new DataView( view.buffer );
+    var o = view.byteOffset;
+    var n = view.byteLength;
+    if( !dataArray ) dataArray = new Int8Array( n );
+    for( var i = 0; i < n; i+=1 ){
+        dataArray[ i ] = dv.getInt8( o+i );
     }
     return dataArray;
 }
 
 function getInt16( view, dataArray, littleEndian ){
-    var buf = getBuffer( view );
-    var dv = new DataView( buf );
-    var n = buf.byteLength;
+    var dv = new DataView( view.buffer );
+    var o = view.byteOffset;
+    var n = view.byteLength;
     if( !dataArray ) dataArray = new Int16Array( n / 2 );
     for( var i = 0; i < n; i+=2 ){
-        dataArray[ i / 2 ] = dv.getInt16( i, littleEndian );
+        dataArray[ i / 2 ] = dv.getInt16( o+i, littleEndian );
     }
     return dataArray;
 }
 
 function getInt32( view, dataArray, littleEndian ){
-    var buf = getBuffer( view );
-    var dv = new DataView( buf );
-    var n = buf.byteLength;
+    var dv = new DataView( view.buffer );
+    var o = view.byteOffset;
+    var n = view.byteLength;
     if( !dataArray ) dataArray = new Int32Array( n / 4 );
     for( var i = 0; i < n; i+=4 ){
-        dataArray[ i / 4 ] = dv.getInt32( i, littleEndian );
+        dataArray[ i / 4 ] = dv.getInt32( o+i, littleEndian );
     }
     return dataArray;
 }
@@ -109,10 +103,14 @@ function decodeFloatCombined( bigArray, smallArray, divisor, dataArray, littleEn
 }
 
 function getBondCount( msgpack, littleEndian ){
-    var resOrder = getInt32( msgpack.resOrder, undefined, littleEndian );
+    var resOrder = msgpack.resOrder;
+    var offset = resOrder.byteOffset;
+    var length = resOrder.byteLength;
+    var dv = new DataView( resOrder.buffer );
     var bondCount = 0;
-    for( var i = 0, il = resOrder.length; i < il; ++i ){
-        bondCount += msgpack.groupMap[ resOrder[ i ] ].bondOrders.length;
+    for( var gi, i = 0, il = length/4; i < il; ++i ){
+        gi = dv.getInt32( offset + i * 4, littleEndian );
+        bondCount += msgpack.groupMap[ gi ].bondOrders.length;
     }
     return bondCount;
 }
