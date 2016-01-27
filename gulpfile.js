@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var jshint = require('gulp-jshint');
 var rollup = require('gulp-rollup');
 var sourcemaps = require('gulp-sourcemaps');
 var qunit = require('gulp-qunit');
@@ -9,7 +10,13 @@ var del = require('del');
 gulp.task('clean', function() {
   return del(['build']);
 });
- 
+
+gulp.task('lint', function() {
+  return gulp.src('./src/*.js')
+    .pipe(jshint({esversion: 6}))
+    .pipe(jshint.reporter('default'));
+});
+
 gulp.task('test', function() {
     return gulp.src('./qunit/test-runner.html')
         .pipe(qunit());

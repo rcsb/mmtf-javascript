@@ -51,15 +51,16 @@ function decodeFloat( intArray, divisor, dataArray ){
 }
 
 function decodeRunLength( array, dataArray ){
+    var i, il;
     if( !dataArray ){
         var fullLength = 0;
-        for( var i = 0, il = array.length; i < il; i+=2 ){
+        for( i = 0, il = array.length; i < il; i+=2 ){
             fullLength += array[ i + 1 ];
         }
         dataArray = new array.constructor( fullLength );
     }
     var dataOffset = 0;
-    for( var i = 0, il = array.length; i < il; i+=2 ){
+    for( i = 0, il = array.length; i < il; i+=2 ){
         var value = array[ i ];
         var length = array[ i + 1 ];
         for( var j = 0; j < length; ++j ){
@@ -125,6 +126,8 @@ function decodeData( msgpack, dataStores, params ){
 
     var p = Object( {}, params );
 
+    var i, il, j, jl, k, kl;
+
     var counts = getCounts( msgpack );
     var bondCount = counts.bondCount;
     var atomCount = counts.atomCount;
@@ -184,7 +187,7 @@ function decodeData( msgpack, dataStores, params ){
     decodeFloatCombined( msgpack.b_factor_big, msgpack.b_factor_small, 100, atomStore.bfactor );
     decodeDelta( decodeRunLength( getInt32( msgpack._atom_site_id ), atomStore.serial ) );
 
-    for( var i = 0, il = msgpack._atom_site_label_alt_id.length; i < il; i+=2 ){
+    for( i = 0, il = msgpack._atom_site_label_alt_id.length; i < il; i+=2 ){
         var value = msgpack._atom_site_label_alt_id[ i ];
         if( value === "?" ){
             msgpack._atom_site_label_alt_id[ i ] = 0;
@@ -203,7 +206,7 @@ function decodeData( msgpack, dataStores, params ){
     msgpack.chainsPerModel.forEach( function( chainCount, i ){
         modelStore.chainOffset[ i ] = chainOffset;
         modelStore.chainCount[ i ] = chainCount;
-        for( var j = 0; j < chainCount; ++j ){
+        for( j = 0; j < chainCount; ++j ){
             chainStore.modelIndex[ j + chainOffset ] = i;
         }
         chainOffset += chainCount;
@@ -213,7 +216,7 @@ function decodeData( msgpack, dataStores, params ){
     msgpack.groupsPerChain.forEach( function( residueCount, i ){
         chainStore.residueOffset[ i ] = residueOffset;
         chainStore.residueCount[ i ] = residueCount;
-        for( var j = 0; j < residueCount; ++j ){
+        for( j = 0; j < residueCount; ++j ){
             residueStore.chainIndex[ j + residueOffset ] = i;
         }
         residueOffset += residueCount;
@@ -231,7 +234,7 @@ function decodeData( msgpack, dataStores, params ){
         "6": "t",  // turn
         "7": "l",  // coil
         "-1": "",  // NA
-    }
+    };
 
     decodeDelta( decodeRunLength( getInt32( msgpack._atom_site_auth_seq_id ), residueStore.resno ) );
 
@@ -240,7 +243,7 @@ function decodeData( msgpack, dataStores, params ){
     var atomOffset = 0;
     var bondOffset = 0;
 
-    for( var i = 0; i < residueCount; ++i ){
+    for( i = 0; i < residueCount; ++i ){
 
         var resData = msgpack.groupMap[ resOrder[ i ] ];
         var hetFlag = resData.hetFlag ? 1 : 0;
@@ -250,7 +253,7 @@ function decodeData( msgpack, dataStores, params ){
         var bondIndices = resData.bondIndices;
         var bondOrders = resData.bondOrders;
 
-        for( var j = 0, jl = bondOrders.length; j < jl; ++j ){
+        for( j = 0, jl = bondOrders.length; j < jl; ++j ){
             bondStore.atomIndex1[ bondOffset ] = atomOffset + bondIndices[ j * 2 ];
             bondStore.atomIndex2[ bondOffset ] = atomOffset + bondIndices[ j * 2 + 1 ];
             bondStore.bondOrder[ bondOffset ] = bondOrders[ j ];
@@ -264,19 +267,19 @@ function decodeData( msgpack, dataStores, params ){
         residueStore.atomCount[ i ] = resAtomCount;
 
         var resName = resData.resName;
-        for( var j = 0, jl = resName.length; j < jl; ++j ){
+        for( j = 0, jl = resName.length; j < jl; ++j ){
             residueStore.resname[ i * 5 + j ] = resName.charCodeAt( j );
         }
 
-        for( var j = 0; j < resAtomCount; ++j ){
+        for( j = 0; j < resAtomCount; ++j ){
 
             var atomname = atomInfo[ j * 2 + 1 ];
-            for( var k = 0, kl = atomname.length; k < kl; ++k ){
+            for( k = 0, kl = atomname.length; k < kl; ++k ){
                 atomStore.atomname[ atomOffset * 4 + k ] = atomname.charCodeAt( k );
             }
 
             var element = atomInfo[ j * 2 ];
-            for( var k = 0, kl = element.length; k < kl; ++k ){
+            for( k = 0, kl = element.length; k < kl; ++k ){
                 atomStore.element[ atomOffset * 3 + k ] = element.charCodeAt( k );
             }
 
@@ -347,8 +350,9 @@ var StructureDecoder = function( bin ){
 
     function getAtom( index ){
         var element = "";
-        for( var k = 0; k < 3; ++k ){
-            var code = self.atomStore.element[ 3 * index + k ];
+        var k, code;
+        for( k = 0; k < 3; ++k ){
+            code = self.atomStore.element[ 3 * index + k ];
             if( code ){
                 element += String.fromCharCode( code );
             }else{
@@ -356,8 +360,8 @@ var StructureDecoder = function( bin ){
             }
         }
         var atomname = "";
-        for( var k = 0; k < 4; ++k ){
-            var code = self.atomStore.atomname[ 4 * index + k ];
+        for( k = 0; k < 4; ++k ){
+            code = self.atomStore.atomname[ 4 * index + k ];
             if( code ){
                 atomname += String.fromCharCode( code );
             }else{

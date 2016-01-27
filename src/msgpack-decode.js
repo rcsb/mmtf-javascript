@@ -26,7 +26,7 @@ function Decoder(buffer, offset) {
     var value = String.fromCharCode.apply(null, subarray);
     offset += length;
     return value;
-  };
+  }
 
   function array(length) {
     var value = new Array(length);
@@ -34,7 +34,7 @@ function Decoder(buffer, offset) {
       value[i] = parse();
     }
     return value;
-  };
+  }
 
   function parse() {
     var type = buffer[offset];
