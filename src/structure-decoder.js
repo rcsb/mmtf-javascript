@@ -111,6 +111,7 @@ function getBondCount( msgpack ){
     for( var i = 0, il = resOrder.length; i < il; ++i ){
         bondCount += msgpack.groupMap[ resOrder[ i ] ].bondOrders.length;
     }
+    return bondCount;
 }
 
 //
