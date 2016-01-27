@@ -100,7 +100,21 @@ function showRandomAtomInfo( sd, id ){
     printObject( atomInfo, id );
 }
 
+function readableStats( stats ){
+    stats = Object.assign( {}, stats );
+    if( stats.compressionRatio ) stats.compressionRatio = stats.compressionRatio.toFixed( 2 );
+    stats.msgpackSize = fileSizeSI( stats.msgpackByteLength );
+    stats.unpackedSize = fileSizeSI( stats.unpackedByteLength );
+    stats.msgpackDecodeTime = formatMilliseconds( stats.msgpackDecodeTimeMs );
+    stats.structureDecodeTime = formatMilliseconds( stats.structureDecodeTimeMs );
+    delete stats.msgpackByteLength;
+    delete stats.unpackedByteLength;
+    delete stats.msgpackDecodeTimeMs;
+    delete stats.structureDecodeTimeMs;
+    return stats;
+}
+
 function showStats( sd, id ){
     var stats = getStats( sd );
-    printObject( stats, id );
+    printObject( readableStats( stats ), id );
 }

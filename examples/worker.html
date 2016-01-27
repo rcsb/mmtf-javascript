@@ -26,7 +26,7 @@
 
         worker.onmessage = function( e ){
             var statsList = e.data;
-            var sumStats = { count: statsList.length };
+            var sumStats = { type: "sum", count: statsList.length };
             var nameList = [
                 "msgpackByteLength", "unpackedByteLength", "compressionRatio", "bondCount",
                 "atomCount", "residueCount", "chainCount", "modelCount", "msgpackDecodeTimeMs",
@@ -40,20 +40,13 @@
                     sumStats[ name ] += stats[ name ];
                 } );
             } );
-            var avgStats = Object.assign( {}, sumStats );
+            var avgStats = Object.assign( {}, sumStats, { type: "average" } );
             nameList.forEach( function( name ){
                 avgStats[ name ] /= statsList.length;
             } );
-            avgStats.msgpackSize = fileSizeSI( avgStats.msgpackByteLength );
-            avgStats.unpackedSize = fileSizeSI( avgStats.unpackedByteLength );
-            sumStats.msgpackSize = fileSizeSI( sumStats.msgpackByteLength );
-            sumStats.unpackedSize = fileSizeSI( sumStats.unpackedByteLength );
-            avgStats.msgpackDecodeTime = formatMilliseconds( avgStats.msgpackDecodeTimeMs );
-            avgStats.structureDecodeTime = formatMilliseconds( avgStats.structureDecodeTimeMs );
-            sumStats.msgpackDecodeTime = formatMilliseconds( sumStats.msgpackDecodeTimeMs );
-            sumStats.structureDecodeTime = formatMilliseconds( sumStats.structureDecodeTimeMs );
-            printObject( avgStats, "avgStats" );
-            printObject( sumStats, "sumStats" );
+            delete sumStats.compressionRatio;
+            printObject( readableStats( avgStats ), "avgStats" );
+            printObject( readableStats( sumStats ), "sumStats" );
         };
 
     </script>
