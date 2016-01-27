@@ -1,9 +1,7 @@
 
 
 importScripts(
-    "../lib/bops.js",
-    "../lib/msgpack.js",
-    "../src/decoder.js",
+    "../dist/structure-decoder.js",
     "utils.js"
 );
 

@@ -1,4 +1,5 @@
 
+import decode from "./msgpack-decode.js";
 
 
 
@@ -486,3 +487,4 @@ var StructureDecoder = function( bin ){
 };
 
 
+export default StructureDecoder;
