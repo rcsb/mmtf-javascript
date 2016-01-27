@@ -19,24 +19,24 @@ function getInt8( view, dataArray ){
     return dataArray;
 }
 
-function getInt16( view, dataArray ){
+function getInt16( view, dataArray, littleEndian ){
     var buf = getBuffer( view );
     var dv = new DataView( buf );
     var n = buf.byteLength;
     if( !dataArray ) dataArray = new Int16Array( n / 2 );
     for( var i = 0; i < n; i+=2 ){
-        dataArray[ i / 2 ] = dv.getInt16( i, false );
+        dataArray[ i / 2 ] = dv.getInt16( i, littleEndian );
     }
     return dataArray;
 }
 
-function getInt32( view, dataArray ){
+function getInt32( view, dataArray, littleEndian ){
     var buf = getBuffer( view );
     var dv = new DataView( buf );
     var n = buf.byteLength;
     if( !dataArray ) dataArray = new Int32Array( n / 4 );
     for( var i = 0; i < n; i+=4 ){
-        dataArray[ i / 4 ] = dv.getInt32( i, false );
+        dataArray[ i / 4 ] = dv.getInt32( i, littleEndian );
     }
     return dataArray;
 }
@@ -100,13 +100,16 @@ function decodeDeltaMulti( bigArray, smallArray, dataArray ){
     return dataArray;
 }
 
-function decodeFloatCombined( bigArray, smallArray, divisor, dataArray ){
-    var int32 = decodeDeltaMulti( getInt32( bigArray ), getInt16( smallArray ) );
+function decodeFloatCombined( bigArray, smallArray, divisor, dataArray, littleEndian ){
+    var int32 = decodeDeltaMulti(
+        getInt32( bigArray, undefined, littleEndian ),
+        getInt16( smallArray, undefined, littleEndian )
+    );
     return decodeFloat( int32, divisor, dataArray );
 }
 
-function getBondCount( msgpack ){
-    var resOrder = getInt32( msgpack.resOrder );
+function getBondCount( msgpack, littleEndian ){
+    var resOrder = getInt32( msgpack.resOrder, undefined, littleEndian );
     var bondCount = 0;
     for( var i = 0, il = resOrder.length; i < il; ++i ){
         bondCount += msgpack.groupMap[ resOrder[ i ] ].bondOrders.length;
