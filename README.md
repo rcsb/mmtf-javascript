@@ -153,6 +153,7 @@ Dictionary encoding
 Msgpack fields
 ==============
 
+[msgpack spec](https://github.com/msgpack/msgpack/blob/master/spec.md)
 
 ### _atom_site_auth_seq_id
 
