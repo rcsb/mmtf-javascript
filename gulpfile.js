@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var rename = require("gulp-rename");
 var jshint = require('gulp-jshint');
 var rollup = require('gulp-rollup');
 var sourcemaps = require('gulp-sourcemaps');
@@ -17,19 +18,29 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-gulp.task('test', function() {
-    return gulp.src('./qunit/test-runner.html')
-        .pipe(qunit());
+gulp.task('test', ['bundle-test'], function() {
+  return gulp.src('./test/unittests.html')
+    .pipe(qunit());
 });
 
-gulp.task('bundle', ['clean'], function(){
+gulp.task('bundle', function(){
   gulp.src('src/structure-decoder.js', {read: false})
     .pipe(rollup({
-        sourceMap: true,
-        format: 'iife',
-        moduleName: 'StructureDecoder'
+      sourceMap: true,
+      format: 'iife',
+      moduleName: 'StructureDecoder'
     }))
     .pipe(sourcemaps.write('.')) // needs rollup sourceMap option
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('bundle-test', function(){
+  gulp.src('src/structure-decoder.js', {read: false})
+    .pipe(rollup({
+      format: 'cjs',
+      moduleName: 'StructureDecoder'
+    }))
+    .pipe(rename('structure-decoder.test.js'))
     .pipe(gulp.dest('build'));
 });
 
@@ -42,8 +53,8 @@ gulp.task('compress', function() {
 gulp.task('scripts', ['clean'], function(){
   gulp.src('src/structure-decoder.js', {read: false})
     .pipe(rollup({
-        format: 'iife',
-        moduleName: 'StructureDecoder'
+      format: 'iife',
+      moduleName: 'StructureDecoder'
     }))
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
