@@ -95,9 +95,16 @@ function decodeDeltaMulti( bigArray, smallArray, dataArray ){
 }
 
 function decodeFloatCombined( bigArray, smallArray, divisor, dataArray, littleEndian ){
+    var int32View;
+    if( dataArray ){
+        int32View = new Int32Array(
+            dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
+        );
+    }
     var int32 = decodeDeltaMulti(
         getInt32( bigArray, undefined, littleEndian ),
-        getInt16( smallArray, undefined, littleEndian )
+        getInt16( smallArray, undefined, littleEndian ),
+        int32View
     );
     return decodeFloat( int32, divisor, dataArray );
 }
