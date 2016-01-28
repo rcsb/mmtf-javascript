@@ -36,7 +36,7 @@ function loadStructure( pdbid ){
     pdbid = pdbid.toUpperCase();
     var promise = makeXhrPromise(
         "GET",
-        "http://132.249.213.67:8080/servemessagepack/" + pdbid,
+        "http://132.249.213.68:8080/servemessagepack/" + pdbid,
         "arraybuffer"
     );
     return promise.then( function( result ){

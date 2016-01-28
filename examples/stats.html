@@ -48,7 +48,7 @@
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", "http://132.249.213.67:8080/servemessagepack/" + pdbid );
+            xhr.open( "GET", "http://132.249.213.68:8080/servemessagepack/" + pdbid );
             xhr.send();
         }
 
@@ -107,6 +107,8 @@
             <option value="4V5A">4V5A</option>
             <option value="4V99">4V99</option>
             <option value="4P3Q">4P3Q</option>
+            <option value="3J3Q">3J3Q</option>
+            <option value="3J3Y">3J3Y</option>
         </select>
         <input type="text" id="pdbidInput"></input>
         <button id="pdbidButton">get</button>
