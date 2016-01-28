@@ -142,9 +142,10 @@ function Decoder(buffer, offset) {
       return value;
     // uint64
     case 0xcf:
-      value = dataView.getUint64(offset + 1);
+      // FIXME not available in JS
+      // value = dataView.getUint64(offset + 1);
       offset += 9;
-      return value;
+      return 0;
     // int 8
     case 0xd0:
       value = dataView.getInt8(offset + 1);
