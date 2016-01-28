@@ -196,27 +196,33 @@ function decodeData( msgpack, dataStores, params ){
 
     chainStore.chainname.set( getInt8( msgpack.chainList ) );
 
+    var chainsPerModel = msgpack.chainsPerModel;
+    var modelChainCount;
     var chainOffset = 0;
-    msgpack.chainsPerModel.forEach( function( chainCount, i ){
+    for( i = 0; i < modelCount; ++i ){
+        modelChainCount = chainsPerModel[ i ];
         modelStore.chainOffset[ i ] = chainOffset;
-        modelStore.chainCount[ i ] = chainCount;
-        for( j = 0; j < chainCount; ++j ){
+        modelStore.chainCount[ i ] = modelChainCount;
+        for( j = 0; j < modelChainCount; ++j ){
             chainStore.modelIndex[ j + chainOffset ] = i;
         }
-        chainOffset += chainCount;
-    } );
+        chainOffset += modelChainCount;
+    }
 
+    var groupsPerChain = msgpack.groupsPerChain;
+    var chainGroupCount;
     var residueOffset = 0;
-    msgpack.groupsPerChain.forEach( function( residueCount, i ){
+    for( i = 0; i < chainCount; ++i ){
+        chainGroupCount = groupsPerChain[ i ];
         chainStore.residueOffset[ i ] = residueOffset;
-        chainStore.residueCount[ i ] = residueCount;
-        for( j = 0; j < residueCount; ++j ){
+        chainStore.residueCount[ i ] = chainGroupCount;
+        for( j = 0; j < chainGroupCount; ++j ){
             residueStore.chainIndex[ j + residueOffset ] = i;
         }
-        residueOffset += residueCount;
-    } );
+        residueOffset += chainGroupCount;
+    }
 
-    // 
+    //
 
     var sstrucMap = {
         "0": "i",  // pi helix
@@ -436,13 +442,13 @@ var StructureDecoder = function( bin ){
             callback.apply( null, getResidue( i ) );
         }
     }
-    
+
     function eachChain( callback ){
         for( var i = 0; i < chainCount; ++i ){
             callback.apply( null, getChain( i ) );
         }
     }
-    
+
     function eachModel( callback ){
         for( var i = 0; i < modelCount; ++i ){
             callback.apply( null, getModel( i ) );
