@@ -7,7 +7,7 @@ function getInt8( view, dataArray ){
     var o = view.byteOffset;
     var n = view.byteLength;
     if( !dataArray ) dataArray = new Int8Array( n );
-    for( var i = 0; i < n; i+=1 ){
+    for( var i = 0; i < n; ++i ){
         dataArray[ i ] = dv.getInt8( o+i );
     }
     return dataArray;
@@ -18,8 +18,8 @@ function getInt16( view, dataArray, littleEndian ){
     var o = view.byteOffset;
     var n = view.byteLength;
     if( !dataArray ) dataArray = new Int16Array( n / 2 );
-    for( var i = 0; i < n; i+=2 ){
-        dataArray[ i / 2 ] = dv.getInt16( o+i, littleEndian );
+    for( var i = 0, il = n / 2; i < il; ++i ){
+        dataArray[ i ] = dv.getInt16( o + i * 2, littleEndian );
     }
     return dataArray;
 }
@@ -29,17 +29,18 @@ function getInt32( view, dataArray, littleEndian ){
     var o = view.byteOffset;
     var n = view.byteLength;
     if( !dataArray ) dataArray = new Int32Array( n / 4 );
-    for( var i = 0; i < n; i+=4 ){
-        dataArray[ i / 4 ] = dv.getInt32( o+i, littleEndian );
+    for( var i = 0, il = n / 4; i < il; ++i ){
+        dataArray[ i ] = dv.getInt32( o + i * 4, littleEndian );
     }
     return dataArray;
 }
 
 function decodeFloat( intArray, divisor, dataArray ){
     var n = intArray.length;
+    var invDiv = 1/divisor;
     if( !dataArray ) dataArray = new Float32Array( n );
     for( var i = 0; i < n; ++i ){
-        dataArray[ i ] = intArray[ i ] / divisor;
+        dataArray[ i ] = intArray[ i ] * invDiv;
     }
     return dataArray;
 }
