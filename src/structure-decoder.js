@@ -153,7 +153,7 @@ function decodeData( msgpack, dataStores, params ){
             serial: new Int32Array( atomCount ),
             hetero: new Int8Array( atomCount ),
             altloc: new Uint8Array( atomCount ),
-            atomname: new Uint32Array( 4 * atomCount )
+            atomname: new Uint8Array( 4 * atomCount )
         };
         residueStore = {
             chainIndex: new Uint32Array( residueCount ),
