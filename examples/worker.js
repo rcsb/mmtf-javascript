@@ -32,6 +32,13 @@ function makeXhrPromise( method, url, responseType ){
 }
 
 
+var status = {
+    requested: 0,
+    finished: 0,
+    failed: 0
+};
+
+
 function loadStructure( pdbid ){
     pdbid = pdbid.toUpperCase();
     var promise = makeXhrPromise(
@@ -40,28 +47,105 @@ function loadStructure( pdbid ){
         "arraybuffer"
     );
     return promise.then( function( result ){
-        var sd = new StructureDecoder( result );
-        sd.decode();
-        return sd;
+        try{
+            var sd = new StructureDecoder( result );
+            sd.decode();
+            status.finished += 1;
+            return sd;
+        }catch( e ){
+            status.failed += 1;
+            console.error( e );
+            return false;
+        }
+    } ).catch( function( e ){
+        status.failed += 1;
+        console.error( e );
+        return false;
     } );
+}
+
+
+function loadBunch( pdbIdList ){
+    var promiseList = [];
+    for( var i = 0, il = pdbIdList.length; i < il; ++i ){
+        promiseList.push( loadStructure( pdbIdList[ i ] ) );
+    }
+    return Promise.all( promiseList );
 }
 
 
 onmessage = function( e ){
 
     var pdbIdList = e.data;
-    var promiseList = [];
+    var chunkList = [];
+    var statsList = [];
 
-    for( var i = 0, il = pdbIdList.length; i < il; ++i ){
-        promiseList.push( loadStructure( pdbIdList[ i ] ) );
+    status.requested = pdbIdList.length;
+    status.finished = 0;
+
+    var chunkSize = 100;
+    for( var i = 0, il = pdbIdList.length; i < il; i += chunkSize ){
+        chunkList.push( i );
     }
 
-    Promise.all( promiseList ).then( function( resultList ){
-        var statsList = [];
-        resultList.forEach( function( sd ){
-            statsList.push( getStats( sd ) );
+    var queue = new Queue( function( start, callback ){
+        var pdbIdChunk = pdbIdList.slice( start, start + chunkSize );
+        loadBunch( pdbIdChunk ).then( function( sdList ){
+            sdList.forEach( function( sd ){
+                if( sd ){
+                    statsList.push( getStats( sd ) );
+                }
+            } );
+            if( queue.length() % 5 === 0 ){
+                postMessage( statsList );
+            }
+            callback();
         } );
-        postMessage( statsList );
-    } );
+    }, chunkList );
 
 };
+
+
+function Queue( fn, argList ){
+
+    var queue = [];
+    var pending = false;
+
+    if( argList ){
+        for( var i = 0, il = argList.length; i < il; ++i ){
+            queue.push( argList[ i ] );
+        }
+        next();
+    }
+
+    function run( arg ){
+        fn( arg, next );
+    }
+
+    function next(){
+        var arg = queue.shift();
+        if( arg !== undefined ){
+            pending = true;
+            setTimeout( function(){ run( arg ); } );
+        }else{
+            pending = false;
+        }
+    }
+
+    // API
+
+    this.push = function( arg ){
+        queue.push( arg );
+        if( !pending ) next();
+    }
+
+    this.kill = function( arg ){
+        queue.length = 0;
+    };
+
+    this.length = function(){
+        return queue.length;
+    };
+
+}
+

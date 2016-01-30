@@ -16,7 +16,7 @@
 
     <script>
 
-        var pdbIdList = [
+        var customPdbIdList = [
             "4CUP", "3SN6", "2L6N", "4V5A", "4V99",
             "2MSE", "2MSD", "2MSC", "1RB8", "4V4G",
             "2KOG", "1BNX", "1BA6", "1AP0",
@@ -24,39 +24,108 @@
             "2MSE", "2MSD", "2MSC", "1RB8", "4V4G",
             "2KOG", "1BNX", "1BA6", "1AP0",
         ];
-
+        var fullPdbIdList = [];
         var worker = new Worker( "worker.js" );
 
         document.addEventListener( "DOMContentLoaded", function(){
-            worker.postMessage( pdbIdList );
+            var countSelect = document.getElementById( "countSelect" );
+            var loadButton = document.getElementById( "loadButton" );
+            loadButton.addEventListener( "click", function(){
+                var pdbIdList = getRandomPdbIdList( countSelect.value );
+                load( pdbIdList );
+            } );
         } );
 
+        function getRandomPdbIdList( count ){
+            var pdbIdList;
+            if( count === "all" ){
+                pdbIdList = fullPdbIdList;
+            }else{
+                pdbIdList = [];
+                for( var i = 0; i < count; ++i ){
+                    var index = Math.floor( Math.random() * fullPdbIdList.length );
+                    pdbIdList.push( fullPdbIdList[ index ] );
+                }
+            }
+            return pdbIdList;
+        }
+
+        loadPdbIdList();
+
+        function loadPdbIdList(){
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener( "load", function(){
+                fullPdbIdList = this.response.split( ", " );
+            }, true );
+            xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
+            xhr.open( "GET", "../data/PDBIds.txt" );
+            xhr.send();
+        }
+
+        function load( pdbIdList ){
+            worker.postMessage( pdbIdList );
+        }
+
         worker.onmessage = function( e ){
-            var statsList = e.data;
-            var sumStats = { type: "sum", count: statsList.length };
-            var nameList = [
-                "msgpackByteLength", "unpackedByteLength", "compressionRatio", "bondCount",
-                "atomCount", "residueCount", "chainCount", "modelCount", "msgpackDecodeTimeMs",
-                "structureDecodeTimeMs"
-            ];
-            nameList.forEach( function( name ){
-                sumStats[ name ] = 0;
-            } );
-            statsList.forEach( function( stats ){
+            var data = e.data;
+            if( data.status ){
+                var statusInfo = document.getElementById( "statusInfo" );
+                statusInfo.innerText = data.status.finished + " of " + data.status.requested;
+            }else{
+                var statsList = e.data;
+                var sumStats = { type: "sum", count: statsList.length };
+                var nameList = [
+                    "msgpackByteLength", "unpackedByteLength", "compressionRatio", "bondCount",
+                    "atomCount", "residueCount", "chainCount", "modelCount", "msgpackDecodeTimeMs",
+                    "structureDecodeTimeMs"
+                ];
                 nameList.forEach( function( name ){
-                    sumStats[ name ] += stats[ name ];
+                    sumStats[ name ] = 0;
                 } );
-            } );
-            var avgStats = Object.assign( {}, sumStats, { type: "average" } );
-            nameList.forEach( function( name ){
-                avgStats[ name ] /= statsList.length;
-            } );
-            delete sumStats.compressionRatio;
-            printObject( readableStats( avgStats ), "avgStats" );
-            printObject( readableStats( sumStats ), "sumStats" );
+                statsList.forEach( function( stats ){
+                    nameList.forEach( function( name ){
+                        sumStats[ name ] += stats[ name ];
+                    } );
+                } );
+                var avgStats = Object.assign( {}, sumStats, { type: "average" } );
+                nameList.forEach( function( name ){
+                    avgStats[ name ] /= statsList.length;
+                } );
+                delete sumStats.compressionRatio;
+                printObject( readableStats( avgStats ), "avgStats" );
+                printObject( readableStats( sumStats ), "sumStats" );
+            }
         };
 
     </script>
+
+    <div>
+        Count
+        <select name="count" id="countSelect">
+            <option value="1">1</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+            <option value="5000">5000</option>
+            <option value="10000">10000</option>
+            <option value="50000">50000</option>
+            <option value="100000">100000</option>
+            <option value="all">all</option>
+        </select>
+        <button id="loadButton">load</button>
+    </div>
+
+    <br/>
+
+    <div>
+        Status
+        <span id="statusInfo"></span>
+    </div>
+
+    <br/>
 
     <div id="avgStats"></div>
 
