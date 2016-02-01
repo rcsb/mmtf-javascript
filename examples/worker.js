@@ -9,26 +9,27 @@ importScripts(
 function makeXhrPromise( method, url, responseType ){
     return new Promise( function( resolve, reject ){
         var xhr = new XMLHttpRequest();
-        xhr.responseType = responseType;
         xhr.open( method, url );
+        xhr.responseType = responseType;
         xhr.onload = function(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
-                resolve( xhr.response );
+                resolve( this.response );
             }else{
                 reject( {
                     status: this.status,
-                    statusText: xhr.statusText
+                    statusText: this.statusText
                 } );
             }
         };
         xhr.onerror = function(){
+            console.log( "error", this.status )
             reject( {
                 status: this.status,
-                statusText: xhr.statusText
+                statusText: this.statusText
             } );
         };
         xhr.send();
-    });
+    } );
 }
 
 
