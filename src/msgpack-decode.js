@@ -228,16 +228,6 @@ export default function decodeMsgpack(buffer) {
       length = dataView.getUint32(offset + 1);
       offset += 5;
       return map(length);
-    // buffer 16
-    case 0xd8:
-      length = dataView.getUint16(offset + 1);
-      offset += 3;
-      return buf(length);
-    // buffer 32
-    case 0xd9:
-      length = dataView.getUint32(offset + 1);
-      offset += 5;
-      return buf(length);
     }
 
     throw new Error("Unknown type 0x" + type.toString(16));
