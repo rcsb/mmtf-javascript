@@ -142,7 +142,8 @@ export default function decodeMsgpack(buffer) {
       return value;
     // uint64
     case 0xcf:
-      // FIXME not available in JS
+      // FIXME not available/representable in JS
+      // largest possible int in JS is 2^53
       // value = dataView.getUint64(offset + 1);
       offset += 9;
       return 0;
@@ -163,9 +164,11 @@ export default function decodeMsgpack(buffer) {
       return value;
     // int 64
     case 0xd3:
-      value = dataView.getInt64(offset + 1);
+      // FIXME not available/representable in JS
+      // largest possible int in JS is 2^53
+      // value = dataView.getInt64(offset + 1);
       offset += 9;
-      return value;
+      return 0;
 
     // fixext 1
     case 0xd4:
