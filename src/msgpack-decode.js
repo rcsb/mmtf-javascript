@@ -2,8 +2,8 @@
 // TODO license and attribution
 
 
-function Decoder(buffer, offset) {
-  offset = offset || 0;
+export default function decodeMsgpack(buffer) {
+  var offset = 0;
   var dataView = new DataView(buffer.buffer);
 
   function map(length) {
@@ -243,12 +243,5 @@ function Decoder(buffer, offset) {
     throw new Error("Unknown type 0x" + type.toString(16));
   }
 
-  this.parse = parse;
-}
-
-export default function decode(buffer) {
-  var decoder = new Decoder(buffer);
-  var value = decoder.parse();
-  // if (decoder.offset !== buffer.length) throw new Error((buffer.length - decoder.offset) + " trailing bytes");
-  return value;
+  return parse();
 }
