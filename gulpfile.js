@@ -28,7 +28,7 @@ gulp.task('bundle', function(){
     .pipe(rollup({
       sourceMap: true,
       format: 'iife',
-      moduleName: 'StructureDecoder'
+      moduleName: 'decodeStructure'
     }))
     .pipe(sourcemaps.write('.')) // needs rollup sourceMap option
     .pipe(gulp.dest('build'));
@@ -38,7 +38,7 @@ gulp.task('bundle-test', function(){
   gulp.src('src/structure-decoder.js', {read: false})
     .pipe(rollup({
       format: 'cjs',
-      moduleName: 'StructureDecoder'
+      moduleName: 'decodeStructure'
     }))
     .pipe(rename('structure-decoder.test.js'))
     .pipe(gulp.dest('build'));
@@ -54,7 +54,7 @@ gulp.task('scripts', ['clean'], function(){
   gulp.src('src/structure-decoder.js', {read: false})
     .pipe(rollup({
       format: 'iife',
-      moduleName: 'StructureDecoder'
+      moduleName: 'decodeStructure'
     }))
     .pipe(uglify())
     .pipe(gulp.dest('dist'));

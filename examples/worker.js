@@ -49,10 +49,9 @@ function loadStructure( pdbid ){
     );
     return promise.then( function( result ){
         try{
-            var sd = new StructureDecoder( result );
-            sd.decode();
+            var d = decodeStructure( result );
             status.finished += 1;
-            return sd;
+            return d;
         }catch( e ){
             status.failed += 1;
             console.error( e );

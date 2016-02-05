@@ -13,20 +13,17 @@
 <body>
 
     <script src="utils.js"></script>
-    <script src="../dist/structure-decoder.js"></script>
+    <script src="../build/structure-decoder.js"></script>
 
     <script>
 
-        var currentStructureDecoder;
+        var currentStructureHelper;
 
         function onload(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
-                var sd = new StructureDecoder( this.response );
-                sd.decode();
-                currentStructureDecoder = sd;
-                // console.log( sd );
-                showStats( sd, "stats" );
-                showRandomAtomInfo( sd, "atomInfo" );
+                currentStructureHelper = new StructureHelper( decodeStructure( this.response ) );
+                showStats( currentStructureHelper, "stats" );
+                showRandomAtomInfo( currentStructureHelper, "atomInfo" );
             }else{
                 error( "error loading" );
             }
@@ -48,7 +45,8 @@
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", "http://132.249.213.68:8080/servemessagepack/" + pdbid );
+            // xhr.open( "GET", "http://132.249.213.68:8080/servemessagepack/" + pdbid );
+            xhr.open( "GET", "http://132.249.213.68:8080/servemessagecalpha/" + pdbid );
             xhr.send();
         }
 
@@ -88,7 +86,7 @@
 
             var atomInfoButton = document.getElementById( "atomInfoButton" );
             atomInfoButton.addEventListener( "click", function(){
-                showRandomAtomInfo( currentStructureDecoder, "atomInfo" );
+                showRandomAtomInfo( currentStructureHelper, "atomInfo" );
             } );
 
             loadStructure( pdbidSelect.value );
@@ -102,10 +100,10 @@
         <select name="pdbid" id="pdbidSelect">
             <option value=""></option>
             <option value="4CUP">4CUP</option>
-            <option value="3SN6">3SN6</option>
+            <option value="3SN6" selected>3SN6</option>
             <option value="2L6N">2L6N</option>
             <option value="4V5A">4V5A</option>
-            <option value="4V99" selected>4V99</option>
+            <option value="4V99">4V99</option>
             <option value="4P3Q">4P3Q</option>
             <option value="3J3Q">3J3Q</option>
             <option value="3J3Y">3J3Y</option>
