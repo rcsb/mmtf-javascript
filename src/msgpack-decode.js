@@ -167,12 +167,11 @@ export default function decodeMsgpack(buffer) {
       offset += 9;
       return value;
 
-    // fixext 1 / undefined
+    // fixext 1
     case 0xd4:
       extType = dataView.getUint8(offset + 1);
-      value = dataView.getUint8(offset + 2);
-      offset += 3;
-      return (extType === 0 && value === 0) ? undefined : [extType, value];
+      offset += 2;
+      return [extType, bin(1)];
     // fixext 2
     case 0xd5:
       extType = dataView.getUint8(offset + 1);
