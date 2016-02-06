@@ -3,16 +3,16 @@
 JavaScript decoder for MMTF files, see [MMTF specification](https://git.rcsb.org/Research/MMTF-Specification).
 
 
-##Table of contents
+## Table of contents
 
 * [API](#api)
 * [Helper](#helper)
 
 
 
-##API
+## API
 
-###Header information
+### Header information
 
 #### unitCell
 
