@@ -76,7 +76,7 @@ QUnit.test( "decodeDelta", function( assert ) {
     assert.deepEqual( decoded, expected, "Passed!" );
 });
 
-QUnit.test( "decodeDeltaMulti", function( assert ) {
+QUnit.test( "decodeSplitListDelta", function( assert ) {
     var deltasBig = new Int32Array([
         200, 3, 100, 2
     ]);
@@ -86,7 +86,7 @@ QUnit.test( "decodeDeltaMulti", function( assert ) {
     var expected = new Int32Array([
         200, 200, 202, 201, 301, 298, 303
     ]);
-    var decoded = decodeDeltaMulti( deltasBig, deltasSmall );
+    var decoded = decodeSplitListDelta( deltasBig, deltasSmall );
     assert.equal( decoded.length, deltasBig.length/2 + deltasSmall.length, "Passed!" );
     assert.equal( decoded.length, expected.length, "Passed!" );
     assert.deepEqual( decoded, expected, "Passed!" );

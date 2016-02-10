@@ -311,7 +311,7 @@ var decodeStructure = (function () {
       return dataArray;
   }
 
-  function decodeDeltaMulti( bigArray, smallArray, dataArray ){
+  function decodeSplitListDelta( bigArray, smallArray, dataArray ){
       var fullLength = ( bigArray.length / 2 ) + smallArray.length;
       if( !dataArray ) dataArray = new Int32Array( fullLength );
       var dataOffset = 0;
@@ -340,7 +340,7 @@ var decodeStructure = (function () {
               dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
           );
       }
-      var int32 = decodeDeltaMulti(
+      var int32 = decodeSplitListDelta(
           getInt32( bigArray, undefined, littleEndian ),
           getInt16( smallArray, undefined, littleEndian ),
           int32View
