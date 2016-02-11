@@ -55,10 +55,11 @@
         function loadPdbIdList(){
             var xhr = new XMLHttpRequest();
             xhr.addEventListener( "load", function(){
-                fullPdbIdList = this.response.split( ", " );
+                fullPdbIdList = this.response.idList;
             }, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
-            xhr.open( "GET", "../data/PDBIds.txt" );
+            xhr.open( "GET", "http://beta.rcsb.org/pdb/json/getCurrent" );
+            xhr.responseType = "json";
             xhr.send();
         }
 
