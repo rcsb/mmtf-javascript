@@ -145,7 +145,7 @@ function decodeStructure( bin ){
     }
     var msgpack = decodeMsgpack( bin );
     // console.log(getInt32( msgpack.resOrder))
-// console.log(msgpack)
+    // console.log(msgpack)
     var i, il, j, jl, k, kl;
 
     var bondCount = getBondCount( msgpack );
@@ -208,6 +208,10 @@ function decodeStructure( bin ){
             msgpack._atom_site_label_alt_id[ i + 1 ] = parseInt( msgpack._atom_site_label_alt_id[ i + 1 ] );
         }
         decodeRunLength( msgpack._atom_site_label_alt_id, aAltloc );
+    }
+
+    if( msgpack._atom_site_pdbx_PDB_ins_code ){
+        // FIXME
     }
 
     //
@@ -311,9 +315,15 @@ function decodeStructure( bin ){
             chainOffset: mChainOffset,
             chainCount: mChainCount
         },
+
         groupMap: groupMap,
+
         unitCell: msgpack.unitCell,
         spaceGroup: msgpack.spaceGroup,
+        bioAssembly: msgpack.bioAssembly,
+        pdbCode: msgpack.pdbCode,
+        title: msgpack.title,
+
         bondCount: bondCount,
         atomCount: atomCount,
         groupCount: groupCount,
