@@ -17,7 +17,7 @@ function formatMilliseconds( ms ){
 	}
 	if( seconds >= 1 ){
 		l.push( seconds + "s" );
-		ms -= seconds * 1000;
+		if( minutes < 1 ) ms -= seconds * 1000;
 	}
 	if( ms !== 0 ){
 		l.push( ms.toFixed( 2 ) + "ms" );
