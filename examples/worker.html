@@ -29,10 +29,15 @@
 
         document.addEventListener( "DOMContentLoaded", function(){
             var countSelect = document.getElementById( "countSelect" );
+            var cAlphaOnlyInput = document.getElementById( "cAlphaOnlyInput" );
+            cAlphaOnlyInput.addEventListener( "change", function(){
+                var pdbIdList = getRandomPdbIdList( countSelect.value );
+                load( pdbIdList, cAlphaOnlyInput.checked );
+            } );
             var loadButton = document.getElementById( "loadButton" );
             loadButton.addEventListener( "click", function(){
                 var pdbIdList = getRandomPdbIdList( countSelect.value );
-                load( pdbIdList );
+                load( pdbIdList, cAlphaOnlyInput.checked );
             } );
         } );
 
@@ -63,8 +68,11 @@
             xhr.send();
         }
 
-        function load( pdbIdList ){
-            worker.postMessage( pdbIdList );
+        function load( pdbIdList, cAlphaOnly ){
+            worker.postMessage( {
+                pdbIdList: pdbIdList,
+                cAlphaOnly: cAlphaOnly
+            } );
         }
 
         worker.onmessage = function( e ){
@@ -115,6 +123,7 @@
             <option value="all">all</option>
         </select>
         <button id="loadButton">load</button>
+        <input type="checkbox" id="cAlphaOnlyInput"></input>C-alpha only
     </div>
 
     <br/>

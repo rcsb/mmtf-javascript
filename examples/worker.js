@@ -71,10 +71,10 @@ function loadStructure( pdbid, cAlphaOnly ){
 }
 
 
-function loadBunch( pdbIdList ){
+function loadBunch( pdbIdList, cAlphaOnly ){
     var promiseList = [];
     for( var i = 0, il = pdbIdList.length; i < il; ++i ){
-        promiseList.push( loadStructure( pdbIdList[ i ] ) );
+        promiseList.push( loadStructure( pdbIdList[ i ], cAlphaOnly ) );
     }
     return Promise.all( promiseList );
 }
@@ -82,7 +82,8 @@ function loadBunch( pdbIdList ){
 
 onmessage = function( e ){
 
-    var pdbIdList = e.data;
+    var pdbIdList = e.data.pdbIdList;
+    var cAlphaOnly = e.data.cAlphaOnly;
     var chunkList = [];
     var statsList = [];
 
@@ -97,7 +98,7 @@ onmessage = function( e ){
 
     var queue = new Queue( function( start, callback ){
         var pdbIdChunk = pdbIdList.slice( start, start + chunkSize );
-        loadBunch( pdbIdChunk ).then( function( sdList ){
+        loadBunch( pdbIdChunk, cAlphaOnly ).then( function( sdList ){
             sdList.forEach( function( stats ){
                 if( stats ){
                     statsList.push( stats );
