@@ -13,7 +13,11 @@ function makeXhrPromise( method, url, responseType ){
         xhr.responseType = responseType;
         xhr.onload = function(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
-                resolve( this.response );
+                if( this.response.byteLength === 0 ){
+                    reject( "zero byteLength" );
+                }else{
+                    resolve( this.response );
+                }
             }else{
                 reject( {
                     status: this.status,
@@ -22,7 +26,7 @@ function makeXhrPromise( method, url, responseType ){
             }
         };
         xhr.onerror = function(){
-            console.log( "error", this.status )
+            console.log( "error", this.status, url );
             reject( {
                 status: this.status,
                 statusText: this.statusText
@@ -39,27 +43,29 @@ var status = {
     failed: 0
 };
 
-
-function loadStructure( pdbid ){
-    pdbid = pdbid.toUpperCase();
+function loadStructure( pdbid, cAlphaOnly ){
     var promise = makeXhrPromise(
-        "GET",
-        "http://132.249.213.68:8080/servemessagepack/" + pdbid,
-        "arraybuffer"
+        "GET", getMmtfUrl( pdbid, cAlphaOnly ), "arraybuffer"
     );
     return promise.then( function( result ){
         try{
-            var d = decodeStructure( result );
+            var t0 = performance.now();
+            var ds = decodeStructure( result );
+            var t1 = performance.now();
+            var info = {
+                msgpackByteLength: result.byteLength,
+                decodeTimeMs: t1 - t0
+            };
             status.finished += 1;
-            return d;
+            return getStats( new StructureHelper( ds ), info );
         }catch( e ){
             status.failed += 1;
-            console.error( e );
+            console.error( e, pdbid, cAlphaOnly );
             return false;
         }
     } ).catch( function( e ){
         status.failed += 1;
-        console.error( e );
+        console.error( e, pdbid, cAlphaOnly );
         return false;
     } );
 }
@@ -82,6 +88,7 @@ onmessage = function( e ){
 
     status.requested = pdbIdList.length;
     status.finished = 0;
+    status.failed = 0;
 
     var chunkSize = 100;
     for( var i = 0, il = pdbIdList.length; i < il; i += chunkSize ){
@@ -91,13 +98,16 @@ onmessage = function( e ){
     var queue = new Queue( function( start, callback ){
         var pdbIdChunk = pdbIdList.slice( start, start + chunkSize );
         loadBunch( pdbIdChunk ).then( function( sdList ){
-            sdList.forEach( function( sd ){
-                if( sd ){
-                    statsList.push( getStats( sd ) );
+            sdList.forEach( function( stats ){
+                if( stats ){
+                    statsList.push( stats );
                 }
             } );
             if( queue.length() % 5 === 0 ){
-                postMessage( statsList );
+                postMessage( {
+                    statsList: statsList,
+                    status: status
+                } );
             }
             callback();
         } );

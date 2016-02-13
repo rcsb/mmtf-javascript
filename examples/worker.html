@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Worker</title>
+    <title>MMTF Multi File Stats</title>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -57,7 +57,7 @@
             xhr.addEventListener( "load", function(){
                 fullPdbIdList = this.response.idList;
             }, true );
-            xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
+            xhr.addEventListener( "error", function(){ error( "error loading pdb id list" ) }, true );
             xhr.open( "GET", "http://beta.rcsb.org/pdb/json/getCurrent" );
             xhr.responseType = "json";
             xhr.send();
@@ -68,34 +68,32 @@
         }
 
         worker.onmessage = function( e ){
-            var data = e.data;
-            if( data.status ){
-                var statusInfo = document.getElementById( "statusInfo" );
-                statusInfo.innerText = data.status.finished + " of " + data.status.requested;
-            }else{
-                var statsList = e.data;
-                var sumStats = { type: "sum", count: statsList.length };
-                var nameList = [
-                    "msgpackByteLength", "unpackedByteLength", "compressionRatio", "bondCount",
-                    "atomCount", "groupCount", "chainCount", "modelCount", "msgpackDecodeTimeMs",
-                    "structureDecodeTimeMs"
-                ];
+            var status = e.data.status;
+            var statusInfo = document.getElementById( "statusInfo" );
+            statusInfo.innerText = status.finished + " of " + status.requested + " (" + status.failed + " failed)";
+            var statsList = e.data.statsList;
+            var sumStats = { type: "sum", count: statsList.length };
+            var countList = [
+                "bondCount", "atomCount", "groupCount", "chainCount", "modelCount"
+            ];
+            var nameList = [ "msgpackByteLength", "decodeTimeMs" ].concat( countList );
+            nameList.forEach( function( name ){
+                sumStats[ name ] = 0;
+            } );
+            statsList.forEach( function( stats ){
                 nameList.forEach( function( name ){
-                    sumStats[ name ] = 0;
+                    sumStats[ name ] += stats[ name ];
                 } );
-                statsList.forEach( function( stats ){
-                    nameList.forEach( function( name ){
-                        sumStats[ name ] += stats[ name ];
-                    } );
-                } );
-                var avgStats = Object.assign( {}, sumStats, { type: "average" } );
-                nameList.forEach( function( name ){
-                    avgStats[ name ] /= statsList.length;
-                } );
-                delete sumStats.compressionRatio;
-                printObject( readableStats( avgStats ), "avgStats" );
-                printObject( readableStats( sumStats ), "sumStats" );
-            }
+            } );
+            var avgStats = Object.assign( {}, sumStats, { type: "average" } );
+            nameList.forEach( function( name ){
+                avgStats[ name ] /= statsList.length;
+            } );
+            countList.forEach( function( name ){
+                avgStats[ name ] = avgStats[ name ].toFixed( 2 );
+            } );
+            showStats( avgStats, "avgStats" );
+            showStats( sumStats, "sumStats" );
         };
 
     </script>
