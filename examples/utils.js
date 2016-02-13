@@ -25,6 +25,17 @@ function formatMilliseconds( ms ){
 	return l.join( " " );
 }
 
+function getMmtfUrl( pdbid, cAlphaOnly ){
+    pdbid = pdbid.toUpperCase();
+    var baseUrl;
+    if( cAlphaOnly ){
+        baseUrl = "http://132.249.213.68:8080/servemessagecalpha/";
+    }else{
+        baseUrl = "http://132.249.213.68:8080/servemessagepack/";
+    }
+    return baseUrl + pdbid;
+}
+
 function getStoreByteLength( store ){
     var bytes = 0;
     for( var name in store ){
@@ -33,7 +44,8 @@ function getStoreByteLength( store ){
     return bytes;
 }
 
-function getStats( structureHelper ){
+function getStats( structureHelper, info ){
+
     var sh = structureHelper;
     var unpackedBytes = (
         getStoreByteLength( sh.bondStore ) +
@@ -43,31 +55,25 @@ function getStats( structureHelper ){
         getStoreByteLength( sh.modelStore )
     );
     return {
-        pdbId: "???",
-        // msgpackByteLength: sh.buffer.byteLength,
-        msgpackByteLength: 0,
-        unpackedByteLength: unpackedBytes,
-        // msgpackSize: fileSizeSI( sh.buffer.byteLength ),
-        msgpackSize: 0,
-        unpackedSize: fileSizeSI( unpackedBytes ),
-        // compressionRatio: unpackedBytes / sh.buffer.byteLength,
-        compressionRatio: 0,
+        pdbId: sh.pdbCode,
+
+        msgpackByteLength: info.msgpackByteLength,
+        decodeTimeMs: info.decodeTimeMs,
+
         bondCount: sh.bondCount,
         atomCount: sh.atomCount,
         groupCount: sh.groupCount,
         chainCount: sh.chainCount,
         modelCount: sh.modelCount,
-        msgpackDecodeTimeMs: 0,
-        structureDecodeTimeMs: 0,
     };
 }
 
-function getAtomInfo( structureDecoder, index ){
-    var sd = structureDecoder;
-    var atom = sd.getAtom( index );
-    var group = sd.getGroup( atom[ 0 ] );
-    var chain = sd.getChain( group[ 0 ] );
-    var model = sd.getModel( chain[ 0 ] );
+function getAtomInfo( structureHelper, index ){
+    var sh = structureHelper;
+    var atom = sh.getAtom( index );
+    var group = sh.getGroup( atom[ 0 ] );
+    var chain = sh.getChain( group[ 0 ] );
+    var model = sh.getModel( chain[ 0 ] );
     return {
         index: index,
         x: atom[ 1 ],
@@ -79,12 +85,13 @@ function getAtomInfo( structureDecoder, index ){
         hetero: atom[ 7 ],
         altloc: atom[ 8 ],
         atomname: atom[ 9 ],
+        // inscode: atom[ 10 ],  // FIXME
         //
         resno: group[ 3 ],
         resname: group[ 4 ],
         sstruc: group[ 5 ],
         //
-        modelIndex: chain[ 0 ],
+        model: chain[ 0 ],
         chainname: chain[ 3 ],
     };
 }
@@ -98,28 +105,17 @@ function printObject( obj, id ){
     elm.innerHTML = html;
 }
 
-function showRandomAtomInfo( sd, id ){
-    var atomInfo = getAtomInfo( sd, Math.floor( Math.random() * sd.atomCount ) );
+function showRandomAtomInfo( sh, id ){
+    var atomInfo = getAtomInfo( sh, Math.floor( Math.random() * sh.atomCount ) );
     printObject( atomInfo, id );
 }
 
-function readableStats( stats ){
-    stats = Object.assign( {}, stats );
-    if( stats.compressionRatio ) stats.compressionRatio = stats.compressionRatio.toFixed( 2 );
-    stats.msgpackSize = fileSizeSI( stats.msgpackByteLength );
-    stats.unpackedSize = fileSizeSI( stats.unpackedByteLength );
-    stats.msgpackDecodeTime = formatMilliseconds( stats.msgpackDecodeTimeMs );
-    stats.structureDecodeTime = formatMilliseconds( stats.structureDecodeTimeMs );
+function showStats( stats, id ){
+    stats.fileSize = fileSizeSI( stats.msgpackByteLength ),
+    stats.decodeTime = formatMilliseconds( stats.decodeTimeMs ),
     delete stats.msgpackByteLength;
-    delete stats.unpackedByteLength;
-    delete stats.msgpackDecodeTimeMs;
-    delete stats.structureDecodeTimeMs;
-    return stats;
-}
-
-function showStats( sd, id ){
-    var stats = getStats( sd );
-    printObject( readableStats( stats ), id );
+    delete stats.decodeTimeMs;
+    printObject( stats, id );
 }
 
 //
@@ -224,6 +220,9 @@ function StructureHelper( d ){
 
     this.unitCell = d.unitCell;
     this.spaceGroup = d.spaceGroup;
+    this.bioAssembly = d.bioAssembly;
+    this.pdbCode = d.pdbCode;
+    this.title = d.title;
 
     this.bondCount = d.bondCount;
     this.atomCount = d.atomCount;
@@ -236,6 +235,7 @@ function StructureHelper( d ){
     this.groupStore = d.groupStore;
     this.chainStore = d.chainStore;
     this.modelStore = d.modelStore;
+
     this.groupMap = d.groupMap;
 
     this.getBond = getBond;

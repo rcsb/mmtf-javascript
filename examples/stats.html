@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Stats</title>
+    <title>MMTF Single File Stats</title>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -21,8 +21,15 @@
 
         function onload(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
-                currentStructureHelper = new StructureHelper( decodeStructure( this.response ) );
-                showStats( currentStructureHelper, "stats" );
+                var t0 = performance.now();
+                var ds = decodeStructure( this.response );
+                var t1 = performance.now();
+                var info = {
+                    msgpackByteLength: this.response.byteLength,
+                    decodeTimeMs: t1 - t0
+                };
+                currentStructureHelper = new StructureHelper( ds );
+                showStats( getStats( currentStructureHelper, info ), "stats" );
                 showRandomAtomInfo( currentStructureHelper, "atomInfo" );
             }else{
                 error( "error loading" );
@@ -39,24 +46,32 @@
             document.getElementById( "atomInfo" ).innerHTML = "";
         }
 
-        function loadStructure( pdbid ){
-            pdbid = pdbid.toUpperCase();
+        function loadStructure( pdbid, cAlphaOnly ){
             var xhr = new XMLHttpRequest();
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
-            // xhr.open( "GET", "http://132.249.213.68:8080/servemessagepack/" + pdbid );
-            xhr.open( "GET", "http://132.249.213.68:8080/servemessagecalpha/" + pdbid );
+            xhr.open( "GET", getMmtfUrl( pdbid, cAlphaOnly ) );
             xhr.send();
         }
 
         document.addEventListener( "DOMContentLoaded", function(){
 
+            var v = document.getElementById( "cAlphaOnlyInput" );
+            cAlphaOnlyInput.addEventListener( "change", function(){
+                if( pdbidInput.value ){
+                    pdbidSelect.value = "";
+                    loadStructure( pdbidInput.value, cAlphaOnlyInput.checked );
+                }else{
+                    loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
+                }
+            } );
+
             var pdbidSelect = document.getElementById( "pdbidSelect" );
             pdbidSelect.addEventListener( "change", function(){
                 if( pdbidSelect.value ){
                     pdbidInput.value = "";
-                    loadStructure( pdbidSelect.value );
+                    loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
                 }else{
                     clear();
                 }
@@ -67,7 +82,7 @@
                 if( e.keyCode === 13 ){
                     if( pdbidInput.value ){
                         pdbidSelect.value = "";
-                        loadStructure( pdbidInput.value );
+                        loadStructure( pdbidInput.value, cAlphaOnlyInput.checked );
                     }else{
                         clear();
                     }
@@ -78,9 +93,9 @@
             pdbidButton.addEventListener( "click", function(){
                 if( pdbidInput.value ){
                     pdbidSelect.value = "";
-                    loadStructure( pdbidInput.value );
+                    loadStructure( pdbidInput.value, cAlphaOnlyInput.checked );
                 }else{
-                    clear();
+                    loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
                 }
             } );
 
@@ -89,7 +104,7 @@
                 showRandomAtomInfo( currentStructureHelper, "atomInfo" );
             } );
 
-            loadStructure( pdbidSelect.value );
+            loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
 
         } );
 
@@ -110,7 +125,12 @@
         </select>
         <input type="text" id="pdbidInput"></input>
         <button id="pdbidButton">get</button>
+        <input type="checkbox" id="cAlphaOnlyInput"></input>C-alpha only
     </div>
+
+    <br/>
+
+    <div id="stats"></div>
 
     <br/>
 
@@ -118,10 +138,6 @@
         Random Atom Info
         <button id="atomInfoButton">show</button>
     </div>
-
-    <br/>
-
-    <div id="stats"></div>
 
     <br/>
 
