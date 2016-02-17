@@ -92,7 +92,7 @@ QUnit.test( "decodeSplitListDelta", function( assert ) {
     assert.deepEqual( decoded, expected, "Passed!" );
 });
 
-QUnit.test( "decodeFloatCombined", function( assert ) {
+QUnit.test( "decodeFloatSplitList", function( assert ) {
     var deltasBig = new Int32Array([
         100, 3, -200, 2
     ]);
@@ -105,7 +105,7 @@ QUnit.test( "decodeFloatCombined", function( assert ) {
     var deltasBigUint8 = new Uint8Array( deltasBig.buffer );
     var deltasSmallUint8 = new Uint8Array( deltasSmall.buffer );
     var divisor = 100;
-    var decoded = decodeFloatCombined( deltasBigUint8, deltasSmallUint8, divisor, undefined, true );
+    var decoded = decodeFloatSplitList( deltasBigUint8, deltasSmallUint8, divisor, undefined, true );
     assert.equal( decoded.length, deltasBig.length/2 + deltasSmall.length, "Passed!" );
     assert.close( decoded[0], expected[0], 0.001, "Passed!" );
     assert.close( decoded[1], expected[1], 0.001, "Passed!" );
@@ -114,19 +114,4 @@ QUnit.test( "decodeFloatCombined", function( assert ) {
     assert.close( decoded[4], expected[4], 0.001, "Passed!" );
     assert.close( decoded[5], expected[5], 0.001, "Passed!" );
     assert.close( decoded[6], expected[6], 0.001, "Passed!" );
-});
-
-QUnit.test( "getBondCount", function( assert ) {
-    var resOrder = new Int32Array([ 0, 0, 1 ]);
-    var groupMap = [
-        { bondOrders: [ 1, 1, 1, 1 ] },
-        { bondOrders: [ 1, 1, 1 ] }
-    ];
-    var msgpack = {
-        resOrder: new Uint8Array( resOrder.buffer ),
-        groupMap: groupMap
-    };
-    var expectedBondCount = 2 * 4 + 1 * 3 ;
-    var bondCount = getBondCount( msgpack, true );
-    assert.equal( bondCount, expectedBondCount, "Passed!" );
 });

@@ -51,7 +51,8 @@
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", getMmtfUrl( pdbid, cAlphaOnly ) );
+            xhr.open( "GET", "../data/1aq1.mmtf" );
+            // xhr.open( "GET", getMmtfUrl( pdbid, cAlphaOnly ) );
             xhr.send();
         }
 

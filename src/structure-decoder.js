@@ -73,6 +73,12 @@ function decodeDelta( dataArray ){
     return dataArray;
 }
 
+function getInt32View( dataArray ){
+    return new Int32Array(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
+    );
+}
+
 function decodeSplitListDelta( bigArray, smallArray, dataArray ){
     var fullLength = ( bigArray.length / 2 ) + smallArray.length;
     if( !dataArray ) dataArray = new Int32Array( fullLength );
@@ -95,13 +101,8 @@ function decodeSplitListDelta( bigArray, smallArray, dataArray ){
     return dataArray;
 }
 
-function decodeFloatCombined( bigArray, smallArray, divisor, dataArray, littleEndian ){
-    var int32View;
-    if( dataArray ){
-        int32View = new Int32Array(
-            dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
-        );
-    }
+function decodeFloatSplitList( bigArray, smallArray, divisor, dataArray, littleEndian ){
+    var int32View = dataArray ? getInt32View( dataArray ) : undefined;
     var int32 = decodeSplitListDelta(
         getInt32( bigArray, undefined, littleEndian ),
         getInt16( smallArray, undefined, littleEndian ),
@@ -110,18 +111,10 @@ function decodeFloatCombined( bigArray, smallArray, divisor, dataArray, littleEn
     return decodeFloat( int32, divisor, dataArray );
 }
 
-function getBondCount( msgpack, littleEndian ){
-    var resOrder = msgpack.resOrder;
-    var offset = resOrder.byteOffset;
-    var length = resOrder.byteLength;
-    var dv = new DataView( resOrder.buffer );
-
-    var bondCount = 0;
-    for( var gi, i = 0, il = length/4; i < il; ++i ){
-        gi = dv.getInt32( offset + i * 4, littleEndian );
-        bondCount += msgpack.groupMap[ gi ].bondOrders.length;
-    }
-    return bondCount;
+function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
+    var int32View = dataArray ? getInt32View( dataArray ) : undefined;
+    var int32 = decodeRunLength( getInt32( array ), int32View )
+    return decodeFloat( int32, divisor, dataArray );
 }
 
 //
@@ -135,7 +128,7 @@ var sstrucMap = {
     "5": "b",  // bridge
     "6": "t",  // turn
     "7": "l",  // coil
-    "-1": "",  // NA
+    "-1": ""   // NA
 };
 
 function decodeStructure( bin ){
@@ -145,83 +138,90 @@ function decodeStructure( bin ){
     }
     var msgpack = decodeMsgpack( bin );
     // console.log(getInt32( msgpack.resOrder))
-    // console.log(msgpack)
+    console.log(msgpack)
     var i, il, j, jl, k, kl;
 
-    var bondCount = getBondCount( msgpack );
-    var atomCount = msgpack.numAtoms;
-    var groupCount = msgpack.resOrder.length / 4;
-    var chainCount = msgpack.chainList.length / 4;
-    var modelCount = msgpack.chainsPerModel.length;
+    var numBonds = msgpack.numBonds;
+    var numAtoms = msgpack.numAtoms;
+    var numGroups = msgpack.groupTypeList.length / 4;
+    var numChains = msgpack.chainList.length / 4;
+    var numModels = msgpack.chainsPerModel.length;
     var groupMap = msgpack.groupMap;
 
     // bondStore
-    var bAtomIndex1 = new Uint32Array( bondCount + groupCount );  // add groupCount
-    var bAtomIndex2 = new Uint32Array( bondCount + groupCount );  // to have space
-    var bBondOrder = new Uint8Array( bondCount + groupCount );    // for polymer bonds
+    var bAtomIndex1 = new Uint32Array( numBonds + numGroups );  // add numGroups
+    var bAtomIndex2 = new Uint32Array( numBonds + numGroups );  // to have space
+    var bBondOrder = new Uint8Array( numBonds + numGroups );    // for polymer bonds
 
     // atomStore
-    var aGroupIndex = new Uint32Array( atomCount );
-    var aX = new Float32Array( atomCount );
-    var aY = new Float32Array( atomCount );
-    var aZ = new Float32Array( atomCount );
-    var aBfactor = new Float32Array( atomCount );
-    var aSerial = new Int32Array( atomCount );
-    var aAltloc = new Uint8Array( atomCount );
+    var aGroupIndex = new Uint32Array( numAtoms );
+    var aXcoord = new Float32Array( numAtoms );
+    var aYcoord = new Float32Array( numAtoms );
+    var aZcoord = new Float32Array( numAtoms );
+    var aBfactor = new Float32Array( numAtoms );
+    var aAtomId = new Int32Array( numAtoms );
+    var aAltLabel = new Uint8Array( numAtoms );
+    var aInsCode = new Uint8Array( numAtoms );
+    var aOccupancy = new Float32Array( numAtoms );
 
     // groupStore
-    var gChainIndex = new Uint32Array( groupCount );
-    var gAtomOffset = new Uint32Array( groupCount );
-    var gAtomCount = new Uint16Array( groupCount );
-    var gGroupTypeId = new Uint16Array( groupCount );
-    var gResno = new Int32Array( groupCount );
-    var gSstruc = new Uint8Array( groupCount );
+    var gChainIndex = new Uint32Array( numGroups );
+    var gAtomOffset = new Uint32Array( numGroups );
+    var gAtomCount = new Uint16Array( numGroups );
+    var gGroupTypeId = new Uint16Array( numGroups );
+    var gGroupNum = new Int32Array( numGroups );
+    var gSecStruct = new Uint8Array( numGroups );
 
     // chainStore
-    var cModelIndex = new Uint16Array( chainCount );
-    var cGroupOffset = new Uint32Array( chainCount );
-    var cGroupCount = new Uint32Array( chainCount );
-    var cChainname = new Uint8Array( 4 * chainCount );
+    var cModelIndex = new Uint16Array( numChains );
+    var cGroupOffset = new Uint32Array( numChains );
+    var cGroupCount = new Uint32Array( numChains );
+    var cChainName = new Uint8Array( 4 * numChains );
 
     // modelStore
-    var mChainOffset = new Uint32Array( modelCount );
-    var mChainCount = new Uint32Array( modelCount );
+    var mChainOffset = new Uint32Array( numModels );
+    var mChainCount = new Uint32Array( numModels );
 
-    decodeFloatCombined( msgpack.cartn_x_big, msgpack.cartn_x_small, 1000, aX );
-    decodeFloatCombined( msgpack.cartn_y_big, msgpack.cartn_y_small, 1000, aY );
-    decodeFloatCombined( msgpack.cartn_z_big, msgpack.cartn_z_small, 1000, aZ );
-    if( msgpack.b_factor_big ){
-        decodeFloatCombined( msgpack.b_factor_big, msgpack.b_factor_small, 100, aBfactor );
+    decodeFloatSplitList( msgpack.xCoordBig, msgpack.xCoordSmall, 1000, aXcoord );
+    decodeFloatSplitList( msgpack.yCoordBig, msgpack.yCoordSmall, 1000, aYcoord );
+    decodeFloatSplitList( msgpack.zCoordBig, msgpack.zCoordSmall, 1000, aZcoord );
+    if( msgpack.bFactorBig && msgpack.bFactorSmall ){
+        decodeFloatSplitList( msgpack.bFactorBig, msgpack.bFactorSmall, 100, aBfactor );
     }
-    if( msgpack._atom_site_id ){
-        decodeDelta( decodeRunLength( getInt32( msgpack._atom_site_id ), aSerial ) );
+    if( msgpack.atomIdList ){
+        decodeDelta( decodeRunLength( getInt32( msgpack.atomIdList ), aAtomId ) );
     }
 
-    if( msgpack._atom_site_label_alt_id ){
-        for( i = 0, il = msgpack._atom_site_label_alt_id.length; i < il; i+=2 ){
-            var value = msgpack._atom_site_label_alt_id[ i ];
+    if( msgpack.altLabelList ){
+        for( i = 0, il = msgpack.altLabelList.length; i < il; i+=2 ){
+            var value = msgpack.altLabelList[ i ];
             if( value === "?" ){
-                msgpack._atom_site_label_alt_id[ i ] = 0;
+                msgpack.altLabelList[ i ] = 0;
             }else{
-                msgpack._atom_site_label_alt_id[ i ] = msgpack._atom_site_label_alt_id[ i ].charCodeAt( 0 );
+                msgpack.altLabelList[ i ] = msgpack.altLabelList[ i ].charCodeAt( 0 );
             }
-            msgpack._atom_site_label_alt_id[ i + 1 ] = parseInt( msgpack._atom_site_label_alt_id[ i + 1 ] );
+            msgpack.altLabelList[ i + 1 ] = parseInt( msgpack.altLabelList[ i + 1 ] );
         }
-        decodeRunLength( msgpack._atom_site_label_alt_id, aAltloc );
+        decodeRunLength( msgpack.altLabelList, aAltLabel );
     }
 
-    if( msgpack._atom_site_pdbx_PDB_ins_code ){
-        // FIXME
+    if( msgpack.insCodeList ){
+        // FIXME run-length encoded, same as altLabelList
+    }
+
+    if( msgpack.occList ){
+        // FIXME run-length encoded, integer encoding (divisor 100)
+        decodeFloatRunLength( msgpack.occList, 100, aOccupancy );
     }
 
     //
 
-    getInt8( msgpack.chainList, cChainname );
+    getInt8( msgpack.chainList, cChainName );
 
     var chainsPerModel = msgpack.chainsPerModel;
     var modelChainCount;
     var chainOffset = 0;
-    for( i = 0; i < modelCount; ++i ){
+    for( i = 0; i < numModels; ++i ){
         modelChainCount = chainsPerModel[ i ];
         mChainOffset[ i ] = chainOffset;
         mChainCount[ i ] = modelChainCount;
@@ -234,7 +234,7 @@ function decodeStructure( bin ){
     var groupsPerChain = msgpack.groupsPerChain;
     var chainGroupCount;
     var groupOffset = 0;
-    for( i = 0; i < chainCount; ++i ){
+    for( i = 0; i < numChains; ++i ){
         chainGroupCount = groupsPerChain[ i ];
         cGroupOffset[ i ] = groupOffset;
         cGroupCount[ i ] = chainGroupCount;
@@ -246,21 +246,21 @@ function decodeStructure( bin ){
 
     //
 
-    decodeDelta( decodeRunLength( getInt32( msgpack._atom_site_auth_seq_id ), gResno ) );
+    decodeDelta( decodeRunLength( getInt32( msgpack.groupNumList ), gGroupNum ) );
+    getInt32( msgpack.groupTypeList, gGroupTypeId );
 
-    var resOrder = getInt32( msgpack.resOrder, gGroupTypeId );
-    var secStruct = getInt8( msgpack.secStruct );
+    var secStruct = getInt8( msgpack.secStructList );
     var atomOffset = 0;
     var bondOffset = 0;
 
-    for( i = 0; i < groupCount; ++i ){
+    for( i = 0; i < numGroups; ++i ){
 
-        var resData = groupMap[ resOrder[ i ] ];
-        var atomInfo = resData.atomInfo;
-        var resAtomCount = atomInfo.length / 2;
+        var groupData = groupMap[ gGroupTypeId[ i ] ];
+        var atomInfo = groupData.atomInfo;
+        var groupAtomCount = atomInfo.length / 2;
 
-        var bondIndices = resData.bondIndices;
-        var bondOrders = resData.bondOrders;
+        var bondIndices = groupData.bondIndices;
+        var bondOrders = groupData.bondOrders;
 
         for( j = 0, jl = bondOrders.length; j < jl; ++j ){
             bAtomIndex1[ bondOffset ] = atomOffset + bondIndices[ j * 2 ];
@@ -271,11 +271,11 @@ function decodeStructure( bin ){
 
         //
 
-        gSstruc[ i ] = ( sstrucMap[ secStruct[ i ] ] || "l" ).charCodeAt();
+        gSecStruct[ i ] = ( sstrucMap[ secStruct[ i ] ] || "l" ).charCodeAt();  // FIXME move out
         gAtomOffset[ i ] = atomOffset;
-        gAtomCount[ i ] = resAtomCount;
+        gAtomCount[ i ] = groupAtomCount;
 
-        for( j = 0; j < resAtomCount; ++j ){
+        for( j = 0; j < groupAtomCount; ++j ){
             aGroupIndex[ atomOffset ] = i;
             atomOffset += 1;
         }
@@ -290,26 +290,28 @@ function decodeStructure( bin ){
         },
         atomStore: {
             groupIndex: aGroupIndex,
-            x: aX,
-            y: aY,
-            z: aZ,
-            bfactor: aBfactor,
-            serial: aSerial,
-            altloc: aAltloc
+            xCoord: aXcoord,
+            yCoord: aYcoord,
+            zCoord: aZcoord,
+            bFactor: aBfactor,
+            atomId: aAtomId,
+            altLabel: aAltLabel,
+            insCode: aInsCode,
+            occupancy: aOccupancy
         },
         groupStore: {
             chainIndex: gChainIndex,
             atomOffset: gAtomOffset,
             atomCount: gAtomCount,
             groupTypeId: gGroupTypeId,
-            resno: gResno,
-            sstruc: gSstruc
+            groupNum: gGroupNum,
+            secStruct: gSecStruct
         },
         chainStore: {
             modelIndex: cModelIndex,
             groupOffset: cGroupOffset,
             groupCount: cGroupCount,
-            chainname: cChainname
+            chainName: cChainName
         },
         modelStore: {
             chainOffset: mChainOffset,
@@ -324,11 +326,11 @@ function decodeStructure( bin ){
         pdbCode: msgpack.pdbCode,
         title: msgpack.title,
 
-        bondCount: bondCount,
-        atomCount: atomCount,
-        groupCount: groupCount,
-        chainCount: chainCount,
-        modelCount: modelCount
+        numBonds: numBonds,
+        numAtoms: numAtoms,
+        numGroups: numGroups,
+        numChains: numChains,
+        numModels: numModels
     };
 
 }
