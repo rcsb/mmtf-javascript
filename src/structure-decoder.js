@@ -113,7 +113,7 @@ function decodeFloatSplitList( bigArray, smallArray, divisor, dataArray, littleE
 
 function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
     var int32View = dataArray ? getInt32View( dataArray ) : undefined;
-    var int32 = decodeRunLength( getInt32( array ), int32View )
+    var int32 = decodeRunLength( getInt32( array, undefined, littleEndian ), int32View )
     return decodeFloat( int32, divisor, dataArray );
 }
 
