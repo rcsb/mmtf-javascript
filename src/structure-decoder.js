@@ -133,19 +133,28 @@ var sstrucMap = {
 
 function decodeStructure( bin ){
 
+    // make sure bin is not a plain Arraybuffer
     if( bin instanceof ArrayBuffer ){
         bin = new Uint8Array( bin );
     }
+
+    // get decoded msgpack data
     var msgpack = decodeMsgpack( bin );
+
     // console.log(getInt32( msgpack.resOrder))
-    console.log(msgpack)
+    // console.log(msgpack)
+
+    // hoisted loop variables
     var i, il, j, jl, k, kl;
 
+    // counts
     var numBonds = msgpack.numBonds;
     var numAtoms = msgpack.numAtoms;
     var numGroups = msgpack.groupTypeList.length / 4;
     var numChains = msgpack.chainList.length / 4;
     var numModels = msgpack.chainsPerModel.length;
+
+    // maps
     var groupMap = msgpack.groupMap;
 
     // bondStore
@@ -182,16 +191,22 @@ function decodeStructure( bin ){
     var mChainOffset = new Uint32Array( numModels );
     var mChainCount = new Uint32Array( numModels );
 
+    // split-list delta & integer decode x, y, z coords
     decodeFloatSplitList( msgpack.xCoordBig, msgpack.xCoordSmall, 1000, aXcoord );
     decodeFloatSplitList( msgpack.yCoordBig, msgpack.yCoordSmall, 1000, aYcoord );
     decodeFloatSplitList( msgpack.zCoordBig, msgpack.zCoordSmall, 1000, aZcoord );
+
+    // split-list delta & integer decode b-factors
     if( msgpack.bFactorBig && msgpack.bFactorSmall ){
         decodeFloatSplitList( msgpack.bFactorBig, msgpack.bFactorSmall, 100, aBfactor );
     }
+
+    // delta & run-length decode atom ids
     if( msgpack.atomIdList ){
         decodeDelta( decodeRunLength( getInt32( msgpack.atomIdList ), aAtomId ) );
     }
 
+    // run-length decode altternate labels
     if( msgpack.altLabelList ){
         var msgpackAltLabelList = msgpack.altLabelList;
         for( i = 0, il = msgpackAltLabelList.length; i < il; i+=2 ){
@@ -206,6 +221,7 @@ function decodeStructure( bin ){
         decodeRunLength( msgpackAltLabelList, aAltLabel );
     }
 
+    // run-length decode insertion codes
     if( msgpack.insCodeList ){
         var msgpackInsCodeList = msgpack.insCodeList;
         for( i = 0, il = msgpackInsCodeList.length; i < il; i+=2 ){
@@ -220,15 +236,15 @@ function decodeStructure( bin ){
         decodeRunLength( msgpackInsCodeList, aInsCode );
     }
 
+    // run-length & integer decode occupancies
     if( msgpack.occList ){
-        // FIXME run-length encoded, integer encoding (divisor 100)
         decodeFloatRunLength( msgpack.occList, 100, aOccupancy );
     }
 
-    //
-
+    // get ascii encoded chain names
     getInt8( msgpack.chainList, cChainName );
 
+    // set-up model-chain relations
     var chainsPerModel = msgpack.chainsPerModel;
     var modelChainCount;
     var chainOffset = 0;
@@ -242,6 +258,7 @@ function decodeStructure( bin ){
         chainOffset += modelChainCount;
     }
 
+    // set-up chain-residue relations
     var groupsPerChain = msgpack.groupsPerChain;
     var chainGroupCount;
     var groupOffset = 0;
@@ -255,12 +272,18 @@ function decodeStructure( bin ){
         groupOffset += chainGroupCount;
     }
 
-    //
-
+    // run-length & delta decode group numbers
     decodeDelta( decodeRunLength( getInt32( msgpack.groupNumList ), gGroupNum ) );
+
+    // get group type pointers
     getInt32( msgpack.groupTypeList, gGroupTypeId );
 
+    // get secondary structure codes
     var secStruct = getInt8( msgpack.secStructList );
+
+    //////
+    // get data from group map
+
     var atomOffset = 0;
     var bondOffset = 0;
 
