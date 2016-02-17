@@ -124,8 +124,6 @@ function showStats( stats, id ){
 
 function StructureHelper( d ){
 
-    console.log( d )
-
     function getBond( index ){
         return [
             d.bondStore.atomIndex1[ index ],
@@ -150,7 +148,7 @@ function StructureHelper( d ){
             group.hetFlag,
             d.atomStore.altLabel ? String.fromCharCode( d.atomStore.altLabel[ index ] ) : null,
             group.atomInfo[ groupAtomIndex * 2 + 1 ],
-            d.atomStore.insCode ? d.atomStore.insCode[ index ] : null,
+            d.atomStore.insCode ? String.fromCharCode( d.atomStore.insCode[ index ] ) : null,
             d.atomStore.occupancy ? d.atomStore.occupancy[ index ] : null
         ];
     }
