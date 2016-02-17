@@ -193,20 +193,31 @@ function decodeStructure( bin ){
     }
 
     if( msgpack.altLabelList ){
-        for( i = 0, il = msgpack.altLabelList.length; i < il; i+=2 ){
-            var value = msgpack.altLabelList[ i ];
+        var msgpackAltLabelList = msgpack.altLabelList;
+        for( i = 0, il = msgpackAltLabelList.length; i < il; i+=2 ){
+            var value = msgpackAltLabelList[ i ];
             if( value === "?" ){
-                msgpack.altLabelList[ i ] = 0;
+                msgpackAltLabelList[ i ] = 0;
             }else{
-                msgpack.altLabelList[ i ] = msgpack.altLabelList[ i ].charCodeAt( 0 );
+                msgpackAltLabelList[ i ] = msgpackAltLabelList[ i ].charCodeAt( 0 );
             }
-            msgpack.altLabelList[ i + 1 ] = parseInt( msgpack.altLabelList[ i + 1 ] );
+            msgpackAltLabelList[ i + 1 ] = parseInt( msgpackAltLabelList[ i + 1 ] );
         }
-        decodeRunLength( msgpack.altLabelList, aAltLabel );
+        decodeRunLength( msgpackAltLabelList, aAltLabel );
     }
 
     if( msgpack.insCodeList ){
-        // FIXME run-length encoded, same as altLabelList
+        var msgpackInsCodeList = msgpack.insCodeList;
+        for( i = 0, il = msgpackInsCodeList.length; i < il; i+=2 ){
+            var value = msgpackInsCodeList[ i ];
+            if( value === null ){
+                msgpackInsCodeList[ i ] = 0;
+            }else{
+                msgpackInsCodeList[ i ] = msgpackInsCodeList[ i ].charCodeAt( 0 );
+            }
+            msgpackInsCodeList[ i + 1 ] = parseInt( msgpackInsCodeList[ i + 1 ] );
+        }
+        decodeRunLength( msgpackInsCodeList, aInsCode );
     }
 
     if( msgpack.occList ){
