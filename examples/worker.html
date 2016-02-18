@@ -82,7 +82,7 @@
             var statsList = e.data.statsList;
             var sumStats = { type: "sum", count: statsList.length };
             var countList = [
-                "bondCount", "atomCount", "groupCount", "chainCount", "modelCount"
+                "numBonds", "numAtoms", "numGroups", "numChains", "numModels"
             ];
             var nameList = [ "msgpackByteLength", "decodeTimeMs" ].concat( countList );
             nameList.forEach( function( name ){
