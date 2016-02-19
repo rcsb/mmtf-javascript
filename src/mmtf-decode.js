@@ -119,18 +119,6 @@ function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
 
 //
 
-var sstrucMap = {
-    "0": "i",  // pi helix
-    "1": "s",  // bend
-    "2": "h",  // alpha helix
-    "3": "e",  // extended
-    "4": "g",  // 3-10 helix
-    "5": "b",  // bridge
-    "6": "t",  // turn
-    "7": "l",  // coil
-    "-1": ""   // NA
-};
-
 function decodeMmtf( bin ){
 
     // make sure bin is not a plain Arraybuffer
@@ -142,7 +130,7 @@ function decodeMmtf( bin ){
     var msgpack = decodeMsgpack( bin );
 
     // console.log(getInt32( msgpack.resOrder))
-    console.log(msgpack)
+    // console.log(msgpack)
 
     // hoisted loop variables
     var i, il, j, jl, k, kl;
@@ -279,7 +267,7 @@ function decodeMmtf( bin ){
     getInt32( msgpack.groupTypeList, gGroupTypeId );
 
     // get secondary structure codes
-    var secStruct = getInt8( msgpack.secStructList );
+    getInt8( msgpack.secStructList, gSecStruct );
 
     //////
     // get data from group map
@@ -305,7 +293,6 @@ function decodeMmtf( bin ){
 
         //
 
-        gSecStruct[ i ] = ( sstrucMap[ secStruct[ i ] ] || "l" ).charCodeAt();  // FIXME move out
         gAtomOffset[ i ] = atomOffset;
         gAtomCount[ i ] = groupAtomCount;
 

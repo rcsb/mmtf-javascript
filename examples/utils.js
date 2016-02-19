@@ -155,13 +155,14 @@ function StructureHelper( d ){
 
     function getGroup( index ){
         var group = d.groupMap[ d.groupStore.groupTypeId[ index ] ];
+        var sstrucCode = d.groupStore.secStruct[ index ];
         return [
             d.groupStore.chainIndex[ index ],
             d.groupStore.atomOffset[ index ],
             d.groupStore.atomCount[ index ],
             d.groupStore.groupNum[ index ],
             group.resName,
-            String.fromCharCode( d.groupStore.secStruct[ index ] ),
+            sstrucMap[ sstrucCode ]
         ];
     }
 
@@ -219,6 +220,18 @@ function StructureHelper( d ){
             callback.apply( null, getModel( i ) );
         }
     }
+
+    var sstrucMap = {
+        "0": "i",  // pi helix
+        "1": "s",  // bend
+        "2": "h",  // alpha helix
+        "3": "e",  // extended
+        "4": "g",  // 3-10 helix
+        "5": "b",  // bridge
+        "6": "t",  // turn
+        "7": "l",  // coil
+        "-1": ""   // NA
+    };
 
     // API
 
