@@ -56,7 +56,7 @@ function getStats( structureHelper, info ){
         getStoreByteLength( sh.modelStore )
     );
     return {
-        pdbId: sh.pdbCode,
+        pdbId: sh.pdbId,
 
         msgpackByteLength: info.msgpackByteLength,
         decodeTimeMs: info.decodeTimeMs,
@@ -90,7 +90,7 @@ function getAtomInfo( structureHelper, index ){
         occupancy: atom[ 11 ],
         //
         groupNum: group[ 3 ],
-        resName: group[ 4 ],
+        groupName: group[ 4 ],
         secStruct: group[ 5 ],
         //
         model: chain[ 0 ],
@@ -225,7 +225,7 @@ function StructureHelper( d ){
     this.unitCell = d.unitCell;
     this.spaceGroup = d.spaceGroup;
     this.bioAssembly = d.bioAssembly;
-    this.pdbCode = d.pdbCode;
+    this.pdbId = d.pdbId;
     this.title = d.title;
 
     this.numBonds = d.numBonds;
