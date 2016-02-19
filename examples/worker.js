@@ -1,7 +1,7 @@
 
 
 importScripts(
-    "../dist/structure-decoder.js",
+    "../dist/mmtf-decode.js",
     "utils.js"
 );
 
@@ -50,7 +50,7 @@ function loadStructure( pdbid, cAlphaOnly ){
     return promise.then( function( result ){
         try{
             var t0 = performance.now();
-            var ds = decodeStructure( result );
+            var ds = decodeMmtf( result );
             var t1 = performance.now();
             var info = {
                 msgpackByteLength: result.byteLength,

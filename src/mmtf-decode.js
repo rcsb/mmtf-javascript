@@ -131,7 +131,7 @@ var sstrucMap = {
     "-1": ""   // NA
 };
 
-function decodeStructure( bin ){
+function decodeMmtf( bin ){
 
     // make sure bin is not a plain Arraybuffer
     if( bin instanceof ArrayBuffer ){
@@ -142,7 +142,7 @@ function decodeStructure( bin ){
     var msgpack = decodeMsgpack( bin );
 
     // console.log(getInt32( msgpack.resOrder))
-    // console.log(msgpack)
+    console.log(msgpack)
 
     // hoisted loop variables
     var i, il, j, jl, k, kl;
@@ -316,6 +316,24 @@ function decodeStructure( bin ){
 
     }
 
+    // if( msgpack.bondAtomList ){
+
+    //     console.log( getInt32( msgpack.bondAtomList ) );
+
+    //     if( msgpack.bondOrderList ){
+    //         var bondOrderList =  msgpack.bondOrderList;
+    //         bBondOrder.set( bondOrderList, bondOffset );
+    //     }
+
+    //     var bondAtomList = getInt32( msgpack.bondAtomList );
+    //     for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
+    //         bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
+    //         bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
+    //         bondOffset += 1;
+    //     }
+
+    // }
+
     return {
         bondStore: {
             atomIndex1: bAtomIndex1,
@@ -357,7 +375,7 @@ function decodeStructure( bin ){
         unitCell: msgpack.unitCell,
         spaceGroup: msgpack.spaceGroup,
         bioAssembly: msgpack.bioAssembly,
-        pdbCode: msgpack.pdbCode,
+        pdbId: msgpack.pdbId,
         title: msgpack.title,
 
         numBonds: numBonds,
@@ -369,4 +387,4 @@ function decodeStructure( bin ){
 
 }
 
-export default decodeStructure;
+export default decodeMmtf;

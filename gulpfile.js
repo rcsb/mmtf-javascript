@@ -24,23 +24,23 @@ gulp.task('test', ['bundle-test'], function() {
 });
 
 gulp.task('bundle', function(){
-  gulp.src('src/structure-decoder.js', {read: false})
+  gulp.src('src/mmtf-decode.js', {read: false})
     .pipe(rollup({
       sourceMap: true,
       format: 'iife',
-      moduleName: 'decodeStructure'
+      moduleName: 'decodeMmtf'
     }))
     .pipe(sourcemaps.write('.')) // needs rollup sourceMap option
     .pipe(gulp.dest('build'));
 });
 
 gulp.task('bundle-test', function(){
-  gulp.src('src/structure-decoder.js', {read: false})
+  gulp.src('src/mmtf-decode.js', {read: false})
     .pipe(rollup({
       format: 'cjs',
-      moduleName: 'decodeStructure'
+      moduleName: 'decodeMmtf'
     }))
-    .pipe(rename('structure-decoder.test.js'))
+    .pipe(rename('mmtf-decode.test.js'))
     .pipe(gulp.dest('build'));
 });
 
@@ -51,10 +51,10 @@ gulp.task('compress', function() {
 });
 
 gulp.task('scripts', ['clean'], function(){
-  gulp.src('src/structure-decoder.js', {read: false})
+  gulp.src('src/mmtf-decode.js', {read: false})
     .pipe(rollup({
       format: 'iife',
-      moduleName: 'decodeStructure'
+      moduleName: 'decodeMmtf'
     }))
     .pipe(uglify())
     .pipe(gulp.dest('dist'));

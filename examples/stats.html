@@ -13,7 +13,7 @@
 <body>
 
     <script src="utils.js"></script>
-    <script src="../build/structure-decoder.js"></script>
+    <script src="../build/mmtf-decode.js"></script>
 
     <script>
 
@@ -22,7 +22,7 @@
         function onload(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
                 var t0 = performance.now();
-                var ds = decodeStructure( this.response );
+                var ds = decodeMmtf( this.response );
                 var t1 = performance.now();
                 var info = {
                     msgpackByteLength: this.response.byteLength,
@@ -51,8 +51,8 @@
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", "../data/1aq1.mmtf" );
-            // xhr.open( "GET", getMmtfUrl( pdbid, cAlphaOnly ) );
+            // xhr.open( "GET", "../data/1aq1.mmtf" );
+            xhr.open( "GET", getMmtfUrl( pdbid, cAlphaOnly ) );
             xhr.send();
         }
 

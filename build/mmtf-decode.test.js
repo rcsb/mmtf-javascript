@@ -350,7 +350,7 @@ function decodeFloatSplitList( bigArray, smallArray, divisor, dataArray, littleE
 
 function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
     var int32View = dataArray ? getInt32View( dataArray ) : undefined;
-    var int32 = decodeRunLength( getInt32( array ), int32View )
+    var int32 = decodeRunLength( getInt32( array, undefined, littleEndian ), int32View )
     return decodeFloat( int32, divisor, dataArray );
 }
 
@@ -368,21 +368,30 @@ var sstrucMap = {
     "-1": ""   // NA
 };
 
-function decodeStructure( bin ){
+function decodeMmtf( bin ){
 
+    // make sure bin is not a plain Arraybuffer
     if( bin instanceof ArrayBuffer ){
         bin = new Uint8Array( bin );
     }
+
+    // get decoded msgpack data
     var msgpack = decodeMsgpack( bin );
+
     // console.log(getInt32( msgpack.resOrder))
     console.log(msgpack)
+
+    // hoisted loop variables
     var i, il, j, jl, k, kl;
 
+    // counts
     var numBonds = msgpack.numBonds;
     var numAtoms = msgpack.numAtoms;
     var numGroups = msgpack.groupTypeList.length / 4;
     var numChains = msgpack.chainList.length / 4;
     var numModels = msgpack.chainsPerModel.length;
+
+    // maps
     var groupMap = msgpack.groupMap;
 
     // bondStore
@@ -419,42 +428,60 @@ function decodeStructure( bin ){
     var mChainOffset = new Uint32Array( numModels );
     var mChainCount = new Uint32Array( numModels );
 
+    // split-list delta & integer decode x, y, z coords
     decodeFloatSplitList( msgpack.xCoordBig, msgpack.xCoordSmall, 1000, aXcoord );
     decodeFloatSplitList( msgpack.yCoordBig, msgpack.yCoordSmall, 1000, aYcoord );
     decodeFloatSplitList( msgpack.zCoordBig, msgpack.zCoordSmall, 1000, aZcoord );
+
+    // split-list delta & integer decode b-factors
     if( msgpack.bFactorBig && msgpack.bFactorSmall ){
         decodeFloatSplitList( msgpack.bFactorBig, msgpack.bFactorSmall, 100, aBfactor );
     }
+
+    // delta & run-length decode atom ids
     if( msgpack.atomIdList ){
         decodeDelta( decodeRunLength( getInt32( msgpack.atomIdList ), aAtomId ) );
     }
 
+    // run-length decode altternate labels
     if( msgpack.altLabelList ){
-        for( i = 0, il = msgpack.altLabelList.length; i < il; i+=2 ){
-            var value = msgpack.altLabelList[ i ];
+        var msgpackAltLabelList = msgpack.altLabelList;
+        for( i = 0, il = msgpackAltLabelList.length; i < il; i+=2 ){
+            var value = msgpackAltLabelList[ i ];
             if( value === "?" ){
-                msgpack.altLabelList[ i ] = 0;
+                msgpackAltLabelList[ i ] = 0;
             }else{
-                msgpack.altLabelList[ i ] = msgpack.altLabelList[ i ].charCodeAt( 0 );
+                msgpackAltLabelList[ i ] = msgpackAltLabelList[ i ].charCodeAt( 0 );
             }
-            msgpack.altLabelList[ i + 1 ] = parseInt( msgpack.altLabelList[ i + 1 ] );
+            msgpackAltLabelList[ i + 1 ] = parseInt( msgpackAltLabelList[ i + 1 ] );
         }
-        decodeRunLength( msgpack.altLabelList, aAltLabel );
+        decodeRunLength( msgpackAltLabelList, aAltLabel );
     }
 
+    // run-length decode insertion codes
     if( msgpack.insCodeList ){
-        // FIXME run-length encoded, same as altLabelList
+        var msgpackInsCodeList = msgpack.insCodeList;
+        for( i = 0, il = msgpackInsCodeList.length; i < il; i+=2 ){
+            var value = msgpackInsCodeList[ i ];
+            if( value === null ){
+                msgpackInsCodeList[ i ] = 0;
+            }else{
+                msgpackInsCodeList[ i ] = msgpackInsCodeList[ i ].charCodeAt( 0 );
+            }
+            msgpackInsCodeList[ i + 1 ] = parseInt( msgpackInsCodeList[ i + 1 ] );
+        }
+        decodeRunLength( msgpackInsCodeList, aInsCode );
     }
 
+    // run-length & integer decode occupancies
     if( msgpack.occList ){
-        // FIXME run-length encoded, integer encoding (divisor 100)
         decodeFloatRunLength( msgpack.occList, 100, aOccupancy );
     }
 
-    //
-
+    // get ascii encoded chain names
     getInt8( msgpack.chainList, cChainName );
 
+    // set-up model-chain relations
     var chainsPerModel = msgpack.chainsPerModel;
     var modelChainCount;
     var chainOffset = 0;
@@ -468,6 +495,7 @@ function decodeStructure( bin ){
         chainOffset += modelChainCount;
     }
 
+    // set-up chain-residue relations
     var groupsPerChain = msgpack.groupsPerChain;
     var chainGroupCount;
     var groupOffset = 0;
@@ -481,12 +509,18 @@ function decodeStructure( bin ){
         groupOffset += chainGroupCount;
     }
 
-    //
-
+    // run-length & delta decode group numbers
     decodeDelta( decodeRunLength( getInt32( msgpack.groupNumList ), gGroupNum ) );
+
+    // get group type pointers
     getInt32( msgpack.groupTypeList, gGroupTypeId );
 
+    // get secondary structure codes
     var secStruct = getInt8( msgpack.secStructList );
+
+    //////
+    // get data from group map
+
     var atomOffset = 0;
     var bondOffset = 0;
 
@@ -518,6 +552,24 @@ function decodeStructure( bin ){
         }
 
     }
+
+    // if( msgpack.bondAtomList ){
+
+    //     console.log( getInt32( msgpack.bondAtomList ) );
+
+    //     if( msgpack.bondOrderList ){
+    //         var bondOrderList =  msgpack.bondOrderList;
+    //         bBondOrder.set( bondOrderList, bondOffset );
+    //     }
+
+    //     var bondAtomList = getInt32( msgpack.bondAtomList );
+    //     for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
+    //         bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
+    //         bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
+    //         bondOffset += 1;
+    //     }
+
+    // }
 
     return {
         bondStore: {
@@ -560,7 +612,7 @@ function decodeStructure( bin ){
         unitCell: msgpack.unitCell,
         spaceGroup: msgpack.spaceGroup,
         bioAssembly: msgpack.bioAssembly,
-        pdbCode: msgpack.pdbCode,
+        pdbId: msgpack.pdbId,
         title: msgpack.title,
 
         numBonds: numBonds,
@@ -572,4 +624,4 @@ function decodeStructure( bin ){
 
 }
 
-module.exports = decodeStructure;
+module.exports = decodeMmtf;
