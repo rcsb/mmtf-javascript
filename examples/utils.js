@@ -109,6 +109,10 @@ function printObject( obj, id ){
 
 function showRandomAtomInfo( sh, id ){
     var atomInfo = getAtomInfo( sh, Math.floor( Math.random() * sh.numAtoms ) );
+    atomInfo.xCoord = atomInfo.xCoord.toFixed( 3 );
+    atomInfo.yCoord = atomInfo.yCoord.toFixed( 3 );
+    atomInfo.zCoord = atomInfo.zCoord.toFixed( 3 );
+    atomInfo.bFactor = atomInfo.bFactor.toFixed( 2 );
     printObject( atomInfo, id );
 }
 
@@ -180,7 +184,7 @@ function StructureHelper( d ){
             d.chainStore.modelIndex[ index ],
             d.chainStore.groupOffset[ index ],
             d.chainStore.groupCount[ index ],
-            chainName,
+            chainName
         ];
     }
 
