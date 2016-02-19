@@ -303,23 +303,23 @@ function decodeMmtf( bin ){
 
     }
 
-    // if( msgpack.bondAtomList ){
+    if( msgpack.bondAtomList ){
 
-    //     console.log( getInt32( msgpack.bondAtomList ) );
+        // console.log( getInt32( msgpack.bondAtomList ) );
 
-    //     if( msgpack.bondOrderList ){
-    //         var bondOrderList =  msgpack.bondOrderList;
-    //         bBondOrder.set( bondOrderList, bondOffset );
-    //     }
+        if( msgpack.bondOrderList ){
+            var bondOrderList =  msgpack.bondOrderList;
+            bBondOrder.set( bondOrderList, bondOffset );
+        }
 
-    //     var bondAtomList = getInt32( msgpack.bondAtomList );
-    //     for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
-    //         bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
-    //         bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
-    //         bondOffset += 1;
-    //     }
+        var bondAtomList = getInt32( msgpack.bondAtomList );
+        for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
+            bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
+            bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
+            bondOffset += 1;
+        }
 
-    // }
+    }
 
     return {
         bondStore: {
