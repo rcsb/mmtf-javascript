@@ -84,7 +84,11 @@
             var countList = [
                 "numBonds", "numAtoms", "numGroups", "numChains", "numModels"
             ];
-            var nameList = [ "msgpackByteLength", "decodeTimeMs" ].concat( countList );
+            var nameList = [
+                "msgpackByteLength", "coordByteLength", "bfactorByteLength",
+                "decodeTimeMs", "decodeMsgpackTimeMs", "decodeMmtfTimeMs",
+                "msgpackBytesPerAtom"
+            ].concat( countList );
             nameList.forEach( function( name ){
                 sumStats[ name ] = 0;
             } );
@@ -100,6 +104,7 @@
             countList.forEach( function( name ){
                 avgStats[ name ] = avgStats[ name ].toFixed( 2 );
             } );
+            delete sumStats.msgpackBytesPerAtom;
             showStats( avgStats, "avgStats" );
             showStats( sumStats, "sumStats" );
         };

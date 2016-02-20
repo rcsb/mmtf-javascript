@@ -23,16 +23,10 @@
 
         function onload(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
-                var t0 = performance.now();
-                var ds = decodeMmtf( this.response );
-                var t1 = performance.now();
-                var info = {
-                    msgpackByteLength: this.response.byteLength,
-                    decodeTimeMs: t1 - t0
-                };
-                currentStructureHelper = new StructureHelper( ds );
-                showStats( getStats( currentStructureHelper, info ), "stats" );
-                showRandomAtomInfo( currentStructureHelper, "atomInfo" );
+                var d = decodeSupervised( this.response );
+                currentStructure = new SimpleStructure( d.structure );
+                showStats( getStats( currentStructure, d.info ), "stats" );
+                showRandomAtomInfo( currentStructure, "atomInfo" );
             }else{
                 error( "error loading" );
             }
@@ -104,7 +98,7 @@
 
             var atomInfoButton = document.getElementById( "atomInfoButton" );
             atomInfoButton.addEventListener( "click", function(){
-                showRandomAtomInfo( currentStructureHelper, "atomInfo" );
+                showRandomAtomInfo( currentStructure, "atomInfo" );
             } );
 
             loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );

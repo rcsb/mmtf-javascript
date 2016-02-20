@@ -356,43 +356,37 @@ function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
 
 //
 
-var sstrucMap = {
-    "0": "i",  // pi helix
-    "1": "s",  // bend
-    "2": "h",  // alpha helix
-    "3": "e",  // extended
-    "4": "g",  // 3-10 helix
-    "5": "b",  // bridge
-    "6": "t",  // turn
-    "7": "l",  // coil
-    "-1": ""   // NA
-};
+function decodeMmtf( binOrDict ){
 
-function decodeMmtf( bin ){
-
-    // make sure bin is not a plain Arraybuffer
-    if( bin instanceof ArrayBuffer ){
-        bin = new Uint8Array( bin );
+    // make sure binOrDict is not a plain Arraybuffer
+    if( binOrDict instanceof ArrayBuffer ){
+        binOrDict = new Uint8Array( binOrDict );
     }
 
-    // get decoded msgpack data
-    var msgpack = decodeMsgpack( bin );
+    var raw;
+    if( binOrDict instanceof Uint8Array ){
+        // get raw dict from msgpack
+        raw = decodeMsgpack( binOrDict );
+    }else{
+        // already raw dict
+        raw = binOrDict;
+    }
 
-    // console.log(getInt32( msgpack.resOrder))
-    console.log(msgpack)
+    // console.log( getInt32( raw.resOrder ) )
+    // console.log( raw )
 
     // hoisted loop variables
     var i, il, j, jl, k, kl;
 
     // counts
-    var numBonds = msgpack.numBonds;
-    var numAtoms = msgpack.numAtoms;
-    var numGroups = msgpack.groupTypeList.length / 4;
-    var numChains = msgpack.chainList.length / 4;
-    var numModels = msgpack.chainsPerModel.length;
+    var numBonds = raw.numBonds;
+    var numAtoms = raw.numAtoms;
+    var numGroups = raw.groupTypeList.length / 4;
+    var numChains = raw.chainList.length / 4;
+    var numModels = raw.chainsPerModel.length;
 
     // maps
-    var groupMap = msgpack.groupMap;
+    var groupMap = raw.groupMap;
 
     // bondStore
     var bAtomIndex1 = new Uint32Array( numBonds + numGroups );  // add numGroups
@@ -429,60 +423,60 @@ function decodeMmtf( bin ){
     var mChainCount = new Uint32Array( numModels );
 
     // split-list delta & integer decode x, y, z coords
-    decodeFloatSplitList( msgpack.xCoordBig, msgpack.xCoordSmall, 1000, aXcoord );
-    decodeFloatSplitList( msgpack.yCoordBig, msgpack.yCoordSmall, 1000, aYcoord );
-    decodeFloatSplitList( msgpack.zCoordBig, msgpack.zCoordSmall, 1000, aZcoord );
+    decodeFloatSplitList( raw.xCoordBig, raw.xCoordSmall, 1000, aXcoord );
+    decodeFloatSplitList( raw.yCoordBig, raw.yCoordSmall, 1000, aYcoord );
+    decodeFloatSplitList( raw.zCoordBig, raw.zCoordSmall, 1000, aZcoord );
 
     // split-list delta & integer decode b-factors
-    if( msgpack.bFactorBig && msgpack.bFactorSmall ){
-        decodeFloatSplitList( msgpack.bFactorBig, msgpack.bFactorSmall, 100, aBfactor );
+    if( raw.bFactorBig && raw.bFactorSmall ){
+        decodeFloatSplitList( raw.bFactorBig, raw.bFactorSmall, 100, aBfactor );
     }
 
     // delta & run-length decode atom ids
-    if( msgpack.atomIdList ){
-        decodeDelta( decodeRunLength( getInt32( msgpack.atomIdList ), aAtomId ) );
+    if( raw.atomIdList ){
+        decodeDelta( decodeRunLength( getInt32( raw.atomIdList ), aAtomId ) );
     }
 
     // run-length decode altternate labels
-    if( msgpack.altLabelList ){
-        var msgpackAltLabelList = msgpack.altLabelList;
-        for( i = 0, il = msgpackAltLabelList.length; i < il; i+=2 ){
-            var value = msgpackAltLabelList[ i ];
+    if( raw.altLabelList ){
+        var rawAltLabelList = raw.altLabelList;
+        for( i = 0, il = rawAltLabelList.length; i < il; i+=2 ){
+            var value = rawAltLabelList[ i ];
             if( value === "?" ){
-                msgpackAltLabelList[ i ] = 0;
+                rawAltLabelList[ i ] = 0;
             }else{
-                msgpackAltLabelList[ i ] = msgpackAltLabelList[ i ].charCodeAt( 0 );
+                rawAltLabelList[ i ] = rawAltLabelList[ i ].charCodeAt( 0 );
             }
-            msgpackAltLabelList[ i + 1 ] = parseInt( msgpackAltLabelList[ i + 1 ] );
+            rawAltLabelList[ i + 1 ] = parseInt( rawAltLabelList[ i + 1 ] );
         }
-        decodeRunLength( msgpackAltLabelList, aAltLabel );
+        decodeRunLength( rawAltLabelList, aAltLabel );
     }
 
     // run-length decode insertion codes
-    if( msgpack.insCodeList ){
-        var msgpackInsCodeList = msgpack.insCodeList;
-        for( i = 0, il = msgpackInsCodeList.length; i < il; i+=2 ){
-            var value = msgpackInsCodeList[ i ];
+    if( raw.insCodeList ){
+        var rawInsCodeList = raw.insCodeList;
+        for( i = 0, il = rawInsCodeList.length; i < il; i+=2 ){
+            var value = rawInsCodeList[ i ];
             if( value === null ){
-                msgpackInsCodeList[ i ] = 0;
+                rawInsCodeList[ i ] = 0;
             }else{
-                msgpackInsCodeList[ i ] = msgpackInsCodeList[ i ].charCodeAt( 0 );
+                rawInsCodeList[ i ] = rawInsCodeList[ i ].charCodeAt( 0 );
             }
-            msgpackInsCodeList[ i + 1 ] = parseInt( msgpackInsCodeList[ i + 1 ] );
+            rawInsCodeList[ i + 1 ] = parseInt( rawInsCodeList[ i + 1 ] );
         }
-        decodeRunLength( msgpackInsCodeList, aInsCode );
+        decodeRunLength( rawInsCodeList, aInsCode );
     }
 
     // run-length & integer decode occupancies
-    if( msgpack.occList ){
-        decodeFloatRunLength( msgpack.occList, 100, aOccupancy );
+    if( raw.occList ){
+        decodeFloatRunLength( raw.occList, 100, aOccupancy );
     }
 
     // get ascii encoded chain names
-    getInt8( msgpack.chainList, cChainName );
+    getInt8( raw.chainList, cChainName );
 
     // set-up model-chain relations
-    var chainsPerModel = msgpack.chainsPerModel;
+    var chainsPerModel = raw.chainsPerModel;
     var modelChainCount;
     var chainOffset = 0;
     for( i = 0; i < numModels; ++i ){
@@ -496,7 +490,7 @@ function decodeMmtf( bin ){
     }
 
     // set-up chain-residue relations
-    var groupsPerChain = msgpack.groupsPerChain;
+    var groupsPerChain = raw.groupsPerChain;
     var chainGroupCount;
     var groupOffset = 0;
     for( i = 0; i < numChains; ++i ){
@@ -510,13 +504,13 @@ function decodeMmtf( bin ){
     }
 
     // run-length & delta decode group numbers
-    decodeDelta( decodeRunLength( getInt32( msgpack.groupNumList ), gGroupNum ) );
+    decodeDelta( decodeRunLength( getInt32( raw.groupNumList ), gGroupNum ) );
 
     // get group type pointers
-    getInt32( msgpack.groupTypeList, gGroupTypeId );
+    getInt32( raw.groupTypeList, gGroupTypeId );
 
     // get secondary structure codes
-    var secStruct = getInt8( msgpack.secStructList );
+    getInt8( raw.secStructList, gSecStruct );
 
     //////
     // get data from group map
@@ -542,7 +536,6 @@ function decodeMmtf( bin ){
 
         //
 
-        gSecStruct[ i ] = ( sstrucMap[ secStruct[ i ] ] || "l" ).charCodeAt();  // FIXME move out
         gAtomOffset[ i ] = atomOffset;
         gAtomCount[ i ] = groupAtomCount;
 
@@ -553,23 +546,23 @@ function decodeMmtf( bin ){
 
     }
 
-    // if( msgpack.bondAtomList ){
+    if( raw.bondAtomList ){
 
-    //     console.log( getInt32( msgpack.bondAtomList ) );
+        // console.log( getInt32( raw.bondAtomList ) );
 
-    //     if( msgpack.bondOrderList ){
-    //         var bondOrderList =  msgpack.bondOrderList;
-    //         bBondOrder.set( bondOrderList, bondOffset );
-    //     }
+        if( raw.bondOrderList ){
+            var bondOrderList =  raw.bondOrderList;
+            bBondOrder.set( bondOrderList, bondOffset );
+        }
 
-    //     var bondAtomList = getInt32( msgpack.bondAtomList );
-    //     for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
-    //         bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
-    //         bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
-    //         bondOffset += 1;
-    //     }
+        var bondAtomList = getInt32( raw.bondAtomList );
+        for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
+            bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
+            bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
+            bondOffset += 1;
+        }
 
-    // }
+    }
 
     return {
         bondStore: {
@@ -609,11 +602,11 @@ function decodeMmtf( bin ){
 
         groupMap: groupMap,
 
-        unitCell: msgpack.unitCell,
-        spaceGroup: msgpack.spaceGroup,
-        bioAssembly: msgpack.bioAssembly,
-        pdbId: msgpack.pdbId,
-        title: msgpack.title,
+        unitCell: raw.unitCell,
+        spaceGroup: raw.spaceGroup,
+        bioAssembly: raw.bioAssembly,
+        pdbId: raw.pdbId,
+        title: raw.title,
 
         numBonds: numBonds,
         numAtoms: numAtoms,

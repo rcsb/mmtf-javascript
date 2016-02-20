@@ -45,25 +45,13 @@ function makeXhrPromise( method, url, responseType ){
 }
 
 
-var status = {
-    requested: 0,
-    finished: 0,
-    failed: 0
-};
-
 function loadStructure( pdbid, cAlphaOnly ){
     var promise = makeXhrPromise(
         "GET", getMmtfUrl( pdbid, cAlphaOnly ), "arraybuffer"
     );
     return promise.then( function( result ){
         try{
-            var t0 = performance.now();
-            var ds = decodeMmtf( result );
-            var t1 = performance.now();
-            var info = {
-                msgpackByteLength: result.byteLength,
-                decodeTimeMs: t1 - t0
-            };
+            var d = decodeSupervised( result );
             status.finished += 1;
             return getStats( new SimpleStructure( d.structure ), d.info );
         }catch( e ){
