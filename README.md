@@ -1,6 +1,6 @@
 
 
-JavaScript decoder for MMTF files, see [MMTF specification](https://git.rcsb.org/Research/MMTF-Specification).
+JavaScript decoder for MMTF files For a description of the format see [MMTF specification](https://git.rcsb.org/Research/MMTF-Specification/blob/master/spec.md). The minified library is available for [download](dist/mmtf-decode.js).
 
 
 ## Table of contents
@@ -11,7 +11,7 @@ JavaScript decoder for MMTF files, see [MMTF specification](https://git.rcsb.org
 
 ## API
 
-The only exposed function is `decodeMmtf` which accepts a `Uint8Array` containing the `mmtf` `msgpack` and returns a decoded `mmtf` object with the following properties.
+The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode.js)) is `decodeMmtf` which accepts a `Uint8Array` containing the `mmtf` `msgpack` and returns a decoded `mmtf` object with the following properties.
 
 
 ### Header information
