@@ -53,7 +53,7 @@ The only exposed function is `decodeMmtf` which accepts a `Uint8Array` containin
 	- altLabel
 	- insCode
 	- occupancy
-- residueStore
+- groupStore
 	- chainIndex
 	- atomOffset
 	- atomCount
@@ -94,7 +94,7 @@ var structure = new SimpleStructure( mmtfObject );
 
 - getBond( index )
 - getAtom( index )
-- getResidue( index )
+- getGroup( index )
 - getChain( index )
 - getModel( index )
 
@@ -103,7 +103,7 @@ var structure = new SimpleStructure( mmtfObject );
 
 - eachBond( fn )
 - eachAtom( fn )
-- eachResidue( fn )
+- eachGroup( fn )
 - eachChain( fn )
 - eachModel( fn )
 
