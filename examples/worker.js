@@ -1,9 +1,17 @@
 
+module = {};
 
 importScripts(
-    "../dist/mmtf-decode.js",
-    "utils.js"
+    "utils.js",
+    "structure.js",
+    "../build/mmtf-decode.test.js"
 );
+
+var status = {
+    requested: 0,
+    finished: 0,
+    failed: 0
+};
 
 
 function makeXhrPromise( method, url, responseType ){
@@ -57,7 +65,7 @@ function loadStructure( pdbid, cAlphaOnly ){
                 decodeTimeMs: t1 - t0
             };
             status.finished += 1;
-            return getStats( new StructureHelper( ds ), info );
+            return getStats( new SimpleStructure( d.structure ), d.info );
         }catch( e ){
             status.failed += 1;
             console.error( e, pdbid, cAlphaOnly );

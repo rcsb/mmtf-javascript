@@ -12,12 +12,14 @@
 
 <body>
 
+    <script>module = {};</script>
+    <script src="structure.js"></script>
     <script src="utils.js"></script>
-    <script src="../build/mmtf-decode.js"></script>
+    <script src="../build/mmtf-decode.test.js"></script>
 
     <script>
 
-        var currentStructureHelper;
+        var currentStructure;
 
         function onload(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
