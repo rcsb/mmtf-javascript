@@ -47,9 +47,12 @@ function decodeSupervised( bin ){
         raw.yCoordBig.byteLength + raw.yCoordSmall.byteLength +
         raw.zCoordBig.byteLength + raw.zCoordSmall.byteLength
     );
-    var bfactorByteLength = (
-        raw.bFactorBig.byteLength + raw.bFactorSmall.byteLength
-    );
+    var bfactorByteLength = 0;
+    if( raw.bFactorBig && raw.bFactorSmall ){
+        bfactorByteLength = (
+            raw.bFactorBig.byteLength + raw.bFactorSmall.byteLength
+        );
+    }
     var info = {
         msgpackByteLength: bin.byteLength,
         coordByteLength: coordByteLength,
