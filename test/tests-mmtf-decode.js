@@ -1,5 +1,5 @@
 
-////////////////////
+/////////////////////
 // decoding helpers
 //
 QUnit.module( "decoding helpers" );
@@ -114,4 +114,211 @@ QUnit.test( "decodeFloatSplitList", function( assert ) {
     assert.close( decoded[4], expected[4], 0.001, "Passed!" );
     assert.close( decoded[5], expected[5], 0.001, "Passed!" );
     assert.close( decoded[6], expected[6], 0.001, "Passed!" );
+});
+
+
+//////////////////
+// mmtf decoding
+//
+QUnit.module( "mmtf decoding" );
+
+function getEmptyFullMmtfDict(){
+    return {
+        // header
+        unitCell: undefined,
+        spaceGroup: undefined,
+        bioAssembly: undefined,
+        pdbId: undefined,
+        title: undefined,
+
+        // counts
+        numBonds: 0,
+        numAtoms: 0,
+
+        // maps
+        groupMap: {},
+
+        // bonds
+        bondAtomList: new Uint8Array( 0 ),
+        bondOrderList: new Uint8Array( 0 ),
+
+        // atoms
+        xCoordBig: new Uint8Array( 0 ),
+        xCoordSmall: new Uint8Array( 0 ),
+        yCoordBig: new Uint8Array( 0 ),
+        yCoordSmall: new Uint8Array( 0 ),
+        zCoordBig: new Uint8Array( 0 ),
+        zCoordSmall: new Uint8Array( 0 ),
+        bFactorBig: new Uint8Array( 0 ),
+        bFactorSmall: new Uint8Array( 0 ),
+        atomIdList: new Uint8Array( 0 ),
+        altLabelList: new Array( 0 ),
+        insCodeList: new Array( 0 ),
+        occList: new Uint8Array( 0 ),
+
+        // groups
+        groupNumList: new Uint8Array( 0 ),
+        groupTypeList: new Uint8Array( 0 ),
+        secStructList: new Uint8Array( 0 ),
+
+        // chains
+        chainList: new Uint8Array( 0 ),
+        groupsPerChain: new Uint8Array( 0 ),
+
+        // models
+        chainsPerModel: new Uint8Array( 0 ),
+    };
+}
+
+function getEmptyRequiredMmtfDict(){
+    return {
+        // counts
+        numBonds: 0,
+        numAtoms: 0,
+
+        // maps
+        groupMap: {},
+
+        // atoms
+        xCoordBig: new Uint8Array( 0 ),
+        xCoordSmall: new Uint8Array( 0 ),
+        yCoordBig: new Uint8Array( 0 ),
+        yCoordSmall: new Uint8Array( 0 ),
+        zCoordBig: new Uint8Array( 0 ),
+        zCoordSmall: new Uint8Array( 0 ),
+
+        // groups
+        groupNumList: new Uint8Array( 0 ),
+        groupTypeList: new Uint8Array( 0 ),
+        secStructList: new Uint8Array( 0 ),
+
+        // chains
+        chainList: new Uint8Array( 0 ),
+        groupsPerChain: new Uint8Array( 0 ),
+
+        // models
+        chainsPerModel: new Uint8Array( 0 ),
+    };
+}
+
+QUnit.test( "empty complete", function( assert ) {
+    var dict = getEmptyFullMmtfDict();
+    var decodedMmtf = decodeMmtf( dict );
+    var expectedMmtf = {
+        pdbId: undefined,
+        spaceGroup: undefined,
+        bioAssembly: undefined,
+        title: undefined,
+        unitCell: undefined,
+        numAtoms: 0,
+        numBonds: 0,
+        numChains: 0,
+        numGroups: 0,
+        numModels: 0,
+        groupMap: {},
+        bondStore: {
+            "atomIndex1": new Uint32Array( 0 ),
+            "atomIndex2": new Uint32Array( 0 ),
+            "bondOrder": new Uint8Array( 0 )
+        },
+        atomStore: {
+            "altLabel": new Uint8Array( 0 ),
+            "atomId": new Int32Array( 0 ),
+            "bFactor": new Float32Array( 0 ),
+            "groupIndex": new Uint32Array( 0 ),
+            "insCode": new Uint8Array( 0 ),
+            "occupancy": new Float32Array( 0 ),
+            "xCoord": new Float32Array( 0 ),
+            "yCoord": new Float32Array( 0 ),
+            "zCoord": new Float32Array( 0 )
+        },
+        groupStore: {
+            "atomCount": new Uint16Array( 0 ),
+            "atomOffset": new Uint32Array( 0 ),
+            "chainIndex": new Uint32Array( 0 ),
+            "groupNum": new Int32Array( 0 ),
+            "groupTypeId": new Uint16Array( 0 ),
+            "secStruct": new Uint8Array( 0 )
+        },
+        chainStore: {
+            "chainName": new Uint8Array( 0 ),
+            "groupCount": new Uint32Array( 0 ),
+            "groupOffset": new Uint32Array( 0 ),
+            "modelIndex": new Uint16Array( 0 )
+        },
+        modelStore: {
+            "chainCount": new Uint32Array( 0 ),
+            "chainOffset": new Uint32Array( 0 )
+        }
+    };
+    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
+});
+
+QUnit.test( "empty required", function( assert ) {
+    var dict = getEmptyRequiredMmtfDict();
+    var decodedMmtf = decodeMmtf( dict );
+    var expectedMmtf = {
+        pdbId: undefined,
+        spaceGroup: undefined,
+        bioAssembly: undefined,
+        title: undefined,
+        unitCell: undefined,
+        numAtoms: 0,
+        numBonds: 0,
+        numChains: 0,
+        numGroups: 0,
+        numModels: 0,
+        groupMap: {},
+        bondStore: {
+            "atomIndex1": new Uint32Array( 0 ),
+            "atomIndex2": new Uint32Array( 0 ),
+            "bondOrder": new Uint8Array( 0 )
+        },
+        atomStore: {
+            "altLabel": new Uint8Array( 0 ),
+            "atomId": new Int32Array( 0 ),
+            "bFactor": new Float32Array( 0 ),
+            "groupIndex": new Uint32Array( 0 ),
+            "insCode": new Uint8Array( 0 ),
+            "occupancy": new Float32Array( 0 ),
+            "xCoord": new Float32Array( 0 ),
+            "yCoord": new Float32Array( 0 ),
+            "zCoord": new Float32Array( 0 )
+        },
+        groupStore: {
+            "atomCount": new Uint16Array( 0 ),
+            "atomOffset": new Uint32Array( 0 ),
+            "chainIndex": new Uint32Array( 0 ),
+            "groupNum": new Int32Array( 0 ),
+            "groupTypeId": new Uint16Array( 0 ),
+            "secStruct": new Uint8Array( 0 )
+        },
+        chainStore: {
+            "chainName": new Uint8Array( 0 ),
+            "groupCount": new Uint32Array( 0 ),
+            "groupOffset": new Uint32Array( 0 ),
+            "modelIndex": new Uint16Array( 0 )
+        },
+        modelStore: {
+            "chainCount": new Uint32Array( 0 ),
+            "chainOffset": new Uint32Array( 0 )
+        }
+    };
+    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
+});
+
+QUnit.test( "empty required missing", function( assert ) {
+    // not all throw an error with an empty mmtf dict, only tested with a filled mmtf dict
+    var names = [
+        // "groupMap", "numBonds", "numAtoms",
+        "xCoordBig", "xCoordSmall", "yCoordBig", "yCoordSmall", "zCoordBig", "zCoordSmall",
+        "groupNumList", "groupTypeList", "secStructList", "chainList",
+        // "groupsPerChain",
+        "chainsPerModel"
+    ];
+    names.forEach( function( name ){
+        var dict = getEmptyRequiredMmtfDict();
+        delete dict[ name ];
+        assert.throws( function(){ decodeMmtf( dict ) }, "TypeError " + name );
+    } );
 });
