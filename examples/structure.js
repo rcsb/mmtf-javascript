@@ -40,7 +40,7 @@ function SimpleStructure( mmtfData ){
             d.groupStore.atomOffset[ index ],
             d.groupStore.atomCount[ index ],
             d.groupStore.groupNum[ index ],
-            group.resName,
+            group.groupName,
             sstrucMap[ sstrucCode ]
         ];
     }
