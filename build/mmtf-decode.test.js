@@ -379,8 +379,8 @@ function decodeMmtf( binOrDict ){
     var i, il, j, jl, k, kl;
 
     // counts
-    var numBonds = raw.numBonds;
-    var numAtoms = raw.numAtoms;
+    var numBonds = raw.numBonds || 0;
+    var numAtoms = raw.numAtoms || 0;
     var numGroups = raw.groupTypeList.length / 4;
     var numChains = raw.chainList.length / 4;
     var numModels = raw.chainsPerModel.length;
