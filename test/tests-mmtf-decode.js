@@ -333,16 +333,15 @@ function loadFile( url, onload, onerror ){
     var xhr = new XMLHttpRequest();
     xhr.addEventListener( "load", onload, true );
     xhr.addEventListener( "error", onerror, true );
+    xhr.open( "GET", url, true );
     xhr.responseType = "arraybuffer";
-    xhr.open( "GET", url );
     xhr.send();
 }
 
 QUnit.test( "decode 1crn", function( assert ) {
     var done = assert.async();
-    function onload( e ){
-        var decodedMmtf = decodeMmtf( e.target.response );
-        console.log( decodedMmtf );
+    function onload(){
+        var decodedMmtf = decodeMmtf( this.response );
         assert.equal( decodedMmtf.pdbId, "1CRN", "Passed!" );
         assert.equal( decodedMmtf.spaceGroup, "P 1 21 1", "Passed!" );
         assert.close( decodedMmtf.unitCell[ 0 ], 40.959, 0.001, "Passed!" );
