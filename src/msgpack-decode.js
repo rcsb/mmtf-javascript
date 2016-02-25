@@ -22,10 +22,12 @@ export default function decodeMsgpack(buffer) {
   }
 
   function str(length) {
-    var subarray = buffer.subarray(offset, offset + length);
-    var value = String.fromCharCode.apply(null, subarray);
+    var value = new Array(length);
+    for( var i = offset, il = offset + length; i < il; ++i ){
+      value[i] = String.fromCharCode(buffer[i]);
+    }
     offset += length;
-    return value;
+    return value.join("");
   }
 
   function array(length) {
