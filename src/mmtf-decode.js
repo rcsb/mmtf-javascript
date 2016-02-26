@@ -134,7 +134,7 @@ function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
 
 //
 
-function decodeMmtf( binOrDict ){
+function decodeMmtf( binOrDict, littleEndian ){
 
     // make sure binOrDict is not a plain Arraybuffer
     if( binOrDict instanceof ArrayBuffer ){
@@ -201,18 +201,18 @@ function decodeMmtf( binOrDict ){
     var mChainCount = new Uint32Array( numModels );
 
     // split-list delta & integer decode x, y, z coords
-    decodeFloatSplitList( raw.xCoordBig, raw.xCoordSmall, 1000, aXcoord );
-    decodeFloatSplitList( raw.yCoordBig, raw.yCoordSmall, 1000, aYcoord );
-    decodeFloatSplitList( raw.zCoordBig, raw.zCoordSmall, 1000, aZcoord );
+    decodeFloatSplitList( raw.xCoordBig, raw.xCoordSmall, 1000, aXcoord, littleEndian );
+    decodeFloatSplitList( raw.yCoordBig, raw.yCoordSmall, 1000, aYcoord, littleEndian );
+    decodeFloatSplitList( raw.zCoordBig, raw.zCoordSmall, 1000, aZcoord, littleEndian );
 
     // split-list delta & integer decode b-factors
     if( raw.bFactorBig && raw.bFactorSmall ){
-        decodeFloatSplitList( raw.bFactorBig, raw.bFactorSmall, 100, aBfactor );
+        decodeFloatSplitList( raw.bFactorBig, raw.bFactorSmall, 100, aBfactor, littleEndian );
     }
 
     // delta & run-length decode atom ids
     if( raw.atomIdList ){
-        decodeDelta( decodeRunLength( getInt32( raw.atomIdList ), aAtomId ) );
+        decodeDelta( decodeRunLength( getInt32( raw.atomIdList, undefined, littleEndian ), aAtomId ) );
     }
 
     // run-length decode altternate labels
@@ -247,7 +247,7 @@ function decodeMmtf( binOrDict ){
 
     // run-length & integer decode occupancies
     if( raw.occList ){
-        decodeFloatRunLength( raw.occList, 100, aOccupancy );
+        decodeFloatRunLength( raw.occList, 100, aOccupancy, littleEndian );
     }
 
     // set-up model-chain relations
@@ -279,11 +279,10 @@ function decodeMmtf( binOrDict ){
     }
 
     // run-length & delta decode group numbers
-    decodeDelta( decodeRunLength( getInt32( raw.groupNumList ), gGroupNum ) );
+    decodeDelta( decodeRunLength( getInt32( raw.groupNumList, undefined, littleEndian ), gGroupNum ) );
 
     // get group type pointers
-    getInt32( raw.groupTypeList, gGroupTypeId );
-
+    getInt32( raw.groupTypeList, gGroupTypeId, littleEndian );
 
     //////
     // get data from group map
@@ -321,14 +320,14 @@ function decodeMmtf( binOrDict ){
 
     if( raw.bondAtomList ){
 
-        // console.log( getInt32( raw.bondAtomList ) );
+        // console.log( getInt32( raw.bondAtomList, undefined, littleEndian ) );
 
         if( raw.bondOrderList ){
             var bondOrderList =  raw.bondOrderList;
             bBondOrder.set( bondOrderList, bondOffset );
         }
 
-        var bondAtomList = getInt32( raw.bondAtomList );
+        var bondAtomList = getInt32( raw.bondAtomList, undefined, littleEndian );
         for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
             bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
             bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
