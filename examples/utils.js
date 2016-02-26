@@ -151,6 +151,7 @@ function showRandomAtomInfo( sh, id ){
     atomInfo.yCoord = atomInfo.yCoord.toFixed( 3 );
     atomInfo.zCoord = atomInfo.zCoord.toFixed( 3 );
     atomInfo.bFactor = atomInfo.bFactor.toFixed( 2 );
+    if( atomInfo.occupancy !== undefined ) atomInfo.occupancy = atomInfo.occupancy.toFixed( 2 );
     printObject( atomInfo, id );
 }
 
