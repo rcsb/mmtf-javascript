@@ -14,23 +14,38 @@ function getInt8View( dataArray ){
 }
 
 function getInt16( view, dataArray, littleEndian ){
-    var dv = new DataView( view.buffer );
     var o = view.byteOffset;
     var n = view.byteLength;
     if( !dataArray ) dataArray = new Int16Array( n / 2 );
-    for( var i = 0, il = n / 2; i < il; ++i ){
-        dataArray[ i ] = dv.getInt16( o + i * 2, littleEndian );
+    if( littleEndian ){
+        var dv = new DataView( view.buffer );
+        for( var i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
+            dataArray[ i ] = dv.getInt16( o + i2, littleEndian );
+        }
+    }else{
+        for( var i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
+            dataArray[ i ] = view[ i2 ] << 8 ^ view[ i2 + 1 ] << 0;
+        }
     }
     return dataArray;
 }
 
 function getInt32( view, dataArray, littleEndian ){
-    var dv = new DataView( view.buffer );
     var o = view.byteOffset;
     var n = view.byteLength;
     if( !dataArray ) dataArray = new Int32Array( n / 4 );
-    for( var i = 0, il = n / 4; i < il; ++i ){
-        dataArray[ i ] = dv.getInt32( o + i * 4, littleEndian );
+    if( littleEndian ){
+        var dv = new DataView( view.buffer );
+        for( var i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+            dataArray[ i ] = dv.getInt32( o + i4, littleEndian );
+        }
+    }else{
+        for( var i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+            dataArray[ i ] = (
+                view[ i4     ] << 24 ^ view[ i4 + 1 ] << 16 ^
+                view[ i4 + 2 ] <<  8 ^ view[ i4 + 3 ] <<  0
+            );
+        }
     }
     return dataArray;
 }
