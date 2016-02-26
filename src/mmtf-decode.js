@@ -173,13 +173,13 @@ function decodeMmtf( binOrDict ){
     var gAtomCount = new Uint16Array( numGroups );
     var gGroupTypeId = new Uint16Array( numGroups );
     var gGroupNum = new Int32Array( numGroups );
-    var gSecStruct = new Uint8Array( numGroups );
+    var gSecStruct = getInt8View( raw.secStructList );  // get secondary structure codes  // new Uint8Array( numGroups );
 
     // chainStore
     var cModelIndex = new Uint16Array( numChains );
     var cGroupOffset = new Uint32Array( numChains );
     var cGroupCount = new Uint32Array( numChains );
-    var cChainName = new Uint8Array( 4 * numChains );
+    var cChainName = getUint8View( raw.chainList );  // get ascii encoded chain names  // new Uint8Array( 4 * numChains );
 
     // modelStore
     var mChainOffset = new Uint32Array( numModels );
@@ -235,9 +235,6 @@ function decodeMmtf( binOrDict ){
         decodeFloatRunLength( raw.occList, 100, aOccupancy );
     }
 
-    // get ascii encoded chain names
-    getInt8( raw.chainList, cChainName );
-
     // set-up model-chain relations
     var chainsPerModel = raw.chainsPerModel;
     var modelChainCount;
@@ -272,8 +269,6 @@ function decodeMmtf( binOrDict ){
     // get group type pointers
     getInt32( raw.groupTypeList, gGroupTypeId );
 
-    // get secondary structure codes
-    getInt8( raw.secStructList, gSecStruct );
 
     //////
     // get data from group map
