@@ -1,16 +1,16 @@
 
 import decodeMsgpack from "./msgpack-decode.js";
 
+function getUint8View( dataArray ){
+    return new Uint8Array(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength
+    );
+}
 
-function getInt8( view, dataArray ){
-    var dv = new DataView( view.buffer );
-    var o = view.byteOffset;
-    var n = view.byteLength;
-    if( !dataArray ) dataArray = new Int8Array( n );
-    for( var i = 0; i < n; ++i ){
-        dataArray[ i ] = dv.getInt8( o+i );
-    }
-    return dataArray;
+function getInt8View( dataArray ){
+    return new Int8Array(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength
+    );
 }
 
 function getInt16( view, dataArray, littleEndian ){
@@ -33,6 +33,12 @@ function getInt32( view, dataArray, littleEndian ){
         dataArray[ i ] = dv.getInt32( o + i * 4, littleEndian );
     }
     return dataArray;
+}
+
+function getInt32View( dataArray ){
+    return new Int32Array(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
+    );
 }
 
 function decodeFloat( intArray, divisor, dataArray ){
@@ -71,12 +77,6 @@ function decodeDelta( dataArray ){
         dataArray[ i ] += dataArray[ i - 1 ];
     }
     return dataArray;
-}
-
-function getInt32View( dataArray ){
-    return new Int32Array(
-        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
-    );
 }
 
 function decodeSplitListDelta( bigArray, smallArray, dataArray ){

@@ -4,16 +4,28 @@
 //
 QUnit.module( "decoding helpers" );
 
-QUnit.test( "getInt8", function( assert ) {
+QUnit.test( "getInt8View", function( assert ) {
     var buffer = new ArrayBuffer( 1 * 20 );
     var view = new Int8Array( buffer, 4 );
     view[0] = 12;
     view[2] = -4;
     var view2 = new Uint8Array( buffer, 4 );
-    var int8 = getInt8( view2 );
+    var int8 = getInt8View( view2 );
     assert.equal( int8[0], 12, "Passed!" );
     assert.equal( int8[1], 0, "Passed!" );
     assert.equal( int8[2], -4, "Passed!" );
+});
+
+QUnit.test( "getUint8View", function( assert ) {
+    var buffer = new ArrayBuffer( 1 * 20 );
+    var view = new Uint8Array( buffer, 4 );
+    view[0] = 16;
+    view[2] = 5;
+    var view2 = new Uint8Array( buffer, 4 );
+    var int8 = getUint8View( view2 );
+    assert.equal( int8[0], 16, "Passed!" );
+    assert.equal( int8[1], 0, "Passed!" );
+    assert.equal( int8[2], 5, "Passed!" );
 });
 
 QUnit.test( "getInt16", function( assert ) {
