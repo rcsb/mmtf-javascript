@@ -123,3 +123,17 @@ if (!Array.from) {
     };
   }
 })();
+
+// workaround for phantomjs not allowing Typed Array as argument in Function.apply
+// from https://gist.github.com/imaya/9825990
+if (window.Uint8Array !== void 0) {
+  try {
+    String.fromCharCode.apply(null, new Uint8Array([0]));
+  } catch(e) {
+    String.fromCharCode.apply = (function(fromCharCodeApply) {
+      return function(thisobj, args) {
+        return fromCharCodeApply.call(String.fromCharCode, thisobj, Array.prototype.slice.call(args));
+      }
+    })(String.fromCharCode.apply);
+  }
+}
