@@ -219,6 +219,80 @@ function getEmptyRequiredMmtfDict(){
     };
 }
 
+function getFilledFullMmtfDict(){
+    return {
+        // header
+        unitCell: [ 10, 12, 30, 90, 90, 120 ],
+        spaceGroup: "P1",
+        bioAssembly: {
+            1: {
+                transforms: [
+                    {
+                        id: 1,
+                        chainId: [ "A" ],
+                        transformation: [
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1
+                        ]
+                    }
+                ]
+            },
+        },
+        pdbId: "1XYZ",
+        title: "Full Test",
+
+        // counts
+        numBonds: 1,
+        numAtoms: 2,
+        numGroups: 1,
+        numChains: 1,
+        numModels: 1,
+
+        // maps
+        groupMap: {
+            102: {
+                atomCharges: [ 2, 1 ],
+                atomInfo: [ "C", "C", "N", "N" ],
+                bondIndices: [ 0, 1 ],
+                bondOrders: [ 2 ],
+                hetFlag: true
+            }
+        },
+
+        // bonds
+        bondAtomList: new Uint8Array( 0 ),
+        bondOrderList: new Uint8Array( 0 ),
+
+        // atoms
+        xCoordBig: new Uint8Array( new Int32Array( [ 50000, 1 ] ).buffer ),
+        xCoordSmall: new Uint8Array( new Int16Array( [ 2000 ] ).buffer ),
+        yCoordBig: new Uint8Array( new Int32Array( [ 60000, 1 ] ).buffer ),
+        yCoordSmall: new Uint8Array( new Int16Array( [ 3000 ] ).buffer ),
+        zCoordBig: new Uint8Array( new Int32Array( [ 70000, 1 ] ).buffer ),
+        zCoordSmall: new Uint8Array( new Int16Array( [ 4000 ] ).buffer ),
+        bFactorBig: new Uint8Array( new Int32Array( [ 9999, 0, 1, 0 ] ).buffer ),
+        bFactorSmall: new Uint8Array( new Int16Array( [] ).buffer ),
+        atomIdList: new Uint8Array( new Int32Array( [ 1, 2 ] ).buffer ),
+        altLabelList: new Array( "A", 1, "B", 1 ),
+        insCodeList: new Array( "X", 2 ),
+        occList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
+
+        // groups
+        groupNumList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
+        groupTypeList: new Uint8Array( new Int32Array( [ 102 ] ).buffer ),
+        secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
+
+        // chains
+        chainList: new Uint8Array( [ 65, 0, 0, 0 ] ),
+        groupsPerChain: [ 1 ],
+
+        // models
+        chainsPerModel: [ 1 ],
+    };
+}
+
 function getFilledRequiredMmtfDict(){
     return {
         // counts
@@ -261,7 +335,7 @@ function getFilledRequiredMmtfDict(){
     };
 }
 
-QUnit.test( "empty complete", function( assert ) {
+QUnit.test( "empty full", function( assert ) {
     var dict = getEmptyFullMmtfDict();
     var decodedMmtf = decodeMmtf( dict );
     var expectedMmtf = {
@@ -365,6 +439,99 @@ QUnit.test( "empty required", function( assert ) {
         }
     };
     assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
+});
+
+QUnit.test( "filled full", function( assert ) {
+    var dict = getFilledFullMmtfDict();
+    var decodedMmtf = decodeMmtf( dict, true );
+    var expectedMmtf = {
+        unitCell: [ 10, 12, 30, 90, 90, 120 ],
+        pdbId: "1XYZ",
+        spaceGroup: "P1",
+        bioAssembly: {
+            1: {
+                transforms: [
+                    {
+                        id: 1,
+                        chainId: [ "A" ],
+                        transformation: [
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1
+                        ]
+                    }
+                ]
+            },
+        },
+        title: "Full Test",
+        numBonds: 1,
+        numAtoms: 2,
+        numGroups: 1,
+        numChains: 1,
+        numModels: 1,
+        groupMap: {
+            102: {
+                atomCharges: [ 2, 1 ],
+                atomInfo: [ "C", "C", "N", "N" ],
+                bondIndices: [ 0, 1 ],
+                bondOrders: [ 2 ],
+                hetFlag: true
+            }
+        },
+        bondStore: {
+            "atomIndex1": new Uint32Array( [ 0, 0 ] ),
+            "atomIndex2": new Uint32Array( [ 1, 0 ] ),
+            "bondOrder": new Uint8Array( [ 2, 0 ] )
+        },
+        atomStore: {
+            "altLabel": new Uint8Array( [ 65, 66 ] ),
+            "atomId": new Int32Array( [ 1, 2 ] ),
+            "bFactor": new Float32Array( [ 99.99, 100.00 ] ),
+            "groupIndex": new Uint32Array( 2 ),
+            "insCode": new Uint8Array( [ 88, 88 ] ),
+            "occupancy": new Float32Array( [ 0.6, 0.4 ] ),
+            "xCoord": new Float32Array( [ 50, 52 ] ),
+            "yCoord": new Float32Array( [ 60, 63 ] ),
+            "zCoord": new Float32Array( [ 70, 74 ] )
+        },
+        groupStore: {
+            "atomCount": new Uint16Array( [ 2 ] ),
+            "atomOffset": new Uint32Array( [ 0 ] ),
+            "chainIndex": new Uint32Array( [ 0 ] ),
+            "groupNum": new Int32Array( [ 100 ] ),
+            "groupTypeId": new Uint16Array( [ 102 ] ),
+            "secStruct": new Int8Array( [ -1 ] )
+        },
+        chainStore: {
+            "chainName": new Uint8Array( [ 65, 0, 0, 0 ] ),
+            "groupCount": new Uint32Array( [ 1 ] ),
+            "groupOffset": new Uint32Array( [ 0 ] ),
+            "modelIndex": new Uint16Array( [ 0 ] )
+        },
+        modelStore: {
+            "chainCount": new Uint32Array( [ 1 ] ),
+            "chainOffset": new Uint32Array( [ 0 ] )
+        }
+    };
+    assert.equal( decodedMmtf.pdbId, expectedMmtf.pdbId, "Passed pdbId!" );
+    assert.equal( decodedMmtf.spaceGroup, expectedMmtf.spaceGroup, "Passed spaceGroup!" );
+    assert.deepEqual( decodedMmtf.bioAssembly, expectedMmtf.bioAssembly, "Passed bioAssembly!" );
+    assert.equal( decodedMmtf.title, expectedMmtf.title, "Passed title!" );
+    assert.deepEqual( decodedMmtf.unitCell, expectedMmtf.unitCell, "Passed unitcell!" );
+
+    assert.equal( decodedMmtf.numBonds, expectedMmtf.numBonds, "Passed numBonds!" );
+    assert.equal( decodedMmtf.numAtoms, expectedMmtf.numAtoms, "Passed numAtoms!" );
+    assert.equal( decodedMmtf.numGroups, expectedMmtf.numGroups, "Passed numGroups!" );
+    assert.equal( decodedMmtf.numChains, expectedMmtf.numChains, "Passed numChains!" );
+    assert.equal( decodedMmtf.numModels, expectedMmtf.numModels, "Passed numModels!" );
+
+    assert.deepEqual( decodedMmtf.groupMap, expectedMmtf.groupMap, "Passed groupMap!" );
+    assert.deepEqual( decodedMmtf.bondStore, expectedMmtf.bondStore, "Passed bondStore!" );
+    assert.deepEqual( decodedMmtf.atomStore, expectedMmtf.atomStore, "Passed atomStore!" );
+    assert.deepEqual( decodedMmtf.groupStore, expectedMmtf.groupStore, "Passed groupStore!" );
+    assert.deepEqual( decodedMmtf.chainStore, expectedMmtf.chainStore, "Passed chainStore!" );
+    assert.deepEqual( decodedMmtf.modelStore, expectedMmtf.modelStore, "Passed modelStore!" );
 });
 
 QUnit.test( "filled required", function( assert ) {
