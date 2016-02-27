@@ -78,7 +78,10 @@
         worker.onmessage = function( e ){
             var status = e.data.status;
             var statusInfo = document.getElementById( "statusInfo" );
-            statusInfo.innerText = status.finished + " of " + status.requested + " (" + status.failed + " failed)";
+            statusInfo.innerText = (
+                status.finished + " of " + status.requested + " (" + status.failed + " failed) -- " +
+                formatMilliseconds( status.timeMs )
+            );
             var statsList = e.data.statsList;
             var sumStats = { type: "sum", count: statsList.length };
             var countList = [

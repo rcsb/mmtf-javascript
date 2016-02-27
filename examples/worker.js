@@ -10,21 +10,26 @@ importScripts(
 var status = {
     requested: 0,
     finished: 0,
-    failed: 0
+    failed: 0,
+    timeMs: 0,
 };
 
 
 function makeXhrPromise( method, url, responseType ){
     return new Promise( function( resolve, reject ){
+        var t0 = performance.now();
         var xhr = new XMLHttpRequest();
         xhr.open( method, url );
         xhr.responseType = responseType;
         xhr.onload = function(){
+            var t1 = performance.now();
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
                 if( this.response.byteLength === 0 ){
                     reject( "zero byteLength" );
                 }else{
-                    resolve( this.response );
+                    resolve( {
+                        response: this.response
+                    } );
                 }
             }else{
                 reject( {
@@ -51,7 +56,7 @@ function loadStructure( pdbid, cAlphaOnly ){
     );
     return promise.then( function( result ){
         try{
-            var d = decodeSupervised( result );
+            var d = decodeSupervised( result.response );
             status.finished += 1;
             return getStats( new SimpleStructure( d.structure ), d.info );
         }catch( e ){
@@ -94,7 +99,10 @@ onmessage = function( e ){
 
     var queue = new Queue( function( start, callback ){
         var pdbIdChunk = pdbIdList.slice( start, start + chunkSize );
+        var t0 = performance.now();
         loadBunch( pdbIdChunk, cAlphaOnly ).then( function( sdList ){
+            var t1 = performance.now();
+            status.timeMs += t1 - t0;
             sdList.forEach( function( stats ){
                 if( stats ){
                     statsList.push( stats );
