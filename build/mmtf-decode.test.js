@@ -23,12 +23,10 @@ function decodeMsgpack(buffer) {
   }
 
   function str(length) {
-    var value = new Array(length);
-    for( var i = offset, il = offset + length; i < il; ++i ){
-      value[i] = String.fromCharCode(buffer[i]);
-    }
+    var subarray = buffer.subarray(offset, offset + length);
+    var value = String.fromCharCode.apply(null, subarray);
     offset += length;
-    return value.join("");
+    return value;
   }
 
   function array(length) {
@@ -241,37 +239,59 @@ function decodeMsgpack(buffer) {
   return parse();
 }
 
-function getInt8( view, dataArray ){
-    var dv = new DataView( view.buffer );
-    var o = view.byteOffset;
-    var n = view.byteLength;
-    if( !dataArray ) dataArray = new Int8Array( n );
-    for( var i = 0; i < n; ++i ){
-        dataArray[ i ] = dv.getInt8( o+i );
-    }
-    return dataArray;
+function getUint8View( dataArray ){
+    return new Uint8Array(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength
+    );
+}
+
+function getInt8View( dataArray ){
+    return new Int8Array(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength
+    );
 }
 
 function getInt16( view, dataArray, littleEndian ){
-    var dv = new DataView( view.buffer );
     var o = view.byteOffset;
     var n = view.byteLength;
     if( !dataArray ) dataArray = new Int16Array( n / 2 );
-    for( var i = 0, il = n / 2; i < il; ++i ){
-        dataArray[ i ] = dv.getInt16( o + i * 2, littleEndian );
+    if( littleEndian ){
+        var dv = new DataView( view.buffer );
+        for( var i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
+            dataArray[ i ] = dv.getInt16( o + i2, littleEndian );
+        }
+    }else{
+        for( var i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
+            dataArray[ i ] = view[ i2 ] << 8 ^ view[ i2 + 1 ] << 0;
+        }
     }
     return dataArray;
 }
 
 function getInt32( view, dataArray, littleEndian ){
-    var dv = new DataView( view.buffer );
     var o = view.byteOffset;
     var n = view.byteLength;
     if( !dataArray ) dataArray = new Int32Array( n / 4 );
-    for( var i = 0, il = n / 4; i < il; ++i ){
-        dataArray[ i ] = dv.getInt32( o + i * 4, littleEndian );
+    if( littleEndian ){
+        var dv = new DataView( view.buffer );
+        for( var i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+            dataArray[ i ] = dv.getInt32( o + i4, littleEndian );
+        }
+    }else{
+        for( var i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+            dataArray[ i ] = (
+                view[ i4     ] << 24 ^ view[ i4 + 1 ] << 16 ^
+                view[ i4 + 2 ] <<  8 ^ view[ i4 + 3 ] <<  0
+            );
+        }
     }
     return dataArray;
+}
+
+function getInt32View( dataArray ){
+    return new Int32Array(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
+    );
 }
 
 function decodeFloat( intArray, divisor, dataArray ){
@@ -310,12 +330,6 @@ function decodeDelta( dataArray ){
         dataArray[ i ] += dataArray[ i - 1 ];
     }
     return dataArray;
-}
-
-function getInt32View( dataArray ){
-    return new Int32Array(
-        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
-    );
 }
 
 function decodeSplitListDelta( bigArray, smallArray, dataArray ){
@@ -358,7 +372,7 @@ function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
 
 //
 
-function decodeMmtf( binOrDict ){
+function decodeMmtf( binOrDict, littleEndian ){
 
     // make sure binOrDict is not a plain Arraybuffer
     if( binOrDict instanceof ArrayBuffer ){
@@ -412,31 +426,31 @@ function decodeMmtf( binOrDict ){
     var gAtomCount = new Uint16Array( numGroups );
     var gGroupTypeId = new Uint16Array( numGroups );
     var gGroupNum = new Int32Array( numGroups );
-    var gSecStruct = new Uint8Array( numGroups );
+    var gSecStruct = getInt8View( raw.secStructList );  // get secondary structure codes  // new Uint8Array( numGroups );
 
     // chainStore
     var cModelIndex = new Uint16Array( numChains );
     var cGroupOffset = new Uint32Array( numChains );
     var cGroupCount = new Uint32Array( numChains );
-    var cChainName = new Uint8Array( 4 * numChains );
+    var cChainName = getUint8View( raw.chainList );  // get ascii encoded chain names  // new Uint8Array( 4 * numChains );
 
     // modelStore
     var mChainOffset = new Uint32Array( numModels );
     var mChainCount = new Uint32Array( numModels );
 
     // split-list delta & integer decode x, y, z coords
-    decodeFloatSplitList( raw.xCoordBig, raw.xCoordSmall, 1000, aXcoord );
-    decodeFloatSplitList( raw.yCoordBig, raw.yCoordSmall, 1000, aYcoord );
-    decodeFloatSplitList( raw.zCoordBig, raw.zCoordSmall, 1000, aZcoord );
+    decodeFloatSplitList( raw.xCoordBig, raw.xCoordSmall, 1000, aXcoord, littleEndian );
+    decodeFloatSplitList( raw.yCoordBig, raw.yCoordSmall, 1000, aYcoord, littleEndian );
+    decodeFloatSplitList( raw.zCoordBig, raw.zCoordSmall, 1000, aZcoord, littleEndian );
 
     // split-list delta & integer decode b-factors
     if( raw.bFactorBig && raw.bFactorSmall ){
-        decodeFloatSplitList( raw.bFactorBig, raw.bFactorSmall, 100, aBfactor );
+        decodeFloatSplitList( raw.bFactorBig, raw.bFactorSmall, 100, aBfactor, littleEndian );
     }
 
     // delta & run-length decode atom ids
     if( raw.atomIdList ){
-        decodeDelta( decodeRunLength( getInt32( raw.atomIdList ), aAtomId ) );
+        decodeDelta( decodeRunLength( getInt32( raw.atomIdList, undefined, littleEndian ), aAtomId ) );
     }
 
     // run-length decode altternate labels
@@ -471,11 +485,8 @@ function decodeMmtf( binOrDict ){
 
     // run-length & integer decode occupancies
     if( raw.occList ){
-        decodeFloatRunLength( raw.occList, 100, aOccupancy );
+        decodeFloatRunLength( raw.occList, 100, aOccupancy, littleEndian );
     }
-
-    // get ascii encoded chain names
-    getInt8( raw.chainList, cChainName );
 
     // set-up model-chain relations
     var chainsPerModel = raw.chainsPerModel;
@@ -506,13 +517,10 @@ function decodeMmtf( binOrDict ){
     }
 
     // run-length & delta decode group numbers
-    decodeDelta( decodeRunLength( getInt32( raw.groupNumList ), gGroupNum ) );
+    decodeDelta( decodeRunLength( getInt32( raw.groupNumList, undefined, littleEndian ), gGroupNum ) );
 
     // get group type pointers
-    getInt32( raw.groupTypeList, gGroupTypeId );
-
-    // get secondary structure codes
-    getInt8( raw.secStructList, gSecStruct );
+    getInt32( raw.groupTypeList, gGroupTypeId, littleEndian );
 
     //////
     // get data from group map
@@ -550,14 +558,14 @@ function decodeMmtf( binOrDict ){
 
     if( raw.bondAtomList ){
 
-        // console.log( getInt32( raw.bondAtomList ) );
+        // console.log( getInt32( raw.bondAtomList, undefined, littleEndian ) );
 
         if( raw.bondOrderList ){
             var bondOrderList =  raw.bondOrderList;
             bBondOrder.set( bondOrderList, bondOffset );
         }
 
-        var bondAtomList = getInt32( raw.bondAtomList );
+        var bondAtomList = getInt32( raw.bondAtomList, undefined, littleEndian );
         for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
             bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
             bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
