@@ -13,23 +13,19 @@ var args = system.args;
 var pdbidCount = args.length > 1 ? args[ 1 ] : 100;
 var outputDir = args.length > 2 ? args[ 2 ] : ".";
 var cAlphaOnly = args.length > 3 ? args[ 3 ].toLowerCase() : false;
-var timeoutMs = args.length > 4 ? args[ 4 ] : Infinity;
+var pdbidListPath = args.length > 4 ? args[ 4 ] : "";
+var timeoutMs = args.length > 5 ? args[ 5 ] : Infinity;
+
+var pdbidList;
+if( pdbidListPath ){
+    pdbidList = fs.read( pdbidListPath );
+    console.log( "loaded pdb id list from file" );
+}
 
 if( [ "false", "0", "f", "no" ].indexOf( cAlphaOnly ) !== -1 ) cAlphaOnly = false;
 if( [ "true", "1", "t", "yes" ].indexOf( cAlphaOnly ) !== -1 ) cAlphaOnly = true;
 
-/**
- * Wait until the test condition is true or a timeout occurs. Useful for waiting
- * on a server response or for a ui change (fadeIn, etc.) to occur.
- *
- * @param testFx javascript condition that evaluates to a boolean,
- * it can be passed in as a string (e.g.: "1 == 1" or "$('#bar').is(':visible')" or
- * as a callback function.
- * @param onReady what to do when testFx condition is fulfilled,
- * it can be passed in as a string (e.g.: "1 == 1" or "$('#bar').is(':visible')" or
- * as a callback function.
- * @param timeOutMillis the max amount of time to wait. If not specified, Infinity sec is used.
- */
+
 function waitFor(testFx, onReady, timeOutMillis) {
     var maxtimeOutMillis = timeOutMillis ? timeOutMillis : Infinity;
     var start = new Date().getTime();
@@ -64,11 +60,21 @@ page.open(url, function (status) {
     } else {
         var prevCompleted;
         waitFor(function(){
-            var completed = page.evaluate( function( __pdbidCount__, __cAlphaOnly__ ){
+
+            var completed = page.evaluate( function( __pdbidCount__, __cAlphaOnly__, __pdbidList__ ){
                 var statusJsonText = document.getElementById( "statusJson" ).innerText;
-                if( fullPdbIdList === undefined || fullPdbIdList.length === 0 ){
+                var statusInfoText = document.getElementById( "statusInfo" ).innerText;
+                if( __pdbidList__ && !statusInfoText ){
+                    console.log( "starting decoding" );
+                    var idList = JSON.parse( __pdbidList__ ).idList;
+                    load( getRandomPdbIdList( __pdbidCount__, idList ), __cAlphaOnly__ );
+                }else if( fullPdbIdList === undefined || fullPdbIdList.length === 0 ){
                     console.log( "waiting for fullPdbIdList" );
-                }else if( statusJsonText ){
+                }else if( !__pdbidList__ && !statusInfoText ){
+                    console.log( "starting decoding" );
+                    loadRandom( __pdbidCount__, __cAlphaOnly__ );
+                }
+                if( statusJsonText ){
                     var statusJson = JSON.parse( statusJsonText );
                     var completed = statusJson.finished + statusJson.failed;
                     if( statusJson.requested === completed ){
@@ -77,12 +83,10 @@ page.open(url, function (status) {
                     }else{
                         return completed;
                     }
-                }else if( !document.getElementById( "statusInfo" ).innerText ){
-                    console.log( "starting decoding" );
-                    loadRandom( __pdbidCount__, __cAlphaOnly__ );
                 }
                 return false;
-            }, pdbidCount, cAlphaOnly);
+            }, pdbidCount, cAlphaOnly, pdbidList );
+
             if( completed === true ){
                 return true;
             }else{

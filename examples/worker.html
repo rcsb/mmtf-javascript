@@ -33,9 +33,9 @@
             loadPdbIdList();
         } );
 
-        function getRandomPdbIdList( count ){
+        function getRandomPdbIdList( count, list ){
             var pdbIdList;
-            if( count === "all" || count === fullPdbIdList.length ){
+            if( count === "all" || count === list.length ){
                 pdbIdList = fullPdbIdList;
             }else{
                 pdbIdList = [];
@@ -49,7 +49,7 @@
 
         function loadPdbIdList(){
             var xhr = new XMLHttpRequest();
-            xhr.open( "GET", "http://rcsb.org/pdb/json/getCurrent", true );
+            xhr.open( "GET", "http://www.rcsb.org/pdb/json/getCurrent", true );
             // xhr.responseType = "json";  // not supported in phantomjs
             xhr.addEventListener( "load", function(){
                 var response = JSON.parse( this.response );
@@ -67,7 +67,7 @@
         }
 
         function loadRandom( count, cAlphaOnly ){
-            var pdbIdList = getRandomPdbIdList( count );
+            var pdbIdList = getRandomPdbIdList( count, fullPdbIdList );
             load( pdbIdList, cAlphaOnly );
         }
 
