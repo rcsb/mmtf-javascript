@@ -1,3 +1,34 @@
+
+( function( global ) {
+
+    'use strict';
+
+    // Console-polyfill. MIT license.
+    // https://github.com/paulmillr/console-polyfill
+    // Make it safe to do console.log() always.
+
+    global.console = global.console || {};
+    var con = global.console;
+    var prop, method;
+    var empty = {};
+    var dummy = function(){};
+    var properties = 'memory'.split( ',' );
+    var methods = (
+        'assert,clear,count,debug,dir,dirxml,error,exception,group,' +
+        'groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,' +
+        'show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn'
+    ).split(',');
+
+    while( prop = properties.pop() ) if( !con[ prop] ) con[ prop ] = empty;
+    while( method = methods.pop() ) if( !con[ method] ) con[ method ] = dummy;
+
+    // Using `this` for web workers while maintaining compatibility with browser
+    // targeted script loaders such as Browserify or Webpack where the only way to
+    // get to the global object is via `window`.
+
+} )( typeof window === 'undefined' ? this : window );
+
+
 // Production steps of ECMA-262, Edition 6, 22.1.2.1
 // Reference: https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.from
 if (!Array.from) {
@@ -82,6 +113,7 @@ if (!Array.from) {
 
 }
 
+
 // https://github.com/ttaubert/node-arraybuffer-slice
 // (c) 2014 Tim Taubert <tim@timtaubert.de>
 // arraybuffer-slice may be freely distributed under the MIT license.
@@ -124,9 +156,10 @@ if (!Array.from) {
   }
 })();
 
+
 // workaround for phantomjs not allowing Typed Array as argument in Function.apply
 // from https://gist.github.com/imaya/9825990
-if (window.Uint8Array !== void 0) {
+if (self.Uint8Array !== void 0) {
   try {
     String.fromCharCode.apply(null, new Uint8Array([0]));
   } catch(e) {
@@ -136,4 +169,83 @@ if (window.Uint8Array !== void 0) {
       }
     })(String.fromCharCode.apply);
   }
+}
+
+
+// @license http://opensource.org/licenses/MIT
+// copyright Paul Irish 2015
+(function(){
+  if ("performance" in self == false) {
+      self.performance = {};
+  }
+  Date.now = (Date.now || function () {  // thanks IE8
+      return new Date().getTime();
+  });
+  if ("now" in self.performance == false){
+    var nowOffset = Date.now();
+    if (performance.timing && performance.timing.navigationStart){
+      nowOffset = performance.timing.navigationStart
+    }
+    self.performance.now = function now(){
+      return Date.now() - nowOffset;
+    }
+  }
+})();
+
+
+if( !Object.assign ){
+
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+
+    Object.defineProperty( Object, "assign", {
+
+        enumerable: false,
+        configurable: true,
+        writable: true,
+
+        value: function(target, firstSource) {
+
+            "use strict";
+            if (target === undefined || target === null)
+            throw new TypeError("Cannot convert first argument to object");
+
+            var to = Object(target);
+
+            var hasPendingException = false;
+            var pendingException;
+
+            for (var i = 1; i < arguments.length; i++) {
+
+                var nextSource = arguments[i];
+                if (nextSource === undefined || nextSource === null)
+                    continue;
+
+                var keysArray = Object.keys(Object(nextSource));
+                for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+
+                    var nextKey = keysArray[nextIndex];
+                    try {
+                        var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+                        if (desc !== undefined && desc.enumerable)
+                            to[nextKey] = nextSource[nextKey];
+                    } catch (e) {
+                        if (!hasPendingException) {
+                            hasPendingException = true;
+                            pendingException = e;
+                        }
+                    }
+
+                }
+
+                if (hasPendingException)
+                    throw pendingException;
+
+            }
+
+            return to;
+
+        }
+
+    } );
+
 }
