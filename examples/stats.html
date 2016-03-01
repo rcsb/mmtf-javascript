@@ -23,7 +23,7 @@
 
         function onload(){
             if( this.status === 200 || this.status === 304 || this.status === 0 ){
-                var d = decodeSupervised( this.response );
+                var d = decodeSupervised( this.response, true );
                 currentStructure = new SimpleStructure( d.structure );
                 showStats( getStats( currentStructure, d.info ), "stats" );
                 showRandomAtomInfo( currentStructure, "atomInfo" );
@@ -47,7 +47,6 @@
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
-            // xhr.open( "GET", "../data/1aq1.mmtf" );
             xhr.open( "GET", getMmtfUrl( pdbid, cAlphaOnly ) );
             xhr.send();
         }

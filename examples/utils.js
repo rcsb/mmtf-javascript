@@ -1,4 +1,7 @@
 
+function $( id ){
+    return document.getElementById( id );
+}
 
 // from http://stackoverflow.com/a/20463021/1435042
 function fileSizeSI(a,b,c,d,e){
@@ -29,16 +32,27 @@ function getMmtfUrl( pdbid, cAlphaOnly ){
     pdbid = pdbid.toUpperCase();
     var baseUrl;
     if( cAlphaOnly ){
-        baseUrl = "http://132.249.213.68:8080/servemessagecalpha/";
+        baseUrl = "http://mmtf.rcsb.org/backbone/";
     }else{
-        baseUrl = "http://132.249.213.68:8080/servemessagepack/";
+        baseUrl = "http://mmtf.rcsb.org/full/";
     }
     return baseUrl + pdbid;
 }
 
-function decodeSupervised( bin ){
+function GET( id ){
+    var a = new RegExp( id + "=([^&#=]*)" );
+    var m = a.exec( window.location.search );
+    if( m ){
+        return decodeURIComponent( m[1] );
+    }else{
+        return undefined;
+    }
+};
+
+function decodeSupervised( bin, log ){
     var t0 = performance.now();
     var raw = decodeMsgpack( new Uint8Array( bin ) );
+    if( log ) console.log( raw );
     var t1 = performance.now();
     var structure = decodeMmtf( raw );
     var t2 = performance.now();
@@ -86,6 +100,7 @@ function getStats( structure, info ){
         getStoreByteLength( s.chainStore ) +
         getStoreByteLength( s.modelStore )
     );
+    if( s.numAtoms === 0 ) console.log(s.pdbId)
     return {
         pdbId: s.pdbId,
 
@@ -97,7 +112,7 @@ function getStats( structure, info ){
         decodeMsgpackTimeMs: info.decodeMsgpackTimeMs,
         decodeMmtfTimeMs: info.decodeMmtfTimeMs,
 
-        msgpackBytesPerAtom: info.msgpackByteLength / s.numAtoms,
+        msgpackBytesPerAtom: s.numAtoms ? info.msgpackByteLength / s.numAtoms : 0,
 
         numBonds: s.numBonds,
         numAtoms: s.numAtoms,

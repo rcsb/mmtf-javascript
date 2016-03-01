@@ -13,37 +13,29 @@
 <body>
 
     <script src="utils.js"></script>
+    <script src="../test/polyfills.js"></script>
 
     <script>
 
-        var customPdbIdList = [
-            "4CUP", "3SN6", "2L6N", "4V5A", "4V99",
-            "2MSE", "2MSD", "2MSC", "1RB8", "4V4G",
-            "2KOG", "1BNX", "1BA6", "1AP0",
-            "4CUP", "3SN6", "2L6N", "4V5A", "4V99",
-            "2MSE", "2MSD", "2MSC", "1RB8", "4V4G",
-            "2KOG", "1BNX", "1BA6", "1AP0",
-        ];
         var fullPdbIdList = [];
         var worker = new Worker( "worker.js" );
 
         document.addEventListener( "DOMContentLoaded", function(){
-            var countSelect = document.getElementById( "countSelect" );
-            var cAlphaOnlyInput = document.getElementById( "cAlphaOnlyInput" );
+            var countSelect = $( "countSelect" );
+            var cAlphaOnlyInput = $( "cAlphaOnlyInput" );
             cAlphaOnlyInput.addEventListener( "change", function(){
-                var pdbIdList = getRandomPdbIdList( countSelect.value );
-                load( pdbIdList, cAlphaOnlyInput.checked );
+                loadRandom( countSelect.value, cAlphaOnlyInput.checked );
             } );
             var loadButton = document.getElementById( "loadButton" );
             loadButton.addEventListener( "click", function(){
-                var pdbIdList = getRandomPdbIdList( countSelect.value );
-                load( pdbIdList, cAlphaOnlyInput.checked );
+                loadRandom( countSelect.value, cAlphaOnlyInput.checked );
             } );
+            loadPdbIdList();
         } );
 
         function getRandomPdbIdList( count ){
             var pdbIdList;
-            if( count === "all" ){
+            if( count === "all" || count === fullPdbIdList.length ){
                 pdbIdList = fullPdbIdList;
             }else{
                 pdbIdList = [];
@@ -55,20 +47,33 @@
             return pdbIdList;
         }
 
-        loadPdbIdList();
-
         function loadPdbIdList(){
             var xhr = new XMLHttpRequest();
+            xhr.open( "GET", "http://rcsb.org/pdb/json/getCurrent", true );
+            // xhr.responseType = "json";  // not supported in phantomjs
             xhr.addEventListener( "load", function(){
-                fullPdbIdList = this.response.idList;
+                var response = JSON.parse( this.response );
+                console.log( "loaded list with " + response.idList.length + " pdb ids" );
+                fullPdbIdList = response.idList;
+                // var count = GET( "count" );
+                // if( count ){
+                //     loadRandom( parseInt( count ), GET( "cAlphaOnly" ) ? true : false );
+                // }
             }, true );
-            xhr.addEventListener( "error", function(){ error( "error loading pdb id list" ) }, true );
-            xhr.open( "GET", "http://rcsb.org/pdb/json/getCurrent" );
-            xhr.responseType = "json";
+            xhr.addEventListener( "error", function(){
+                console.error( "error loading pdb id list" )
+            }, true );
             xhr.send();
         }
 
+        function loadRandom( count, cAlphaOnly ){
+            var pdbIdList = getRandomPdbIdList( count );
+            load( pdbIdList, cAlphaOnly );
+        }
+
         function load( pdbIdList, cAlphaOnly ){
+            var statusInfo = $( "statusInfo" );
+            statusInfo.innerText = "0 of " + pdbIdList.length + " (0 failed) -- 0.00ms";
             worker.postMessage( {
                 pdbIdList: pdbIdList,
                 cAlphaOnly: cAlphaOnly
@@ -76,11 +81,19 @@
         }
 
         worker.onmessage = function( e ){
+            if( e.data.status === undefined ){
+                console.log("onmessage",e.data)
+                return;
+            }
             var status = e.data.status;
-            var statusInfo = document.getElementById( "statusInfo" );
+            status.time = formatMilliseconds( status.timeMs );
+            delete status.timeMs;
+            var statusJson = $( "statusJson" );
+            statusJson.innerText = JSON.stringify( status );
+            var statusInfo = $( "statusInfo" );
             statusInfo.innerText = (
-                status.finished + " of " + status.requested + " (" + status.failed + " failed) -- " +
-                formatMilliseconds( status.timeMs )
+                status.finished + " of " + status.requested +
+                " (" + status.failed + " failed) -- " + status.time
             );
             var statsList = e.data.statsList;
             var sumStats = { type: "sum", count: statsList.length };
@@ -110,9 +123,21 @@
             delete sumStats.msgpackBytesPerAtom;
             showStats( avgStats, "avgStats" );
             showStats( sumStats, "sumStats" );
+            if( status.requested === ( status.finished + status.failed ) ){
+                $( "statsListJson" ).innerText = JSON.stringify( e.data.statsList, null, '\t' );
+                $( "statsSumJson" ).innerText = JSON.stringify( sumStats, null, '\t' );
+                $( "statsAvgJson" ).innerText = JSON.stringify( avgStats, null, '\t' );
+                $( "errorsJson" ).innerText = JSON.stringify( e.data.errors, null, '\t' );
+            }
         };
 
     </script>
+
+    <span style="display:none;" id="statusJson"></span>
+    <span style="display:none;" id="statsListJson"></span>
+    <span style="display:none;" id="statsSumJson"></span>
+    <span style="display:none;" id="statsAvgJson"></span>
+    <span style="display:none;" id="errorsJson"></span>
 
     <div>
         Count
