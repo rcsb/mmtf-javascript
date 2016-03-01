@@ -35,13 +35,14 @@
 
         function getRandomPdbIdList( count, list ){
             var pdbIdList;
+            list = list || fullPdbIdList
             if( count === "all" || count === list.length ){
-                pdbIdList = fullPdbIdList;
+                pdbIdList = list;
             }else{
                 pdbIdList = [];
                 for( var i = 0; i < count; ++i ){
-                    var index = Math.floor( Math.random() * fullPdbIdList.length );
-                    pdbIdList.push( fullPdbIdList[ index ] );
+                    var index = Math.floor( Math.random() * list.length );
+                    pdbIdList.push( list[ index ] );
                 }
             }
             return pdbIdList;
