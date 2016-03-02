@@ -12,18 +12,18 @@ var args = system.args;
 
 var pdbidCount = args.length > 1 ? args[ 1 ] : 100;
 var outputDir = args.length > 2 ? args[ 2 ] : ".";
-var cAlphaOnly = args.length > 3 ? args[ 3 ].toLowerCase() : false;
+var backboneOnly = args.length > 3 ? args[ 3 ].toLowerCase() : false;
 var pdbidListPath = args.length > 4 ? args[ 4 ] : "";
 var timeoutMs = args.length > 5 ? args[ 5 ] : Infinity;
 
 var pdbidList;
 if( pdbidListPath ){
-    pdbidList = fs.read( pdbidListPath );
+    pdbidList = JSON.parse( fs.read( pdbidListPath ) ).idList;
     console.log( "loaded pdb id list from file" );
 }
 
-if( [ "false", "0", "f", "no" ].indexOf( cAlphaOnly ) !== -1 ) cAlphaOnly = false;
-if( [ "true", "1", "t", "yes" ].indexOf( cAlphaOnly ) !== -1 ) cAlphaOnly = true;
+if( [ "false", "0", "f", "no" ].indexOf( backboneOnly ) !== -1 ) backboneOnly = false;
+if( [ "true", "1", "t", "yes" ].indexOf( backboneOnly ) !== -1 ) backboneOnly = true;
 
 
 function waitFor(testFx, onReady, timeOutMillis) {
@@ -61,18 +61,17 @@ page.open(url, function (status) {
         var prevCompleted;
         waitFor(function(){
 
-            var completed = page.evaluate( function( __pdbidCount__, __cAlphaOnly__, __pdbidList__ ){
+            var completed = page.evaluate( function( __pdbidCount__, __backboneOnly__, __pdbidList__ ){
                 var statusJsonText = document.getElementById( "statusJson" ).innerText;
                 var statusInfoText = document.getElementById( "statusInfo" ).innerText;
                 if( __pdbidList__ && !statusInfoText ){
                     console.log( "starting decoding" );
-                    var idList = JSON.parse( __pdbidList__ ).idList;
-                    load( getRandomPdbIdList( __pdbidCount__, idList ), __cAlphaOnly__ );
+                    load( getRandomPdbIdList( __pdbidCount__, __pdbidList__ ), __backboneOnly__ );
                 }else if( fullPdbIdList === undefined || fullPdbIdList.length === 0 ){
                     console.log( "waiting for fullPdbIdList" );
                 }else if( !__pdbidList__ && !statusInfoText ){
                     console.log( "starting decoding" );
-                    loadRandom( __pdbidCount__, __cAlphaOnly__ );
+                    loadRandom( __pdbidCount__, __backboneOnly__ );
                 }
                 if( statusJsonText ){
                     var statusJson = JSON.parse( statusJsonText );
@@ -85,7 +84,7 @@ page.open(url, function (status) {
                     }
                 }
                 return false;
-            }, pdbidCount, cAlphaOnly, pdbidList );
+            }, pdbidCount, backboneOnly, pdbidList );
 
             if( completed === true ){
                 return true;

@@ -42,24 +42,24 @@
             document.getElementById( "atomInfo" ).innerHTML = "";
         }
 
-        function loadStructure( pdbid, cAlphaOnly ){
+        function loadStructure( pdbid, backboneOnly ){
             var xhr = new XMLHttpRequest();
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", getMmtfUrl( pdbid, cAlphaOnly ) );
+            xhr.open( "GET", getMmtfUrl( pdbid, backboneOnly ) );
             xhr.send();
         }
 
         document.addEventListener( "DOMContentLoaded", function(){
 
-            var cAlphaOnlyInput = document.getElementById( "cAlphaOnlyInput" );
-            cAlphaOnlyInput.addEventListener( "change", function(){
+            var backboneOnlyInput = document.getElementById( "backboneOnlyInput" );
+            backboneOnlyInput.addEventListener( "change", function(){
                 if( pdbidInput.value ){
                     pdbidSelect.value = "";
-                    loadStructure( pdbidInput.value, cAlphaOnlyInput.checked );
+                    loadStructure( pdbidInput.value, backboneOnlyInput.checked );
                 }else{
-                    loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
+                    loadStructure( pdbidSelect.value, backboneOnlyInput.checked );
                 }
             } );
 
@@ -67,7 +67,7 @@
             pdbidSelect.addEventListener( "change", function(){
                 if( pdbidSelect.value ){
                     pdbidInput.value = "";
-                    loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
+                    loadStructure( pdbidSelect.value, backboneOnlyInput.checked );
                 }else{
                     clear();
                 }
@@ -78,7 +78,7 @@
                 if( e.keyCode === 13 ){
                     if( pdbidInput.value ){
                         pdbidSelect.value = "";
-                        loadStructure( pdbidInput.value, cAlphaOnlyInput.checked );
+                        loadStructure( pdbidInput.value, backboneOnlyInput.checked );
                     }else{
                         clear();
                     }
@@ -89,9 +89,9 @@
             pdbidButton.addEventListener( "click", function(){
                 if( pdbidInput.value ){
                     pdbidSelect.value = "";
-                    loadStructure( pdbidInput.value, cAlphaOnlyInput.checked );
+                    loadStructure( pdbidInput.value, backboneOnlyInput.checked );
                 }else{
-                    loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
+                    loadStructure( pdbidSelect.value, backboneOnlyInput.checked );
                 }
             } );
 
@@ -100,7 +100,7 @@
                 showRandomAtomInfo( currentStructure, "atomInfo" );
             } );
 
-            loadStructure( pdbidSelect.value, cAlphaOnlyInput.checked );
+            loadStructure( pdbidSelect.value, backboneOnlyInput.checked );
 
         } );
 
@@ -121,7 +121,7 @@
         </select>
         <input type="text" id="pdbidInput"></input>
         <button id="pdbidButton">get</button>
-        <input type="checkbox" id="cAlphaOnlyInput"></input>C-alpha only
+        <input type="checkbox" id="backboneOnlyInput"></input>Backbone only
     </div>
 
     <br/>

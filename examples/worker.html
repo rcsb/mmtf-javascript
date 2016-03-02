@@ -22,13 +22,13 @@
 
         document.addEventListener( "DOMContentLoaded", function(){
             var countSelect = $( "countSelect" );
-            var cAlphaOnlyInput = $( "cAlphaOnlyInput" );
-            cAlphaOnlyInput.addEventListener( "change", function(){
-                loadRandom( countSelect.value, cAlphaOnlyInput.checked );
+            var backboneOnlyInput = $( "backboneOnlyInput" );
+            backboneOnlyInput.addEventListener( "change", function(){
+                loadRandom( countSelect.value, backboneOnlyInput.checked );
             } );
             var loadButton = document.getElementById( "loadButton" );
             loadButton.addEventListener( "click", function(){
-                loadRandom( countSelect.value, cAlphaOnlyInput.checked );
+                loadRandom( countSelect.value, backboneOnlyInput.checked );
             } );
             loadPdbIdList();
         } );
@@ -58,7 +58,7 @@
                 fullPdbIdList = response.idList;
                 // var count = GET( "count" );
                 // if( count ){
-                //     loadRandom( parseInt( count ), GET( "cAlphaOnly" ) ? true : false );
+                //     loadRandom( parseInt( count ), GET( "backboneOnly" ) ? true : false );
                 // }
             }, true );
             xhr.addEventListener( "error", function(){
@@ -67,17 +67,17 @@
             xhr.send();
         }
 
-        function loadRandom( count, cAlphaOnly ){
+        function loadRandom( count, backboneOnly ){
             var pdbIdList = getRandomPdbIdList( count, fullPdbIdList );
-            load( pdbIdList, cAlphaOnly );
+            load( pdbIdList, backboneOnly );
         }
 
-        function load( pdbIdList, cAlphaOnly ){
+        function load( pdbIdList, backboneOnly ){
             var statusInfo = $( "statusInfo" );
             statusInfo.innerText = "0 of " + pdbIdList.length + " (0 failed) -- 0.00ms";
             worker.postMessage( {
                 pdbIdList: pdbIdList,
-                cAlphaOnly: cAlphaOnly
+                backboneOnly: backboneOnly
             } );
         }
 
@@ -157,7 +157,7 @@
             <option value="all">all</option>
         </select>
         <button id="loadButton">load</button>
-        <input type="checkbox" id="cAlphaOnlyInput"></input>C-alpha only
+        <input type="checkbox" id="backboneOnlyInput"></input>Backbone only
     </div>
 
     <br/>

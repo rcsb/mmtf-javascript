@@ -97,9 +97,9 @@ function makeXhrPromise( method, url, responseType ){
 }
 
 
-function loadStructure( pdbid, cAlphaOnly ){
+function loadStructure( pdbid, backboneOnly ){
     var promise = makeXhrPromise(
-        "GET", getMmtfUrl( pdbid, cAlphaOnly ), "arraybuffer"
+        "GET", getMmtfUrl( pdbid, backboneOnly ), "arraybuffer"
     );
     return promise.then( function( result ){
         try{
@@ -119,10 +119,10 @@ function loadStructure( pdbid, cAlphaOnly ){
 }
 
 
-function loadBunch( pdbIdList, cAlphaOnly ){
+function loadBunch( pdbIdList, backboneOnly ){
     var promiseList = [];
     for( var i = 0, il = pdbIdList.length; i < il; ++i ){
-        promiseList.push( loadStructure( pdbIdList[ i ], cAlphaOnly ) );
+        promiseList.push( loadStructure( pdbIdList[ i ], backboneOnly ) );
     }
     return Promise.all( promiseList );
 }
@@ -130,7 +130,7 @@ function loadBunch( pdbIdList, cAlphaOnly ){
 
 onmessage = function( e ){
     var pdbIdList = e.data.pdbIdList;
-    var cAlphaOnly = e.data.cAlphaOnly;
+    var backboneOnly = e.data.backboneOnly;
     var chunkList = [];
     var statsList = [];
 
@@ -147,7 +147,7 @@ onmessage = function( e ){
     var queue = new Queue( function( start, callback ){
         var pdbIdChunk = pdbIdList.slice( start, start + chunkSize );
         var t0 = performance.now();
-        loadBunch( pdbIdChunk, cAlphaOnly ).then( function( sdList ){
+        loadBunch( pdbIdChunk, backboneOnly ).then( function( sdList ){
             var t1 = performance.now();
             status.timeMs += t1 - t0;
             sdList.forEach( function( stats ){

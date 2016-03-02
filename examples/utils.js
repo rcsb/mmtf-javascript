@@ -28,10 +28,10 @@ function formatMilliseconds( ms ){
 	return l.join( " " );
 }
 
-function getMmtfUrl( pdbid, cAlphaOnly ){
+function getMmtfUrl( pdbid, backboneOnly ){
     pdbid = pdbid.toUpperCase();
     var baseUrl;
-    if( cAlphaOnly ){
+    if( backboneOnly ){
         baseUrl = "http://mmtf.rcsb.org/backbone/";
     }else{
         baseUrl = "http://mmtf.rcsb.org/full/";
