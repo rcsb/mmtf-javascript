@@ -14,6 +14,7 @@ var status = {
     finished: 0,
     failed: 0,
     timeMs: 0,
+    backboneOnly: undefined
 };
 
 var errors = {};
@@ -138,6 +139,7 @@ onmessage = function( e ){
     status.finished = 0;
     status.failed = 0;
     status.timeMs = 0;
+    status.backboneOnly = backboneOnly;
 
     var chunkSize = 100;
     for( var i = 0, il = pdbIdList.length; i < il; i += chunkSize ){

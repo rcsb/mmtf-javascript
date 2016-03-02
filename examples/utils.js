@@ -174,12 +174,14 @@ function showStats( stats, id ){
     stats.msgpackSize = fileSizeSI( stats.msgpackByteLength );
     stats.coordsSize = fileSizeSI( stats.coordByteLength );
     stats.bfactorSize = fileSizeSI( stats.bfactorByteLength );
+    stats.overallTime = formatMilliseconds( stats.overallTimeMs );
     stats.decodeTime = formatMilliseconds( stats.decodeTimeMs );
     stats.decodeMsgpackTime = formatMilliseconds( stats.decodeMsgpackTimeMs );
     stats.decodeMmtfTime = formatMilliseconds( stats.decodeMmtfTimeMs );
     delete stats.msgpackByteLength;
     delete stats.coordByteLength;
     delete stats.bfactorByteLength;
+    delete stats.overallTimeMs;
     delete stats.decodeTimeMs;
     delete stats.decodeMsgpackTimeMs;
     delete stats.decodeMmtfTimeMs;
@@ -201,11 +203,6 @@ function objectListToCsv( objList ){
         strList.push( rowList.join( "," ) );
     }
     return strList.join( "\n" );
-}
-
-function getDateString(){
-    var now = new Date();
-    return now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
 }
 
 function download( data, downloadName ){
@@ -246,5 +243,16 @@ function downloadStats( stats, asCsv ){
 function downloadErrors( errors ){
     var filename = "mmtf-errors.json";
     var data = JSON.stringify( errors, null, '\t' );
+    download( data, filename );
+}
+
+function downloadSummary( status, avg, sum ){
+    var filename = "mmtf-summary.json";
+    var summary = {
+        status: status,
+        avg: avg,
+        sum: sum
+    };
+    var data = JSON.stringify( summary, null, '\t' );
     download( data, filename );
 }

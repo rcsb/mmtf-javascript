@@ -20,6 +20,9 @@
         var fullPdbIdList = [];
         var currentStats = {};
         var currentErrors = {};
+        var currentStatus = {};
+        var currentAvg = {};
+        var currentSum = {};
         var worker = new Worker( "worker.js" );
 
         document.addEventListener( "DOMContentLoaded", function(){
@@ -34,6 +37,9 @@
             } );
             $( "downloadErrors" ).addEventListener( "click", function(){
                 downloadErrors( currentErrors );
+            } );
+            $( "downloadSummary" ).addEventListener( "click", function(){
+                downloadSummary( currentStatus, currentAvg, currentSum );
             } );
             loadPdbIdList();
         } );
@@ -88,19 +94,16 @@
 
         worker.onmessage = function( e ){
             if( e.data.status === undefined ){
-                console.log("onmessage",e.data)
+                console.log( "onmessage", e.data );
                 return;
             }
             var status = e.data.status;
-            status.time = formatMilliseconds( status.timeMs );
-            delete status.timeMs;
-            $( "statusJson" ).innerText = JSON.stringify( status );
             $( "statusInfo" ).innerText = (
                 status.finished + " of " + status.requested +
-                " (" + status.failed + " failed) -- " + status.time
+                " (" + status.failed + " failed) -- " + formatMilliseconds( status.timeMs )
             );
             var statsList = e.data.statsList;
-            var sumStats = { type: "sum", count: statsList.length };
+            var sumStats = { type: "sum", count: statsList.length, overallTimeMs: status.timeMs };
             var countList = [
                 "numBonds", "numAtoms", "numGroups", "numChains", "numModels"
             ];
@@ -117,16 +120,19 @@
                     sumStats[ name ] += stats[ name ];
                 } );
             } );
+            var sumStatsPrint = Object.assign( {}, sumStats );
             var avgStats = Object.assign( {}, sumStats, { type: "average" } );
             nameList.forEach( function( name ){
                 avgStats[ name ] /= statsList.length;
             } );
+            avgStats.overallTimeMs /= statsList.length;
+            var avgStatsPrint = Object.assign( {}, avgStats );
             countList.forEach( function( name ){
-                avgStats[ name ] = avgStats[ name ].toFixed( 2 );
+                avgStatsPrint[ name ] = avgStatsPrint[ name ].toFixed( 2 );
             } );
             delete sumStats.msgpackBytesPerAtom;
-            showStats( avgStats, "avgStats" );
-            showStats( sumStats, "sumStats" );
+            showStats( avgStatsPrint, "avgStats" );
+            showStats( sumStatsPrint, "sumStats" );
             if( status.requested === ( status.finished + status.failed ) ){
                 $( "statsListJson" ).innerText = JSON.stringify( e.data.statsList, null, '\t' );
                 $( "statsSumJson" ).innerText = JSON.stringify( sumStats, null, '\t' );
@@ -134,6 +140,9 @@
                 $( "errorsJson" ).innerText = JSON.stringify( e.data.errors, null, '\t' );
                 currentStats = e.data.statsList;
                 currentErrors = e.data.errors;
+                currentStatus = e.data.status;
+                currentAvg = avgStats;
+                currentSum = sumStats;
                 $( "downloads" ).style.display = "block";
             }
         };
@@ -172,6 +181,7 @@
         Downloads
         <button id="downloadStats">stats</button>
         <button id="downloadErrors">errors</button>
+        <button id="downloadSummary">summary</button>
     </div>
 
     <br/>
