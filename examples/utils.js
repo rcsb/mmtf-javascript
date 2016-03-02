@@ -188,3 +188,63 @@ function showStats( stats, id ){
     }
     printObject( stats, id );
 }
+
+function objectListToCsv( objList ){
+    var nameList = Object.keys( objList[ 0 ] );
+    var strList = [ nameList.join( "," ) ];
+    for( var i = 0, il = objList.length; i < il; ++i ){
+        var obj = objList[ i ];
+        var rowList = [];
+        for( var j = 0, jl = nameList.length; j < jl; ++j ){
+            rowList.push( obj[ nameList[ j ] ] );
+        }
+        strList.push( rowList.join( "," ) );
+    }
+    return strList.join( "\n" );
+}
+
+function getDateString(){
+    var now = new Date();
+    return now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
+}
+
+function download( data, downloadName ){
+    downloadName = downloadName || "download";
+    var a = document.createElement( 'a' );
+    a.style.display = "hidden";
+    document.body.appendChild( a );
+    if( data instanceof Blob ){
+        a.href = URL.createObjectURL( data );
+    }else{
+        // assume text
+        a.href = URL.createObjectURL(
+            new Blob( [ data ], { type: 'text/plain' } )
+        );
+    }
+    a.download = downloadName;
+    a.target = "_blank";
+    a.click();
+    document.body.removeChild( a );
+    if( data instanceof Blob ){
+        URL.revokeObjectURL( data );
+    }
+};
+
+function downloadStats( stats, asCsv ){
+    var filename = "mmtf-stats";
+    var data;
+    if( asCsv ){
+        data = objectListToCsv( stats );
+        filename += ".csv";
+    }else{
+        data = JSON.stringify( stats, null, '\t' );
+        filename += ".json";
+    }
+    download( data, filename );
+}
+
+function downloadErrors( errors ){
+    var filename = "mmtf-errors.json";
+    var data = JSON.stringify( errors, null, '\t' );
+    download( data, filename );
+}

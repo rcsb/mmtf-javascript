@@ -18,17 +18,22 @@
     <script>
 
         var fullPdbIdList = [];
+        var currentStats = {};
+        var currentErrors = {};
         var worker = new Worker( "worker.js" );
 
         document.addEventListener( "DOMContentLoaded", function(){
-            var countSelect = $( "countSelect" );
-            var backboneOnlyInput = $( "backboneOnlyInput" );
-            backboneOnlyInput.addEventListener( "change", function(){
-                loadRandom( countSelect.value, backboneOnlyInput.checked );
+            $( "backboneOnlyInput" ).addEventListener( "change", function(){
+                loadRandom( $( "countSelect" ).value, backboneOnlyInput.checked );
             } );
-            var loadButton = document.getElementById( "loadButton" );
-            loadButton.addEventListener( "click", function(){
-                loadRandom( countSelect.value, backboneOnlyInput.checked );
+            $( "loadButton" ).addEventListener( "click", function(){
+                loadRandom( $( "countSelect" ).value, backboneOnlyInput.checked );
+            } );
+            $( "downloadStats" ).addEventListener( "click", function(){
+                downloadStats( currentStats, true );
+            } );
+            $( "downloadErrors" ).addEventListener( "click", function(){
+                downloadErrors( currentErrors );
             } );
             loadPdbIdList();
         } );
@@ -73,8 +78,8 @@
         }
 
         function load( pdbIdList, backboneOnly ){
-            var statusInfo = $( "statusInfo" );
-            statusInfo.innerText = "0 of " + pdbIdList.length + " (0 failed) -- 0.00ms";
+            $( "downloads" ).style.display = "none";
+            $( "statusInfo" ).innerText = "0 of " + pdbIdList.length + " (0 failed) -- 0.00ms";
             worker.postMessage( {
                 pdbIdList: pdbIdList,
                 backboneOnly: backboneOnly
@@ -89,10 +94,8 @@
             var status = e.data.status;
             status.time = formatMilliseconds( status.timeMs );
             delete status.timeMs;
-            var statusJson = $( "statusJson" );
-            statusJson.innerText = JSON.stringify( status );
-            var statusInfo = $( "statusInfo" );
-            statusInfo.innerText = (
+            $( "statusJson" ).innerText = JSON.stringify( status );
+            $( "statusInfo" ).innerText = (
                 status.finished + " of " + status.requested +
                 " (" + status.failed + " failed) -- " + status.time
             );
@@ -129,6 +132,9 @@
                 $( "statsSumJson" ).innerText = JSON.stringify( sumStats, null, '\t' );
                 $( "statsAvgJson" ).innerText = JSON.stringify( avgStats, null, '\t' );
                 $( "errorsJson" ).innerText = JSON.stringify( e.data.errors, null, '\t' );
+                currentStats = e.data.statsList;
+                currentErrors = e.data.errors;
+                $( "downloads" ).style.display = "block";
             }
         };
 
@@ -158,6 +164,14 @@
         </select>
         <button id="loadButton">load</button>
         <input type="checkbox" id="backboneOnlyInput"></input>Backbone only
+    </div>
+
+    <br/>
+
+    <div style="display:none;" id="downloads">
+        Downloads
+        <button id="downloadStats">stats</button>
+        <button id="downloadErrors">errors</button>
     </div>
 
     <br/>
