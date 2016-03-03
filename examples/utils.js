@@ -172,6 +172,10 @@ function showRandomAtomInfo( sh, id ){
 
 function showStats( stats, id ){
     stats.msgpackSize = fileSizeSI( stats.msgpackByteLength );
+    if( "msgpackBytesPerAtom" in stats ){
+        stats.msgpackSizePerAtom = fileSizeSI( stats.msgpackBytesPerAtom );
+        delete stats.msgpackBytesPerAtom;
+    }
     stats.coordsSize = fileSizeSI( stats.coordByteLength );
     stats.bfactorSize = fileSizeSI( stats.bfactorByteLength );
     stats.overallTime = formatMilliseconds( stats.overallTimeMs );
@@ -185,9 +189,6 @@ function showStats( stats, id ){
     delete stats.decodeTimeMs;
     delete stats.decodeMsgpackTimeMs;
     delete stats.decodeMmtfTimeMs;
-    if( "msgpackBytesPerAtom" in stats ){
-        stats.msgpackBytesPerAtom = stats.msgpackBytesPerAtom.toFixed( 2 );
-    }
     printObject( stats, id );
 }
 

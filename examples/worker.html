@@ -131,6 +131,7 @@
                 avgStatsPrint[ name ] = avgStatsPrint[ name ].toFixed( 2 );
             } );
             delete sumStats.msgpackBytesPerAtom;
+            delete sumStatsPrint.msgpackBytesPerAtom;
             showStats( avgStatsPrint, "avgStats" );
             showStats( sumStatsPrint, "sumStats" );
             if( status.requested === ( status.finished + status.failed ) ){
