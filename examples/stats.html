@@ -21,17 +21,6 @@
 
         var currentStructure;
 
-        function onload(){
-            if( this.status === 200 || this.status === 304 || this.status === 0 ){
-                var d = decodeSupervised( this.response, true );
-                currentStructure = new SimpleStructure( d.structure );
-                showStats( getStats( currentStructure, d.info ), "stats" );
-                showRandomAtomInfo( currentStructure, "atomInfo" );
-            }else{
-                error( "error loading" );
-            }
-        }
-
         function clear(){
             document.getElementById( "stats" ).innerHTML = "";
             document.getElementById( "atomInfo" ).innerHTML = "";
@@ -44,7 +33,20 @@
 
         function loadStructure( pdbid, backboneOnly ){
             var xhr = new XMLHttpRequest();
-            xhr.addEventListener( "load", onload, true );
+            var t0 = performance.now();
+            xhr.addEventListener( "load", function(){
+                if( this.status === 200 || this.status === 304 || this.status === 0 ){
+                    var d = decodeSupervised( this.response, true );
+                    var t1 = performance.now();
+                    currentStructure = new SimpleStructure( d.structure );
+                    var stats = getStats( currentStructure, d.info );
+                    stats.overallTimeMs = t1 - t0;
+                    showStats( stats, "stats" );
+                    showRandomAtomInfo( currentStructure, "atomInfo" );
+                }else{
+                    error( "error loading" );
+                }
+            }, true );
             xhr.addEventListener( "error", function(){ error( "error loading" ) }, true );
             xhr.responseType = "arraybuffer";
             xhr.open( "GET", getMmtfUrl( pdbid, backboneOnly ) );
