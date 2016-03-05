@@ -150,8 +150,12 @@ function decodeMmtf( binOrDict, littleEndian ){
         raw = binOrDict;
     }
 
-    // console.log( getInt32( raw.resOrder ) )
-    // console.log( raw )
+    // workaround
+    if( raw.internalChainsPerModel === undefined ){
+      raw.internalGroupsPerChain = raw.groupsPerChain;
+      raw.internalChainsPerModel = raw.chainsPerModel;
+      raw.internalChainList = raw.chainList;
+    }
 
     // hoisted loop variables
     var i, il, j, jl, k, kl;
@@ -161,7 +165,7 @@ function decodeMmtf( binOrDict, littleEndian ){
     var numAtoms = raw.numAtoms || 0;
     var numGroups = raw.groupTypeList.length / 4;
     var numChains = raw.chainList.length / 4;
-    var numModels = raw.chainsPerModel.length;
+    var numModels = raw.internalChainsPerModel.length;
 
     // maps
     var groupMap = raw.groupMap;
@@ -194,7 +198,7 @@ function decodeMmtf( binOrDict, littleEndian ){
     var cModelIndex = new Uint16Array( numChains );
     var cGroupOffset = new Uint32Array( numChains );
     var cGroupCount = new Uint32Array( numChains );
-    var cChainName = getUint8View( raw.chainList );  // get ascii encoded chain names  // new Uint8Array( 4 * numChains );
+    var cChainName = getUint8View( raw.internalChainList );  // get ascii encoded chain names  // new Uint8Array( 4 * numChains );
 
     // modelStore
     var mChainOffset = new Uint32Array( numModels );
@@ -251,11 +255,11 @@ function decodeMmtf( binOrDict, littleEndian ){
     }
 
     // set-up model-chain relations
-    var chainsPerModel = raw.chainsPerModel;
+    var internalChainsPerModel = raw.internalChainsPerModel;
     var modelChainCount;
     var chainOffset = 0;
     for( i = 0; i < numModels; ++i ){
-        modelChainCount = chainsPerModel[ i ];
+        modelChainCount = internalChainsPerModel[ i ];
         mChainOffset[ i ] = chainOffset;
         mChainCount[ i ] = modelChainCount;
         for( j = 0; j < modelChainCount; ++j ){
@@ -265,11 +269,11 @@ function decodeMmtf( binOrDict, littleEndian ){
     }
 
     // set-up chain-residue relations
-    var groupsPerChain = raw.groupsPerChain;
+    var internalGroupsPerChain = raw.internalGroupsPerChain;
     var chainGroupCount;
     var groupOffset = 0;
     for( i = 0; i < numChains; ++i ){
-        chainGroupCount = groupsPerChain[ i ];
+        chainGroupCount = internalGroupsPerChain[ i ];
         cGroupOffset[ i ] = groupOffset;
         cGroupCount[ i ] = chainGroupCount;
         for( j = 0; j < chainGroupCount; ++j ){
