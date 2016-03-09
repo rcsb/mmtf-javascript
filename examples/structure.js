@@ -39,7 +39,7 @@ function SimpleStructure( mmtfData ){
             d.groupStore.chainIndex[ index ],
             d.groupStore.atomOffset[ index ],
             d.groupStore.atomCount[ index ],
-            d.groupStore.groupNum[ index ],
+            d.groupStore.groupId[ index ],
             group.groupName,
             sstrucMap[ sstrucCode ]
         ];

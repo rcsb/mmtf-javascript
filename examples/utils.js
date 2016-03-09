@@ -142,7 +142,7 @@ function getAtomInfo( structure, index ){
         insCode: atom[ 10 ],
         occupancy: atom[ 11 ],
         //
-        groupNum: group[ 3 ],
+        groupId: group[ 3 ],
         groupName: group[ 4 ],
         secStruct: group[ 5 ],
         //

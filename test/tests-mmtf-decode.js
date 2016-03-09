@@ -172,12 +172,12 @@ function getEmptyFullMmtfDict(){
         occList: new Uint8Array( 0 ),
 
         // groups
-        groupNumList: new Uint8Array( 0 ),
+        groupIdList: new Uint8Array( 0 ),
         groupTypeList: new Uint8Array( 0 ),
         secStructList: new Uint8Array( 0 ),
 
         // chains
-        chainList: new Uint8Array( 0 ),
+        chainIdList: new Uint8Array( 0 ),
         groupsPerChain: new Uint8Array( 0 ),
 
         // models
@@ -206,12 +206,12 @@ function getEmptyRequiredMmtfDict(){
         zCoordSmall: new Uint8Array( 0 ),
 
         // groups
-        groupNumList: new Uint8Array( 0 ),
+        groupIdList: new Uint8Array( 0 ),
         groupTypeList: new Uint8Array( 0 ),
         secStructList: new Uint8Array( 0 ),
 
         // chains
-        chainList: new Uint8Array( 0 ),
+        chainIdList: new Uint8Array( 0 ),
         groupsPerChain: new Uint8Array( 0 ),
 
         // models
@@ -280,12 +280,12 @@ function getFilledFullMmtfDict(){
         occList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
 
         // groups
-        groupNumList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
+        groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
         groupTypeList: new Uint8Array( new Int32Array( [ 102 ] ).buffer ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
 
         // chains
-        chainList: new Uint8Array( [ 65, 0, 0, 0 ] ),
+        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -322,12 +322,12 @@ function getFilledRequiredMmtfDict(){
         zCoordSmall: new Uint8Array( new Int16Array( [ 3000 ] ).buffer ),
 
         // groups
-        groupNumList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
+        groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
         groupTypeList: new Uint8Array( new Int32Array( [ 10 ] ).buffer ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
 
         // chains
-        chainList: new Uint8Array( [ 65, 0, 0, 0 ] ),
+        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -370,7 +370,7 @@ QUnit.test( "empty full", function( assert ) {
             "atomCount": new Uint16Array( 0 ),
             "atomOffset": new Uint32Array( 0 ),
             "chainIndex": new Uint32Array( 0 ),
-            "groupNum": new Int32Array( 0 ),
+            "groupId": new Int32Array( 0 ),
             "groupTypeId": new Uint16Array( 0 ),
             "secStruct": new Int8Array( 0 )
         },
@@ -423,7 +423,7 @@ QUnit.test( "empty required", function( assert ) {
             "atomCount": new Uint16Array( 0 ),
             "atomOffset": new Uint32Array( 0 ),
             "chainIndex": new Uint32Array( 0 ),
-            "groupNum": new Int32Array( 0 ),
+            "groupId": new Int32Array( 0 ),
             "groupTypeId": new Uint16Array( 0 ),
             "secStruct": new Int8Array( 0 )
         },
@@ -499,7 +499,7 @@ QUnit.test( "filled full", function( assert ) {
             "atomCount": new Uint16Array( [ 2 ] ),
             "atomOffset": new Uint32Array( [ 0 ] ),
             "chainIndex": new Uint32Array( [ 0 ] ),
-            "groupNum": new Int32Array( [ 100 ] ),
+            "groupId": new Int32Array( [ 100 ] ),
             "groupTypeId": new Uint16Array( [ 102 ] ),
             "secStruct": new Int8Array( [ -1 ] )
         },
@@ -577,7 +577,7 @@ QUnit.test( "filled required", function( assert ) {
             "atomCount": new Uint16Array( [ 2 ] ),
             "atomOffset": new Uint32Array( [ 0 ] ),
             "chainIndex": new Uint32Array( [ 0 ] ),
-            "groupNum": new Int32Array( [ 100 ] ),
+            "groupId": new Int32Array( [ 100 ] ),
             "groupTypeId": new Uint16Array( [ 10 ] ),
             "secStruct": new Int8Array( [ -1 ] )
         },
@@ -617,7 +617,7 @@ QUnit.test( "empty required missing", function( assert ) {
     var names = [
         // "groupMap", "numBonds", "numAtoms",
         "xCoordBig", "xCoordSmall", "yCoordBig", "yCoordSmall", "zCoordBig", "zCoordSmall",
-        "groupNumList", "groupTypeList", "secStructList", "chainList",
+        "groupIdList", "groupTypeList", "secStructList", "chainIdList",
         // "groupsPerChain",
         "chainsPerModel"
     ];

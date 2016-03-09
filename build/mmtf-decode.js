@@ -389,12 +389,12 @@ var decodeMmtf = (function () {
           raw = binOrDict;
       }
 
-      // workaround
-      if( raw.internalChainsPerModel === undefined ){
-        raw.internalGroupsPerChain = raw.groupsPerChain;
-        raw.internalChainsPerModel = raw.chainsPerModel;
-        raw.internalChainList = raw.chainList;
-      }
+      // // workaround
+      // if( raw.internalChainsPerModel === undefined ){
+      //   raw.internalGroupsPerChain = raw.groupsPerChain;
+      //   raw.internalChainsPerModel = raw.chainsPerModel;
+      //   raw.internalChainList = raw.chainList;
+      // }
 
       // hoisted loop variables
       var i, il, j, jl, k, kl;
@@ -403,8 +403,8 @@ var decodeMmtf = (function () {
       var numBonds = raw.numBonds || 0;
       var numAtoms = raw.numAtoms || 0;
       var numGroups = raw.groupTypeList.length / 4;
-      var numChains = raw.chainList.length / 4;
-      var numModels = raw.internalChainsPerModel.length;
+      var numChains = raw.chainIdList.length / 4;
+      var numModels = raw.chainsPerModel.length;
 
       // maps
       var groupMap = raw.groupMap;
@@ -430,14 +430,14 @@ var decodeMmtf = (function () {
       var gAtomOffset = new Uint32Array( numGroups );
       var gAtomCount = new Uint16Array( numGroups );
       var gGroupTypeId = new Uint16Array( numGroups );
-      var gGroupNum = new Int32Array( numGroups );
+      var gGroupId = new Int32Array( numGroups );
       var gSecStruct = getInt8View( raw.secStructList );  // get secondary structure codes  // new Uint8Array( numGroups );
 
       // chainStore
       var cModelIndex = new Uint16Array( numChains );
       var cGroupOffset = new Uint32Array( numChains );
       var cGroupCount = new Uint32Array( numChains );
-      var cChainName = getUint8View( raw.internalChainList );  // get ascii encoded chain names  // new Uint8Array( 4 * numChains );
+      var cChainName = getUint8View( raw.chainIdList );  // get ascii encoded chain names  // new Uint8Array( 4 * numChains );
 
       // modelStore
       var mChainOffset = new Uint32Array( numModels );
@@ -494,11 +494,11 @@ var decodeMmtf = (function () {
       }
 
       // set-up model-chain relations
-      var internalChainsPerModel = raw.internalChainsPerModel;
+      var chainsPerModel = raw.chainsPerModel;
       var modelChainCount;
       var chainOffset = 0;
       for( i = 0; i < numModels; ++i ){
-          modelChainCount = internalChainsPerModel[ i ];
+          modelChainCount = chainsPerModel[ i ];
           mChainOffset[ i ] = chainOffset;
           mChainCount[ i ] = modelChainCount;
           for( j = 0; j < modelChainCount; ++j ){
@@ -508,11 +508,11 @@ var decodeMmtf = (function () {
       }
 
       // set-up chain-residue relations
-      var internalGroupsPerChain = raw.internalGroupsPerChain;
+      var groupsPerChain = raw.groupsPerChain;
       var chainGroupCount;
       var groupOffset = 0;
       for( i = 0; i < numChains; ++i ){
-          chainGroupCount = internalGroupsPerChain[ i ];
+          chainGroupCount = groupsPerChain[ i ];
           cGroupOffset[ i ] = groupOffset;
           cGroupCount[ i ] = chainGroupCount;
           for( j = 0; j < chainGroupCount; ++j ){
@@ -522,7 +522,7 @@ var decodeMmtf = (function () {
       }
 
       // run-length & delta decode group numbers
-      decodeDelta( decodeRunLength( getInt32( raw.groupNumList, undefined, littleEndian ), gGroupNum ) );
+      decodeDelta( decodeRunLength( getInt32( raw.groupIdList, undefined, littleEndian ), gGroupId ) );
 
       // get group type pointers
       getInt32( raw.groupTypeList, gGroupTypeId, littleEndian );
@@ -601,7 +601,7 @@ var decodeMmtf = (function () {
               atomOffset: gAtomOffset,
               atomCount: gAtomCount,
               groupTypeId: gGroupTypeId,
-              groupNum: gGroupNum,
+              groupId: gGroupId,
               secStruct: gSecStruct
           },
           chainStore: {
