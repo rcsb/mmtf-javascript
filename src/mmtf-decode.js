@@ -151,11 +151,10 @@ function decodeMmtf( binOrDict, littleEndian ){
     }
 
     // // workaround
-    // if( raw.internalChainsPerModel === undefined ){
-    //   raw.internalGroupsPerChain = raw.groupsPerChain;
-    //   raw.internalChainsPerModel = raw.chainsPerModel;
-    //   raw.internalChainList = raw.chainList;
-    // }
+    if( raw.chainIdList === undefined ){
+      raw.chainIdList = raw.chainList;
+      raw.groupIdList = raw.groupNumList;
+    }
 
     // hoisted loop variables
     var i, il, j, jl, k, kl;
