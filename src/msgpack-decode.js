@@ -22,10 +22,22 @@ export default function decodeMsgpack(buffer) {
   }
 
   function str(length) {
-    var subarray = buffer.subarray(offset, offset + length);
-    var value = String.fromCharCode.apply(null, subarray);
+    var array = buffer.subarray(offset, offset + length);
     offset += length;
-    return value;
+    // limit number of arguments to String.fromCharCode to something
+    // browsers can handle, see http://stackoverflow.com/a/22747272
+    var chunkSize = 0xffff;
+    if(length > chunkSize){
+      var c = [];
+      for(var i = 0; i < array.length; i += chunkSize) {
+        c.push(String.fromCharCode.apply(
+          null, array.subarray(i, i + chunkSize)
+        ));
+      }
+      return c.join("");
+    }else{
+      return String.fromCharCode.apply(null, array);
+    }
   }
 
   function array(length) {
