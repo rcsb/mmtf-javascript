@@ -16,14 +16,15 @@ function getInt8View( dataArray ){
 function getInt16( view, dataArray, littleEndian ){
     var o = view.byteOffset;
     var n = view.byteLength;
+    var i, i2, il;
     if( !dataArray ) dataArray = new Int16Array( n / 2 );
     if( littleEndian ){
         var dv = new DataView( view.buffer );
-        for( var i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
+        for( i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
             dataArray[ i ] = dv.getInt16( o + i2, littleEndian );
         }
     }else{
-        for( var i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
+        for( i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
             dataArray[ i ] = view[ i2 ] << 8 ^ view[ i2 + 1 ] << 0;
         }
     }
@@ -33,14 +34,15 @@ function getInt16( view, dataArray, littleEndian ){
 function getInt32( view, dataArray, littleEndian ){
     var o = view.byteOffset;
     var n = view.byteLength;
+    var i, i4, il;
     if( !dataArray ) dataArray = new Int32Array( n / 4 );
     if( littleEndian ){
         var dv = new DataView( view.buffer );
-        for( var i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+        for( i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
             dataArray[ i ] = dv.getInt32( o + i4, littleEndian );
         }
     }else{
-        for( var i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+        for( i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
             dataArray[ i ] = (
                 view[ i4     ] << 24 ^ view[ i4 + 1 ] << 16 ^
                 view[ i4 + 2 ] <<  8 ^ view[ i4 + 3 ] <<  0
@@ -128,7 +130,7 @@ function decodeFloatSplitList( bigArray, smallArray, divisor, dataArray, littleE
 
 function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
     var int32View = dataArray ? getInt32View( dataArray ) : undefined;
-    var int32 = decodeRunLength( getInt32( array, undefined, littleEndian ), int32View )
+    var int32 = decodeRunLength( getInt32( array, undefined, littleEndian ), int32View );
     return decodeFloat( int32, divisor, dataArray );
 }
 
@@ -218,15 +220,15 @@ function decodeMmtf( binOrDict, littleEndian ){
         decodeDelta( decodeRunLength( getInt32( raw.atomIdList, undefined, littleEndian ), aAtomId ) );
     }
 
-    // run-length decode altternate labels
+    // run-length decode alternate labels
     if( raw.altLabelList ){
         var rawAltLabelList = raw.altLabelList;
         for( i = 0, il = rawAltLabelList.length; i < il; i+=2 ){
-            var value = rawAltLabelList[ i ];
-            if( value === "?" ){
+            var rawAltLabel = rawAltLabelList[ i ];
+            if( rawAltLabel === "?" ){
                 rawAltLabelList[ i ] = 0;
             }else{
-                rawAltLabelList[ i ] = rawAltLabelList[ i ].charCodeAt( 0 );
+                rawAltLabelList[ i ] = rawAltLabel.charCodeAt( 0 );
             }
             rawAltLabelList[ i + 1 ] = parseInt( rawAltLabelList[ i + 1 ] );
         }
@@ -237,11 +239,11 @@ function decodeMmtf( binOrDict, littleEndian ){
     if( raw.insCodeList ){
         var rawInsCodeList = raw.insCodeList;
         for( i = 0, il = rawInsCodeList.length; i < il; i+=2 ){
-            var value = rawInsCodeList[ i ];
-            if( value === null ){
+            var rawInsCode = rawInsCodeList[ i ];
+            if( rawInsCode === null ){
                 rawInsCodeList[ i ] = 0;
             }else{
-                rawInsCodeList[ i ] = rawInsCodeList[ i ].charCodeAt( 0 );
+                rawInsCodeList[ i ] = rawInsCode.charCodeAt( 0 );
             }
             rawInsCodeList[ i + 1 ] = parseInt( rawInsCodeList[ i + 1 ] );
         }
