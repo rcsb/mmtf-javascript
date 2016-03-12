@@ -146,9 +146,6 @@ function getEmptyFullMmtfDict(){
         // counts
         numBonds: 0,
         numAtoms: 0,
-        numGroups: 0,
-        numChains: 0,
-        numModels: 0,
 
         // maps
         groupMap: {},
@@ -190,9 +187,6 @@ function getEmptyRequiredMmtfDict(){
         // counts
         numBonds: 0,
         numAtoms: 0,
-        numGroups: 0,
-        numChains: 0,
-        numModels: 0,
 
         // maps
         groupMap: {},
@@ -246,9 +240,6 @@ function getFilledFullMmtfDict(){
         // counts
         numBonds: 1,
         numAtoms: 2,
-        numGroups: 1,
-        numChains: 1,
-        numModels: 1,
 
         // maps
         groupMap: {
@@ -298,9 +289,6 @@ function getFilledRequiredMmtfDict(){
         // counts
         numBonds: 1,
         numAtoms: 2,
-        numGroups: 1,
-        numChains: 1,
-        numModels: 1,
 
         // maps
         groupMap: {
