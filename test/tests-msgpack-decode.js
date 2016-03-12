@@ -38,7 +38,7 @@ QUnit.test( "FixStr", function( assert ) {
     dv.setUint8( 2, 66 );
     dv.setUint8( 3, 67 );
     var result = decodeMsgpack( buffer );
-    assert.deepEqual( result, "ABC", "Passed!" );
+    assert.equal( result, "ABC", "Passed!" );
 });
 
 QUnit.test( "Negative FixInt", function( assert ) {
@@ -333,6 +333,23 @@ QUnit.test( "str 32", function( assert ) {
     dv.setUint8( 5, 65 );
     var result = decodeMsgpack( buffer );
     assert.equal( result, "A", "Passed!" );
+});
+
+QUnit.test( "very long str 32", function( assert ) {
+    var strLength = 65535 + 1;  // trigger chunked string decoding
+    var buffer = new Uint8Array( strLength + 5 );
+    var dv = new DataView( buffer.buffer )
+    dv.setUint8( 0, 0xdb );
+    dv.setUint32( 1, strLength, false );
+    dv.setUint8( 5, 65 );
+    dv.setUint8( 6, 66 );
+    dv.setUint8( 7, 67 );
+    dv.setUint8( strLength + 5 - 3, 67 );
+    dv.setUint8( strLength + 5 - 2, 66 );
+    dv.setUint8( strLength + 5 - 1, 65 );
+    var result = decodeMsgpack( buffer );
+    assert.ok( result.startsWith( "ABC" ), "String should start with ABC" );
+    assert.ok( result.endsWith( "CBA" ), "String should end with CBA" );
 });
 
 QUnit.test( "array 16", function( assert ) {
