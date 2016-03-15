@@ -137,11 +137,11 @@ QUnit.module( "mmtf decoding" );
 function getEmptyFullMmtfDict(){
     return {
         // header
-        unitCell: undefined,
-        spaceGroup: undefined,
-        bioAssembly: undefined,
-        pdbId: undefined,
-        title: undefined,
+        unitCell: [ 0, 0, 0, 0, 0, 0 ],
+        spaceGroup: "",
+        bioAssembly: {},
+        pdbId: "",
+        title: "",
 
         // counts
         numBonds: 0,
@@ -175,6 +175,7 @@ function getEmptyFullMmtfDict(){
 
         // chains
         chainIdList: new Uint8Array( 0 ),
+        chainNameList: new Uint8Array( 0 ),
         groupsPerChain: new Uint8Array( 0 ),
 
         // models
@@ -202,7 +203,6 @@ function getEmptyRequiredMmtfDict(){
         // groups
         groupIdList: new Uint8Array( 0 ),
         groupTypeList: new Uint8Array( 0 ),
-        secStructList: new Uint8Array( 0 ),
 
         // chains
         chainIdList: new Uint8Array( 0 ),
@@ -248,7 +248,9 @@ function getFilledFullMmtfDict(){
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
                 bondOrders: [ 2 ],
-                hetFlag: true
+                chemCompType: "L-PEPTIDE LINKING",
+                singleLetterCode: "G",
+                groupName: "GLY"
             }
         },
 
@@ -277,6 +279,7 @@ function getFilledFullMmtfDict(){
 
         // chains
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
+        chainNameList: new Uint8Array( [ 66, 0, 0, 0 ] ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -297,7 +300,9 @@ function getFilledRequiredMmtfDict(){
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
                 bondOrders: [ 2 ],
-                hetFlag: true
+                chemCompType: "L-PEPTIDE LINKING",
+                singleLetterCode: "G",
+                groupName: "GLY"
             }
         },
 
@@ -312,7 +317,6 @@ function getFilledRequiredMmtfDict(){
         // groups
         groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
         groupTypeList: new Uint8Array( new Int32Array( [ 10 ] ).buffer ),
-        secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
 
         // chains
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
@@ -325,13 +329,13 @@ function getFilledRequiredMmtfDict(){
 
 QUnit.test( "empty full", function( assert ) {
     var dict = getEmptyFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict );
+    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
-        pdbId: undefined,
-        spaceGroup: undefined,
-        bioAssembly: undefined,
-        title: undefined,
-        unitCell: undefined,
+        pdbId: "",
+        spaceGroup: "",
+        bioAssembly: {},
+        title: "",
+        unitCell: [ 0, 0, 0, 0, 0, 0 ],
         numAtoms: 0,
         numBonds: 0,
         numChains: 0,
@@ -363,6 +367,7 @@ QUnit.test( "empty full", function( assert ) {
             "secStruct": new Int8Array( 0 )
         },
         chainStore: {
+            "chainId": new Uint8Array( 0 ),
             "chainName": new Uint8Array( 0 ),
             "groupCount": new Uint32Array( 0 ),
             "groupOffset": new Uint32Array( 0 ),
@@ -378,7 +383,7 @@ QUnit.test( "empty full", function( assert ) {
 
 QUnit.test( "empty required", function( assert ) {
     var dict = getEmptyRequiredMmtfDict();
-    var decodedMmtf = decodeMmtf( dict );
+    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
         pdbId: undefined,
         spaceGroup: undefined,
@@ -397,12 +402,12 @@ QUnit.test( "empty required", function( assert ) {
             "bondOrder": new Uint8Array( 0 )
         },
         atomStore: {
-            "altLabel": new Uint8Array( 0 ),
-            "atomId": new Int32Array( 0 ),
-            "bFactor": new Float32Array( 0 ),
+            "altLabel": undefined,
+            "atomId": undefined,
+            "bFactor": undefined,
             "groupIndex": new Uint32Array( 0 ),
-            "insCode": new Uint8Array( 0 ),
-            "occupancy": new Float32Array( 0 ),
+            "insCode": undefined,
+            "occupancy": undefined,
             "xCoord": new Float32Array( 0 ),
             "yCoord": new Float32Array( 0 ),
             "zCoord": new Float32Array( 0 )
@@ -413,10 +418,11 @@ QUnit.test( "empty required", function( assert ) {
             "chainIndex": new Uint32Array( 0 ),
             "groupId": new Int32Array( 0 ),
             "groupTypeId": new Uint16Array( 0 ),
-            "secStruct": new Int8Array( 0 )
+            "secStruct": undefined
         },
         chainStore: {
-            "chainName": new Uint8Array( 0 ),
+            "chainId": new Uint8Array( 0 ),
+            "chainName": undefined,
             "groupCount": new Uint32Array( 0 ),
             "groupOffset": new Uint32Array( 0 ),
             "modelIndex": new Uint16Array( 0 )
@@ -431,7 +437,7 @@ QUnit.test( "empty required", function( assert ) {
 
 QUnit.test( "filled full", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict, true );
+    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
         unitCell: [ 10, 12, 30, 90, 90, 120 ],
         pdbId: "1XYZ",
@@ -464,7 +470,9 @@ QUnit.test( "filled full", function( assert ) {
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
                 bondOrders: [ 2 ],
-                hetFlag: true
+                chemCompType: "L-PEPTIDE LINKING",
+                singleLetterCode: "G",
+                groupName: "GLY"
             }
         },
         bondStore: {
@@ -492,7 +500,8 @@ QUnit.test( "filled full", function( assert ) {
             "secStruct": new Int8Array( [ -1 ] )
         },
         chainStore: {
-            "chainName": new Uint8Array( [ 65, 0, 0, 0 ] ),
+            "chainId": new Uint8Array( [ 65, 0, 0, 0 ] ),
+            "chainName": new Uint8Array( [  66, 0, 0, 0 ] ),
             "groupCount": new Uint32Array( [ 1 ] ),
             "groupOffset": new Uint32Array( [ 0 ] ),
             "modelIndex": new Uint16Array( [ 0 ] )
@@ -524,7 +533,7 @@ QUnit.test( "filled full", function( assert ) {
 
 QUnit.test( "filled required", function( assert ) {
     var dict = getFilledRequiredMmtfDict();
-    var decodedMmtf = decodeMmtf( dict, true );
+    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
         pdbId: undefined,
         spaceGroup: undefined,
@@ -542,7 +551,9 @@ QUnit.test( "filled required", function( assert ) {
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
                 bondOrders: [ 2 ],
-                hetFlag: true
+                chemCompType: "L-PEPTIDE LINKING",
+                singleLetterCode: "G",
+                groupName: "GLY"
             }
         },
         bondStore: {
@@ -551,12 +562,12 @@ QUnit.test( "filled required", function( assert ) {
             "bondOrder": new Uint8Array( [ 2, 0 ] )
         },
         atomStore: {
-            "altLabel": new Uint8Array( 2 ),
-            "atomId": new Int32Array( 2 ),
-            "bFactor": new Float32Array( 2 ),
+            "altLabel": undefined,
+            "atomId": undefined,
+            "bFactor": undefined,
             "groupIndex": new Uint32Array( 2 ),
-            "insCode": new Uint8Array( 2 ),
-            "occupancy": new Float32Array( 2 ),
+            "insCode": undefined,
+            "occupancy": undefined,
             "xCoord": new Float32Array( [ 10, 11 ] ),
             "yCoord": new Float32Array( [ 20, 22 ] ),
             "zCoord": new Float32Array( [ 30, 33 ] )
@@ -567,10 +578,11 @@ QUnit.test( "filled required", function( assert ) {
             "chainIndex": new Uint32Array( [ 0 ] ),
             "groupId": new Int32Array( [ 100 ] ),
             "groupTypeId": new Uint16Array( [ 10 ] ),
-            "secStruct": new Int8Array( [ -1 ] )
+            "secStruct": undefined
         },
         chainStore: {
-            "chainName": new Uint8Array( [ 65, 0, 0, 0 ] ),
+            "chainId": new Uint8Array( [ 65, 0, 0, 0 ] ),
+            "chainName": undefined,
             "groupCount": new Uint32Array( [ 1 ] ),
             "groupOffset": new Uint32Array( [ 0 ] ),
             "modelIndex": new Uint16Array( [ 0 ] )
@@ -605,7 +617,7 @@ QUnit.test( "empty required missing", function( assert ) {
     var names = [
         // "groupMap", "numBonds", "numAtoms",
         "xCoordBig", "xCoordSmall", "yCoordBig", "yCoordSmall", "zCoordBig", "zCoordSmall",
-        "groupIdList", "groupTypeList", "secStructList", "chainIdList",
+        "groupIdList", "groupTypeList", "chainIdList",
         // "groupsPerChain",
         "chainsPerModel"
     ];

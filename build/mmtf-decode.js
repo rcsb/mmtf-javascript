@@ -387,7 +387,12 @@ var decodeMmtf = (function () {
 
   //
 
-  function decodeMmtf( binOrDict, littleEndian ){
+  function decodeMmtf( binOrDict, params ){
+
+      params = params || {};
+
+      var littleEndian = params.littleEndian;
+      var ignoreFields = params.ignoreFields || [];
 
       // make sure binOrDict is not a plain Arraybuffer
       if( binOrDict instanceof ArrayBuffer ){
@@ -404,10 +409,19 @@ var decodeMmtf = (function () {
       }
 
       // // workaround
-      if( raw.chainIdList === undefined ){
+      if( raw.chainIdList === undefined && raw.chainList !== undefined ){
         raw.chainIdList = raw.chainList;
         raw.groupIdList = raw.groupNumList;
       }
+
+      // determine what optional fields to decode
+      var decodeBfactor = raw.bFactorBig && raw.bFactorSmall && ignoreFields.indexOf( "bFactor" ) === -1;
+      var decodeAtomId = raw.atomIdList && ignoreFields.indexOf( "atomId" ) === -1;
+      var decodeAltLabel = raw.altLabelList && ignoreFields.indexOf( "altLabel" ) === -1;
+      var decodeInsCode = raw.insCodeList && ignoreFields.indexOf( "insCode" ) === -1;
+      var decodeOccupancy = raw.occList && ignoreFields.indexOf( "occupancy" ) === -1;
+      var decodeSecStruct = raw.secStructList && ignoreFields.indexOf( "secStruct" ) === -1;
+      var decodeChainName = raw.chainNameList && ignoreFields.indexOf( "chainName" ) === -1;
 
       // hoisted loop variables
       var i, il, j, jl, k, kl;
@@ -432,11 +446,11 @@ var decodeMmtf = (function () {
       var aXcoord = new Float32Array( numAtoms );
       var aYcoord = new Float32Array( numAtoms );
       var aZcoord = new Float32Array( numAtoms );
-      var aBfactor = new Float32Array( numAtoms );
-      var aAtomId = new Int32Array( numAtoms );
-      var aAltLabel = new Uint8Array( numAtoms );
-      var aInsCode = new Uint8Array( numAtoms );
-      var aOccupancy = new Float32Array( numAtoms );
+      var aBfactor = decodeBfactor ? new Float32Array( numAtoms ) : undefined;
+      var aAtomId = decodeAtomId ? new Int32Array( numAtoms ) : undefined;
+      var aAltLabel = decodeAltLabel ? new Uint8Array( numAtoms ) : undefined;
+      var aInsCode = decodeInsCode ? new Uint8Array( numAtoms ) : undefined;
+      var aOccupancy = decodeOccupancy ? new Float32Array( numAtoms ) : undefined;
 
       // groupStore
       var gChainIndex = new Uint32Array( numGroups );
@@ -444,13 +458,14 @@ var decodeMmtf = (function () {
       var gAtomCount = new Uint16Array( numGroups );
       var gGroupTypeId = new Uint16Array( numGroups );
       var gGroupId = new Int32Array( numGroups );
-      var gSecStruct = getInt8View( raw.secStructList );  // get secondary structure codes  // new Uint8Array( numGroups );
+      var gSecStruct = decodeSecStruct ? getInt8View( raw.secStructList ) : undefined;
 
       // chainStore
       var cModelIndex = new Uint16Array( numChains );
       var cGroupOffset = new Uint32Array( numChains );
       var cGroupCount = new Uint32Array( numChains );
-      var cChainName = getUint8View( raw.chainIdList );  // get ascii encoded chain names  // new Uint8Array( 4 * numChains );
+      var cChainId = getUint8View( raw.chainIdList );
+      var cChainName = decodeChainName ? getUint8View( raw.chainNameList ) : undefined;
 
       // modelStore
       var mChainOffset = new Uint32Array( numModels );
@@ -462,17 +477,17 @@ var decodeMmtf = (function () {
       decodeFloatSplitList( raw.zCoordBig, raw.zCoordSmall, 1000, aZcoord, littleEndian );
 
       // split-list delta & integer decode b-factors
-      if( raw.bFactorBig && raw.bFactorSmall ){
+      if( decodeBfactor ){
           decodeFloatSplitList( raw.bFactorBig, raw.bFactorSmall, 100, aBfactor, littleEndian );
       }
 
       // delta & run-length decode atom ids
-      if( raw.atomIdList ){
+      if( decodeAtomId ){
           decodeDelta( decodeRunLength( getInt32( raw.atomIdList, undefined, littleEndian ), aAtomId ) );
       }
 
       // run-length decode alternate labels
-      if( raw.altLabelList ){
+      if( decodeAltLabel ){
           var rawAltLabelList = raw.altLabelList;
           for( i = 0, il = rawAltLabelList.length; i < il; i+=2 ){
               var rawAltLabel = rawAltLabelList[ i ];
@@ -487,7 +502,7 @@ var decodeMmtf = (function () {
       }
 
       // run-length decode insertion codes
-      if( raw.insCodeList ){
+      if( decodeInsCode ){
           var rawInsCodeList = raw.insCodeList;
           for( i = 0, il = rawInsCodeList.length; i < il; i+=2 ){
               var rawInsCode = rawInsCodeList[ i ];
@@ -502,7 +517,7 @@ var decodeMmtf = (function () {
       }
 
       // run-length & integer decode occupancies
-      if( raw.occList ){
+      if( decodeOccupancy ){
           decodeFloatRunLength( raw.occList, 100, aOccupancy, littleEndian );
       }
 
@@ -621,6 +636,7 @@ var decodeMmtf = (function () {
               modelIndex: cModelIndex,
               groupOffset: cGroupOffset,
               groupCount: cGroupCount,
+              chainId: cChainId,
               chainName: cChainName
           },
           modelStore: {

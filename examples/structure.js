@@ -24,11 +24,12 @@ function SimpleStructure( mmtfData ){
             d.atomStore.bFactor ? d.atomStore.bFactor[ index ] : null,
             group.atomInfo[ groupAtomIndex * 2 ],
             d.atomStore.atomId ? d.atomStore.atomId[ index ] : null,
-            group.hetFlag,
+            group.chemCompType,
             d.atomStore.altLabel ? String.fromCharCode( d.atomStore.altLabel[ index ] ) : null,
             group.atomInfo[ groupAtomIndex * 2 + 1 ],
             d.atomStore.insCode ? String.fromCharCode( d.atomStore.insCode[ index ] ) : null,
-            d.atomStore.occupancy ? d.atomStore.occupancy[ index ] : null
+            d.atomStore.occupancy ? d.atomStore.occupancy[ index ] : null,
+            group.singleLetterCode
         ];
     }
 
@@ -46,11 +47,11 @@ function SimpleStructure( mmtfData ){
     }
 
     function getChain( index ){
-        var chainName = "";
+        var chainId = "";
         for( var k = 0; k < 4; ++k ){
-            var code = d.chainStore.chainName[ 4 * index + k ];
+            var code = d.chainStore.chainId[ 4 * index + k ];
             if( code ){
-                chainName += String.fromCharCode( code );
+                chainId += String.fromCharCode( code );
             }else{
                 break;
             }
@@ -59,7 +60,7 @@ function SimpleStructure( mmtfData ){
             d.chainStore.modelIndex[ index ],
             d.chainStore.groupOffset[ index ],
             d.chainStore.groupCount[ index ],
-            chainName
+            chainId
         ];
     }
 

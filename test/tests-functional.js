@@ -168,10 +168,13 @@ function checkMmtfFields( decodedMmtf, assert ){
     );
 
     var reqChainStoreFields = [
-        "modelIndex", "groupOffset", "groupCount", "chainName"
+        "modelIndex", "groupOffset", "groupCount", "chainId"
+    ];
+    var optChainStoreFields = [
+        "chainName"
     ];
     checkDictFields(
-        decodedMmtf.chainStore, reqChainStoreFields, [], "chainStore", assert
+        decodedMmtf.chainStore, reqChainStoreFields, optChainStoreFields, "chainStore", assert
     );
 
     var reqModelStoreFields = [

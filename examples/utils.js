@@ -136,7 +136,7 @@ function getAtomInfo( structure, index ){
         bFactor: atom[ 4 ],
         element: atom[ 5 ],
         atomId: atom[ 6 ],
-        hetFlag: atom[ 7 ],
+        chemCompType: atom[ 7 ],
         altLabel: atom[ 8 ],
         atomName: atom[ 9 ],
         insCode: atom[ 10 ],
@@ -144,6 +144,7 @@ function getAtomInfo( structure, index ){
         //
         groupId: group[ 3 ],
         groupName: group[ 4 ],
+        singleLetterCode: atom[ 12 ],
         secStruct: group[ 5 ],
         //
         model: chain[ 0 ],
@@ -165,8 +166,8 @@ function showRandomAtomInfo( sh, id ){
     atomInfo.xCoord = atomInfo.xCoord.toFixed( 3 );
     atomInfo.yCoord = atomInfo.yCoord.toFixed( 3 );
     atomInfo.zCoord = atomInfo.zCoord.toFixed( 3 );
-    atomInfo.bFactor = atomInfo.bFactor.toFixed( 2 );
-    if( atomInfo.occupancy !== undefined ) atomInfo.occupancy = atomInfo.occupancy.toFixed( 2 );
+    if( atomInfo.bFactor !== null ) atomInfo.bFactor = atomInfo.bFactor.toFixed( 2 );
+    if( atomInfo.occupancy !== null ) atomInfo.occupancy = atomInfo.occupancy.toFixed( 2 );
     printObject( atomInfo, id );
 }
 
