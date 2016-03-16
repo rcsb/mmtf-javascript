@@ -136,6 +136,10 @@ QUnit.module( "mmtf decoding" );
 
 function getEmptyFullMmtfDict(){
     return {
+        // meta
+        mmtfVersion: "",
+        mmtfProducer: "",
+
         // header
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
         spaceGroup: "",
@@ -185,6 +189,10 @@ function getEmptyFullMmtfDict(){
 
 function getEmptyRequiredMmtfDict(){
     return {
+        // meta
+        mmtfVersion: "",
+        mmtfProducer: "",
+
         // counts
         numBonds: 0,
         numAtoms: 0,
@@ -215,6 +223,10 @@ function getEmptyRequiredMmtfDict(){
 
 function getFilledFullMmtfDict(){
     return {
+        // meta
+        mmtfVersion: "0.1",
+        mmtfProducer: "unittest",
+
         // header
         unitCell: [ 10, 12, 30, 90, 90, 120 ],
         spaceGroup: "P1",
@@ -289,6 +301,10 @@ function getFilledFullMmtfDict(){
 
 function getFilledRequiredMmtfDict(){
     return {
+        // meta
+        mmtfVersion: "0.1",
+        mmtfProducer: "unittest",
+
         // counts
         numBonds: 1,
         numAtoms: 2,
@@ -331,6 +347,8 @@ QUnit.test( "empty full", function( assert ) {
     var dict = getEmptyFullMmtfDict();
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
+        mmtfVersion: "",
+        mmtfProducer: "",
         pdbId: "",
         spaceGroup: "",
         bioAssembly: {},
@@ -385,6 +403,8 @@ QUnit.test( "empty required", function( assert ) {
     var dict = getEmptyRequiredMmtfDict();
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
+        mmtfVersion: "",
+        mmtfProducer: "",
         pdbId: undefined,
         spaceGroup: undefined,
         bioAssembly: undefined,
@@ -439,6 +459,8 @@ QUnit.test( "filled full", function( assert ) {
     var dict = getFilledFullMmtfDict();
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
+        mmtfVersion: "0.1",
+        mmtfProducer: "unittest",
         unitCell: [ 10, 12, 30, 90, 90, 120 ],
         pdbId: "1XYZ",
         spaceGroup: "P1",
@@ -535,6 +557,8 @@ QUnit.test( "filled required", function( assert ) {
     var dict = getFilledRequiredMmtfDict();
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var expectedMmtf = {
+        mmtfVersion: "0.1",
+        mmtfProducer: "unittest",
         pdbId: undefined,
         spaceGroup: undefined,
         bioAssembly: undefined,

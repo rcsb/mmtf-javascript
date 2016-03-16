@@ -656,7 +656,10 @@ var decodeMmtf = (function () {
           numAtoms: numAtoms,
           numGroups: numGroups,
           numChains: numChains,
-          numModels: numModels
+          numModels: numModels,
+
+          mmtfVersion: raw.mmtfVersion,
+          mmtfProducer: raw.mmtfProducer
       };
 
   }
