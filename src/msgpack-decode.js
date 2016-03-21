@@ -1,8 +1,12 @@
-
-// TODO license and attribution
-
+/**
+ * @file msgpack-decode
+ * @author Alexander Rose <alexander.rose@weirdbyte.de>
+ */
 
 export default function decodeMsgpack(buffer) {
+  // Loosely based on
+  // The MIT License (MIT)
+  // Copyright (c) 2013 Tim Caswell <tim@creationix.com>
   var offset = 0;
   var dataView = new DataView(buffer.buffer);
 

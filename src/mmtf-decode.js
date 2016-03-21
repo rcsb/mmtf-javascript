@@ -1,3 +1,7 @@
+/**
+ * @file msgpack-decode
+ * @author Alexander Rose <alexander.rose@weirdbyte.de>
+ */
 
 import decodeMsgpack from "./msgpack-decode.js";
 
