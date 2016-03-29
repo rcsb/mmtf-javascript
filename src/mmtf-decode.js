@@ -404,6 +404,12 @@ function decodeMmtf( binOrDict, params ){
         bioAssembly: raw.bioAssembly,
         pdbId: raw.pdbId,
         title: raw.title,
+        entityList: raw.entityList,
+
+        experimentalMethods: raw.experimentalMethods,
+        resolution: raw.resolution,
+        rFree: raw.rFree,
+        rWork: raw.rWork,
 
         numBonds: numBonds,
         numAtoms: numAtoms,

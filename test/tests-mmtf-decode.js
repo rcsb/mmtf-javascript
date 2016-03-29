@@ -146,6 +146,12 @@ function getEmptyFullMmtfDict(){
         bioAssembly: {},
         pdbId: "",
         title: "",
+        entityList: [],
+
+        experimentalMethods: [],
+        resolution: 0,
+        rFree: 0,
+        rWork: 0,
 
         // counts
         numBonds: 0,
@@ -248,6 +254,12 @@ function getFilledFullMmtfDict(){
         },
         pdbId: "1XYZ",
         title: "Full Test",
+        entityList: [],
+
+        experimentalMethods: [ "X-RAY DIFFRACTION" ],
+        resolution: 2.5,
+        rFree: 0.7,
+        rWork: 0.5,
 
         // counts
         numBonds: 1,
@@ -354,6 +366,11 @@ QUnit.test( "empty full", function( assert ) {
         bioAssembly: {},
         title: "",
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
+        entityList: [],
+        experimentalMethods: [],
+        resolution: 0,
+        rFree: 0,
+        rWork: 0,
         numAtoms: 0,
         numBonds: 0,
         numChains: 0,
@@ -410,6 +427,11 @@ QUnit.test( "empty required", function( assert ) {
         bioAssembly: undefined,
         title: undefined,
         unitCell: undefined,
+        entityList: undefined,
+        experimentalMethods: undefined,
+        resolution: undefined,
+        rFree: undefined,
+        rWork: undefined,
         numAtoms: 0,
         numBonds: 0,
         numChains: 0,

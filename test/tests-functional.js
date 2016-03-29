@@ -65,10 +65,10 @@ function checkGroupMapFields( groupMap, assert ){
 
 function checkBioAssemblyFields( bioAssembly, assert ){
     var reqAssemblyFields = [
-        "id", "macromolecularSize", "transforms"
+        "macroMolecularSize", "transforms"
     ];
     var reqPartFields = [
-        "id", "chainId", "transformation"
+        "chainIdList", "transformation"
     ];
     for( var assemblyId in bioAssembly ){
         var assembly = bioAssembly[ assemblyId ];
@@ -81,6 +81,18 @@ function checkBioAssemblyFields( bioAssembly, assert ){
                 part, reqPartFields, [], "part", assert
             );
         }
+    }
+}
+
+function checkEntityListFields( entityList, assert ){
+    var reqEntityFields = [
+        "chainIndexList", "description", "type"
+    ];
+    for( var i = 0, il = entityList.length; i < il; ++i ){
+        var entity = entityList[ i ];
+        checkDictFields(
+            entity, reqEntityFields, [], "entity", assert
+        );
     }
 }
 
@@ -110,6 +122,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
 
         // header
         "title", "pdbId", "bioAssembly", "unitCell", "spaceGroup", "experimentalMethods",
+        "resolution", "rFree", "rWork", "entityList",
         // counts
 
         // maps
@@ -134,6 +147,10 @@ function checkMsgpackFields( decodedMsgpack, assert ){
     if( decodedMsgpack.bioAssembly !== undefined ){
         checkBioAssemblyFields( decodedMsgpack.bioAssembly, assert );
     }
+
+    if( decodedMsgpack.entityList !== undefined ){
+        checkEntityListFields( decodedMsgpack.entityList, assert );
+    }
 }
 
 function checkMmtfFields( decodedMmtf, assert ){
@@ -151,7 +168,8 @@ function checkMmtfFields( decodedMmtf, assert ){
     ];
     var optTopLevelFields = [
         // header
-        "unitCell", "spaceGroup", "bioAssembly", "pdbId", "title",
+        "title", "pdbId", "bioAssembly", "unitCell", "spaceGroup", "experimentalMethods",
+        "resolution", "rFree", "rWork", "entityList",
         // counts
 
         // stores
@@ -165,7 +183,13 @@ function checkMmtfFields( decodedMmtf, assert ){
 
     checkGroupMapFields( decodedMmtf.groupMap, assert );
 
-    checkBioAssemblyFields( decodedMmtf.bioAssembly, assert );
+    if( decodedMmtf.bioAssembly !== undefined ){
+        checkBioAssemblyFields( decodedMmtf.bioAssembly, assert );
+    }
+
+    if( decodedMmtf.entityList !== undefined ){
+        checkEntityListFields( decodedMmtf.entityList, assert );
+    }
 
     var reqBondStoreFields = [
         "atomIndex1", "atomIndex2", "bondOrder"
@@ -269,10 +293,35 @@ function checkCommonTypes( decodedDict, assert ){
             "spaceGroup must be a string"
         );
     }
+    if( decodedDict.entityList !== undefined ){
+        assert.ok(
+            Array.isArray( decodedDict.entityList ),
+            "when given, entityList must be an array"
+        );
+    }
+
     if( decodedDict.experimentalMethods !== undefined ){
         assert.ok(
             Array.isArray( decodedDict.experimentalMethods ),
             "when given, experimentalMethods must be an array"
+        );
+    }
+    if( decodedDict.resolution !== undefined ){
+        assert.ok(
+            typeof decodedDict.resolution === 'number',
+            "resolution must be a float"
+        );
+    }
+    if( decodedDict.rFree !== undefined ){
+        assert.ok(
+            typeof decodedDict.rFree === 'number',
+            "rFree must be a float"
+        );
+    }
+    if( decodedDict.rWork !== undefined ){
+        assert.ok(
+            typeof decodedDict.rWork === 'number',
+            "rWork must be a float"
         );
     }
 }
@@ -778,7 +827,7 @@ QUnit.test( "decode mmtf 1d66 full", function( assert ) {
 
         assert.equal( decodedMmtf.pdbId, "1D66", "Wrong PDB ID" );
 
-        assert.equal( decodedMmtf.numBonds, 1888,  "Wrong number of bonds" );
+        assert.equal( decodedMmtf.numBonds, 1960,  "Wrong number of bonds" );
         assert.equal( decodedMmtf.numAtoms, 1762,  "Wrong number of atoms" );
         assert.equal( decodedMmtf.numGroups, 207,  "Wrong number of groups" );
         assert.equal( decodedMmtf.numChains, 12,  "Wrong number of chains" );
@@ -805,7 +854,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 
         assert.equal( decodedMsgpack.pdbId, "1D66", "Wrong PDB ID" );
 
-        assert.equal( decodedMsgpack.numBonds, 1888, "Wrong number of bonds" );
+        assert.equal( decodedMsgpack.numBonds, 1960, "Wrong number of bonds" );
         assert.equal( decodedMsgpack.numAtoms, 1762, "Wrong number of atoms" );
         assert.equal( decodedMsgpack.groupTypeList.length / 4, 207, "Wrong number of groups" );
         assert.equal( decodedMsgpack.groupsPerChain.length, 12, "Wrong number of chains" );
