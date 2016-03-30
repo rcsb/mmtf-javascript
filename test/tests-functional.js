@@ -740,6 +740,103 @@ function checkMmtfConsistency( decodedMmtf, assert ){
 
 
 /////////////////////
+// check vocabulary
+//
+function checkCommonVocabulary( decodedDict, assert ){
+
+    function toUpperCase( str ){
+        return str.toUpperCase();
+    }
+
+    // experimentalMethods
+
+    var knownExperimentalMethods = [
+        "ELECTRON CRYSTALLOGRAPHY", "ELECTRON MICROSCOPY", "EPR", "FIBER DIFFRACTION",
+        "FLUORESCENCE TRANSFER", "INFRARED SPECTROSCOPY", "NEUTRON DIFFRACTION",
+        "POWDER DIFFRACTION", "SOLID-STATE NMR", "SOLUTION NMR", "SOLUTION SCATTERING",
+        "THEORETICAL MODEL", "X-RAY DIFFRACTION"
+    ].map( toUpperCase );
+
+    if( decodedDict.experimentalMethods !== undefined ){
+        decodedDict.experimentalMethods.forEach( function( method ){
+            assert.ok(
+                knownExperimentalMethods.indexOf( method.toUpperCase() ) !== -1,
+                "unknown experimental method '" + method + "'"
+            );
+        } );
+    }
+
+    // groupType.chemCompType
+
+    var knownChemCompTypes = [
+        "D-beta-peptide", "C-gamma linking", "D-gamma-peptide", "C-delta linking",
+        "D-peptide COOH carboxy terminus", "D-peptide NH3 amino terminus",
+        "D-peptide linking", "D-saccharide", "D-saccharide 1,4 and 1,4 linking",
+        "D-saccharide 1,4 and 1,6 linking", "DNA OH 3 prime terminus", "DNA OH 5 prime terminus",
+        "DNA linking", "L-DNA linking", "L-RNA linking", "L-beta-peptide, C-gamma linking",
+        "L-gamma-peptide, C-delta linking", "L-peptide COOH carboxy terminus",
+        "L-peptide NH3 amino terminus", "L-peptide linking", "L-saccharide",
+        "L-saccharide 1,4 and 1,4 linking", "L-saccharide 1,4 and 1,6 linking",
+        "RNA OH 3 prime terminus", "RNA OH 5 prime terminus", "RNA linking",
+        "non-polymer", "other", "peptide linking", "peptide-like", "saccharide"
+    ].map( toUpperCase );
+
+    for( var groupId in decodedDict.groupMap ){
+        var groupType = decodedDict.groupMap[ groupId ];
+        if( groupType.chemCompType !== "" ){
+            assert.ok(
+                knownChemCompTypes.indexOf( groupType.chemCompType.toUpperCase() ) !== -1,
+                "unknown chemCompType '" + groupType.chemCompType + "'"
+            );
+        }
+    }
+
+    // entity.type
+
+    var knownEntityTypes = [
+        "macrolide", "non-polymer", "polymer", "water"
+    ].map( toUpperCase );
+
+    if( decodedDict.entityList ){
+        decodedDict.entityList.forEach( function( entity ){
+            if( entity.type !== "" ){
+                assert.ok(
+                    knownEntityTypes.indexOf( entity.type.toUpperCase() ) !== -1,
+                    "unknown entity type '" + entity.type + "'"
+                );
+            }
+        } );
+    }
+
+}
+
+function checkMsgpackVocabulary( msgpackDict, assert ){
+    checkCommonVocabulary( msgpackDict, assert );
+}
+
+function checkMmtfVocabulary( mmtfDict, assert ){
+    checkCommonVocabulary( mmtfDict, assert );
+}
+
+
+//////////
+// check
+
+function checkMsgpack( msgpackDict, assert ){
+    checkMsgpackFields( msgpackDict, assert );
+    checkMsgpackTypes( msgpackDict, assert );
+    checkMsgpackConsistency( msgpackDict, assert );
+    checkMsgpackVocabulary( msgpackDict, assert );
+}
+
+function checkMmtf( mmtfDict, assert ){
+    checkMmtfFields( mmtfDict, assert );
+    checkMmtfTypes( mmtfDict, assert );
+    checkMmtfConsistency( mmtfDict, assert );
+    checkMmtfVocabulary( mmtfDict, assert );
+}
+
+/////////////////////
 // functional tests
 //
 QUnit.module( "functional tests" );
@@ -770,9 +867,7 @@ QUnit.test( "decode mmtf 1crn full", function( assert ) {
 
         assert.equal( Object.keys( decodedMmtf.groupMap ).length, 16, "Passed!" );
 
-        checkMmtfFields( decodedMmtf, assert );
-        checkMmtfTypes( decodedMmtf, assert );
-        checkMmtfConsistency( decodedMmtf, assert );
+        checkMmtf( decodedMmtf, assert );
 
         done();
     }
@@ -805,9 +900,7 @@ QUnit.test( "decode msgpack 1crn full", function( assert ) {
 
         assert.equal( Object.keys( decodedMsgpack.groupMap ).length, 16, "Wrong number of groupMap entries" );
 
-        checkMsgpackFields( decodedMsgpack, assert );
-        checkMsgpackTypes( decodedMsgpack, assert );
-        checkMsgpackConsistency( decodedMsgpack, assert );
+        checkMsgpack( decodedMsgpack, assert );
 
         done();
     }
@@ -835,9 +928,7 @@ QUnit.test( "decode mmtf 1d66 full", function( assert ) {
 
         assert.equal( Object.keys( decodedMmtf.groupMap ).length, 24, "Wrong number of groupMap entries" );
 
-        checkMmtfFields( decodedMmtf, assert );
-        checkMmtfTypes( decodedMmtf, assert );
-        checkMmtfConsistency( decodedMmtf, assert );
+        checkMmtf( decodedMmtf, assert );
 
         done();
     }
@@ -862,9 +953,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 
         assert.equal( Object.keys( decodedMsgpack.groupMap ).length, 24, "Wrong number of groupMap entries" );
 
-        checkMsgpackFields( decodedMsgpack, assert );
-        checkMsgpackTypes( decodedMsgpack, assert );
-        checkMsgpackConsistency( decodedMsgpack, assert );
+        checkMsgpack( decodedMsgpack, assert );
 
         done();
     }
@@ -892,9 +981,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 
 //         assert.equal( Object.keys( decodedMmtf.groupMap ).length, 22, "Wrong number of groupMap entries" );
 
-//         checkMmtfFields( decodedMmtf, assert );
-//         checkMmtfTypes( decodedMmtf, assert );
-//         checkMmtfConsistency( decodedMmtf, assert );
+//         checkMmtf( decodedMmtf, assert );
 
 //         done();
 //     }
@@ -919,9 +1006,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 
 //         assert.equal( Object.keys( decodedMsgpack.groupMap ).length, 24, "Wrong number of groupMap entries" );
 
-//         checkMsgpackFields( decodedMsgpack, assert );
-//         checkMsgpackTypes( decodedMsgpack, assert );
-//         checkMsgpackConsistency( decodedMsgpack, assert );
+//         checkMsgpack( decodedMsgpack, assert );
 
 //         done();
 //     }
