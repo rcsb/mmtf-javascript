@@ -3,7 +3,7 @@
  * @author Alexander Rose <alexander.rose@weirdbyte.de>
  */
 
-export default function decodeMsgpack(buffer) {
+function decodeMsgpack(buffer) {
   // Loosely based on
   // The MIT License (MIT)
   // Copyright (c) 2013 Tim Caswell <tim@creationix.com>
@@ -253,3 +253,5 @@ export default function decodeMsgpack(buffer) {
 
   return parse();
 }
+
+export default decodeMsgpack;
