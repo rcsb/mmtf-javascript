@@ -62,15 +62,10 @@
         function loadPdbIdList(){
             var xhr = new XMLHttpRequest();
             xhr.open( "GET", "http://www.rcsb.org/pdb/json/getCurrent", true );
-            // xhr.responseType = "json";  // not supported in phantomjs
+            xhr.responseType = "json";
             xhr.addEventListener( "load", function(){
-                var response = JSON.parse( this.response );
-                console.log( "loaded list with " + response.idList.length + " pdb ids" );
-                fullPdbIdList = response.idList;
-                // var count = GET( "count" );
-                // if( count ){
-                //     loadRandom( parseInt( count ), GET( "backboneOnly" ) ? true : false );
-                // }
+                console.log( "loaded list with " + this.response.idList.length + " pdb ids" );
+                fullPdbIdList = this.response.idList;
             }, true );
             xhr.addEventListener( "error", function(){
                 console.error( "error loading pdb id list" )
