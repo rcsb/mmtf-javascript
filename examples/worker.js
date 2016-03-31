@@ -6,7 +6,7 @@ importScripts(
     "promise.min.js",
     "utils.js",
     "structure.js",
-    "../build/mmtf-decode.test.js"
+    "../build/cjs/mmtf-decode.js"
 );
 
 var status = {

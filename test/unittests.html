@@ -17,9 +17,17 @@
 
     <script src="blanket.min.js"></script>
 
-    <script src="../build/mmtf-decode.test.js" data-cover></script>
+    <script>
+        module = { exports: {} };
+        exports = {};
+    </script>
+
+    <script src="../build/cjs/mmtf-decode.js" data-cover></script>
+    <script src="../build/cjs/mmtf-decode-helpers.js" data-cover></script>
+    <script src="../build/cjs/msgpack-decode.js" data-cover></script>
 
     <script src="tests-msgpack-decode.js"></script>
+    <script src="tests-mmtf-decode-helpers.js"></script>
     <script src="tests-mmtf-decode.js"></script>
     <script src="tests-functional.js"></script>
 

@@ -256,6 +256,11 @@ function decodeMsgpack(buffer) {
   return parse();
 }
 
+/**
+ * @file msgpack-decode-helpers
+ * @author Alexander Rose <alexander.rose@weirdbyte.de>
+ */
+
 function getUint8View( dataArray ){
     return new Uint8Array(
         dataArray.buffer, dataArray.byteOffset, dataArray.byteLength
@@ -388,8 +393,6 @@ function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
     var int32 = decodeRunLength( getInt32( array, undefined, littleEndian ), int32View );
     return decodeFloat( int32, divisor, dataArray );
 }
-
-//
 
 function decodeMmtf( binOrDict, params ){
 

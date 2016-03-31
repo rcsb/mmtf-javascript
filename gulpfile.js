@@ -9,7 +9,7 @@ var uglify = require('gulp-uglify');
 var del = require('del');
 
 gulp.task('clean', function() {
-  return del(['build']);
+  del(['dist', 'build']);
 });
 
 gulp.task('lint', function() {
@@ -18,46 +18,32 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-gulp.task('test', ['bundle-test'], function() {
+gulp.task('test', ['build-cjs'], function() {
   return gulp.src('./test/unittests.html')
     .pipe(qunit());
 });
 
-gulp.task('bundle', function(){
-  gulp.src('src/mmtf-decode.js', {read: false})
-    .pipe(rollup({
-      sourceMap: true,
-      format: 'iife',
-      moduleName: 'decodeMmtf'
-    }))
-    .pipe(sourcemaps.write('.')) // needs rollup sourceMap option
-    .pipe(gulp.dest('build'));
-});
-
-gulp.task('bundle-test', function(){
-  gulp.src('src/mmtf-decode.js', {read: false})
-    .pipe(rollup({
-      format: 'cjs',
-      moduleName: 'decodeMmtf'
-    }))
-    .pipe(rename('mmtf-decode.test.js'))
-    .pipe(gulp.dest('build'));
-});
-
-gulp.task('compress', function() {
-  return gulp.src('build/*.js')
-    .pipe(uglify())
-    .pipe(gulp.dest('dist'));
-});
-
-gulp.task('scripts', ['clean'], function(){
+gulp.task('build', function(){
   gulp.src('src/mmtf-decode.js', {read: false})
     .pipe(rollup({
       format: 'iife',
       moduleName: 'decodeMmtf'
     }))
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('build-cjs', function(){
+  gulp.src('src/*', {read: false})
+    .pipe(rollup({ format: 'cjs' }))
+    .pipe(gulp.dest('build/cjs'));
+});
+
+gulp.task('compress', ['build'], function(){
+  gulp.src('build/mmtf-decode.js', {read: false})
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
+
+gulp.task('scripts', ['compress']);
 
 gulp.task('default', ['scripts']);
