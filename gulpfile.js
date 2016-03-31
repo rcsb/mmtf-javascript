@@ -24,7 +24,7 @@ gulp.task('test', ['build-cjs'], function() {
 });
 
 gulp.task('build', function(){
-  gulp.src('src/mmtf-decode.js', {read: false})
+  return gulp.src('./src/mmtf-decode.js', {read: false})
     .pipe(rollup({
       format: 'iife',
       moduleName: 'decodeMmtf'
@@ -33,13 +33,13 @@ gulp.task('build', function(){
 });
 
 gulp.task('build-cjs', function(){
-  gulp.src('src/*', {read: false})
+  return gulp.src('./src/*', {read: false})
     .pipe(rollup({ format: 'cjs' }))
     .pipe(gulp.dest('build/cjs'));
 });
 
 gulp.task('compress', ['build'], function(){
-  gulp.src('build/mmtf-decode.js', {read: false})
+  return gulp.src('./build/mmtf-decode.js')
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
