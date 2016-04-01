@@ -52,14 +52,15 @@ function getEmptyFullMmtfDict(){
         groupTypeList: new Uint8Array( 0 ),
         secStructList: new Uint8Array( 0 ),
         insCodeList: [],
+        seqResIdList: new Uint8Array( 0 ),
 
         // chains
         chainIdList: new Uint8Array( 0 ),
         chainNameList: new Uint8Array( 0 ),
-        groupsPerChain: new Uint8Array( 0 ),
+        groupsPerChain: [],
 
         // models
-        chainsPerModel: new Uint8Array( 0 ),
+        chainsPerModel: [],
     };
 }
 
@@ -90,10 +91,10 @@ function getEmptyRequiredMmtfDict(){
 
         // chains
         chainIdList: new Uint8Array( 0 ),
-        groupsPerChain: new Uint8Array( 0 ),
+        groupsPerChain: [],
 
         // models
-        chainsPerModel: new Uint8Array( 0 ),
+        chainsPerModel: [],
     };
 }
 
@@ -123,7 +124,14 @@ function getFilledFullMmtfDict(){
         ],
         pdbId: "1XYZ",
         title: "Full Test",
-        entityList: [],
+        entityList: [
+            {
+                chainIndexList: Array[1],
+                description: "Some Protein",
+                sequence: "A",
+                type: "polymer"
+            }
+        ],
 
         experimentalMethods: [ "X-RAY DIFFRACTION" ],
         resolution: 2.5,
@@ -169,6 +177,7 @@ function getFilledFullMmtfDict(){
         groupTypeList: new Uint8Array( new Int32Array( [ 102 ] ).buffer ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
         insCodeList: new Array( "X", 1 ),
+        seqResIdList: new Uint8Array( new Int32Array( [ 0, 1 ] ).buffer ),
 
         // chains
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
@@ -226,7 +235,10 @@ function getFilledRequiredMmtfDict(){
 
 QUnit.test( "empty full", function( assert ) {
     var dict = getEmptyFullMmtfDict();
+    assert.equal( Object.keys( dict ).length, 37, "Wrong number of fields in msgpack" );
+    checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    checkMmtf( decodedMmtf, assert );
     var expectedMmtf = {
         mmtfVersion: "",
         mmtfProducer: "",
@@ -287,7 +299,9 @@ QUnit.test( "empty full", function( assert ) {
 
 QUnit.test( "empty required", function( assert ) {
     var dict = getEmptyRequiredMmtfDict();
+    checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    checkMmtf( decodedMmtf, assert );
     var expectedMmtf = {
         mmtfVersion: "",
         mmtfProducer: "",
@@ -348,7 +362,10 @@ QUnit.test( "empty required", function( assert ) {
 
 QUnit.test( "filled full", function( assert ) {
     var dict = getFilledFullMmtfDict();
+    assert.equal( Object.keys( dict ).length, 37, "Wrong number of fields in msgpack" );
+    checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    checkMmtf( decodedMmtf, assert );
     var expectedMmtf = {
         mmtfVersion: "0.1",
         mmtfProducer: "unittest",
@@ -425,7 +442,7 @@ QUnit.test( "filled full", function( assert ) {
     };
     assert.equal( decodedMmtf.pdbId, expectedMmtf.pdbId, "Passed pdbId!" );
     assert.equal( decodedMmtf.spaceGroup, expectedMmtf.spaceGroup, "Passed spaceGroup!" );
-    assert.deepEqual( decodedMmtf.bioAssembly, expectedMmtf.bioAssembly, "Passed bioAssembly!" );
+    assert.deepEqual( decodedMmtf.bioAssemblyList, expectedMmtf.bioAssemblyList, "Passed bioAssemblyList!" );
     assert.equal( decodedMmtf.title, expectedMmtf.title, "Passed title!" );
     assert.deepEqual( decodedMmtf.unitCell, expectedMmtf.unitCell, "Passed unitcell!" );
 
@@ -445,7 +462,9 @@ QUnit.test( "filled full", function( assert ) {
 
 QUnit.test( "filled required", function( assert ) {
     var dict = getFilledRequiredMmtfDict();
+    checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    checkMmtf( decodedMmtf, assert );
     var expectedMmtf = {
         mmtfVersion: "0.1",
         mmtfProducer: "unittest",

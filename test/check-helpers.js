@@ -211,8 +211,11 @@ function checkMmtfFields( decodedMmtf, assert ){
     var reqGroupStoreFields = [
         "chainIndex", "atomOffset", "atomCount", "groupId", "groupTypeId", "secStruct"
     ];
+    var optGroupStoreFields = [
+        "insCode"
+    ];
     checkDictFields(
-        decodedMmtf.groupStore, reqGroupStoreFields, [], "groupStore", assert
+        decodedMmtf.groupStore, reqGroupStoreFields, optGroupStoreFields, "groupStore", assert
     );
 
     var reqChainStoreFields = [
@@ -735,7 +738,10 @@ function checkMmtfConsistency( decodedMmtf, assert ){
     assert.equal( chainStore.modelIndex.length, decodedMmtf.numChains, "numChains, modelIndex" );
     assert.equal( chainStore.groupOffset.length, decodedMmtf.numChains, "numChains, groupOffset" );
     assert.equal( chainStore.groupCount.length, decodedMmtf.numChains, "numChains, groupCount" );
-    assert.equal( chainStore.chainName.length, decodedMmtf.numChains * 4, "numChains, chainName" );
+    assert.equal( chainStore.chainId.length, decodedMmtf.numChains * 4, "numChains, chainId" );
+    if( chainStore.chainName !== undefined ){
+    	assert.equal( chainStore.chainName.length, decodedMmtf.numChains * 4, "numChains, chainName" );
+    }
 
     var modelStore = decodedMmtf.modelStore;
     assert.equal( modelStore.chainOffset.length, decodedMmtf.numModels, "numModels, chainOffset" );

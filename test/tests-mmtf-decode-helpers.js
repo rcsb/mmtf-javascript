@@ -65,15 +65,25 @@ QUnit.test( "decodeFloat", function( assert ) {
 });
 
 QUnit.test( "decodeRunLength", function( assert ) {
-    var runs = new Int32Array([
+    var runs1 = new Int32Array([
+        0, 1
+    ]);
+    var expected1 = new Int32Array([
+        0
+    ]);
+    var decoded1 = decodeRunLength( runs1 );
+    assert.equal( decoded1.length, 1, "Passed!" );
+    assert.deepEqual( decoded1, expected1, "Passed!" );
+    //
+    var runs2 = new Int32Array([
         0, 2, 3, 5
     ]);
-    var expected = new Int32Array([
+    var expected2 = new Int32Array([
         0, 0, 3, 3, 3, 3, 3
     ]);
-    var decoded = decodeRunLength( runs );
-    assert.equal( decoded.length, 7, "Passed!" );
-    assert.deepEqual( decoded, expected, "Passed!" );
+    var decoded2 = decodeRunLength( runs2 );
+    assert.equal( decoded2.length, 7, "Passed!" );
+    assert.deepEqual( decoded2, expected2, "Passed!" );
 });
 
 QUnit.test( "decodeDelta", function( assert ) {
