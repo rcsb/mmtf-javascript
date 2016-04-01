@@ -44,14 +44,14 @@ function getEmptyFullMmtfDict(){
         bFactorBig: new Uint8Array( 0 ),
         bFactorSmall: new Uint8Array( 0 ),
         atomIdList: new Uint8Array( 0 ),
-        altLabelList: new Array( 0 ),
-        insCodeList: new Array( 0 ),
+        altLabelList: [],
         occList: new Uint8Array( 0 ),
 
         // groups
         groupIdList: new Uint8Array( 0 ),
         groupTypeList: new Uint8Array( 0 ),
         secStructList: new Uint8Array( 0 ),
+        insCodeList: [],
 
         // chains
         chainIdList: new Uint8Array( 0 ),
@@ -163,13 +163,13 @@ function getFilledFullMmtfDict(){
         bFactorSmall: new Uint8Array( new Int16Array( [] ).buffer ),
         atomIdList: new Uint8Array( new Int32Array( [ 1, 2 ] ).buffer ),
         altLabelList: new Array( "A", 1, "B", 1 ),
-        insCodeList: new Array( "X", 2 ),
         occList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
 
         // groups
         groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
         groupTypeList: new Uint8Array( new Int32Array( [ 102 ] ).buffer ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
+        insCodeList: new Array( "X", 1 ),
 
         // chains
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
@@ -257,7 +257,6 @@ QUnit.test( "empty full", function( assert ) {
             "atomId": new Int32Array( 0 ),
             "bFactor": new Float32Array( 0 ),
             "groupIndex": new Uint32Array( 0 ),
-            "insCode": new Uint8Array( 0 ),
             "occupancy": new Float32Array( 0 ),
             "xCoord": new Float32Array( 0 ),
             "yCoord": new Float32Array( 0 ),
@@ -269,7 +268,8 @@ QUnit.test( "empty full", function( assert ) {
             "chainIndex": new Uint32Array( 0 ),
             "groupId": new Int32Array( 0 ),
             "groupTypeId": new Uint16Array( 0 ),
-            "secStruct": new Int8Array( 0 )
+            "secStruct": new Int8Array( 0 ),
+            "insCode": new Uint8Array( 0 )
         },
         chainStore: {
             "chainId": new Uint8Array( 0 ),
@@ -318,7 +318,6 @@ QUnit.test( "empty required", function( assert ) {
             "atomId": undefined,
             "bFactor": undefined,
             "groupIndex": new Uint32Array( 0 ),
-            "insCode": undefined,
             "occupancy": undefined,
             "xCoord": new Float32Array( 0 ),
             "yCoord": new Float32Array( 0 ),
@@ -330,7 +329,8 @@ QUnit.test( "empty required", function( assert ) {
             "chainIndex": new Uint32Array( 0 ),
             "groupId": new Int32Array( 0 ),
             "groupTypeId": new Uint16Array( 0 ),
-            "secStruct": undefined
+            "secStruct": undefined,
+            "insCode": undefined
         },
         chainStore: {
             "chainId": new Uint8Array( 0 ),
@@ -399,7 +399,6 @@ QUnit.test( "filled full", function( assert ) {
             "atomId": new Int32Array( [ 1, 2 ] ),
             "bFactor": new Float32Array( [ 99.99, 100.00 ] ),
             "groupIndex": new Uint32Array( 2 ),
-            "insCode": new Uint8Array( [ 88, 88 ] ),
             "occupancy": new Float32Array( [ 0.6, 0.4 ] ),
             "xCoord": new Float32Array( [ 50, 52 ] ),
             "yCoord": new Float32Array( [ 60, 63 ] ),
@@ -411,7 +410,8 @@ QUnit.test( "filled full", function( assert ) {
             "chainIndex": new Uint32Array( [ 0 ] ),
             "groupId": new Int32Array( [ 100 ] ),
             "groupTypeId": new Uint16Array( [ 102 ] ),
-            "secStruct": new Int8Array( [ -1 ] )
+            "secStruct": new Int8Array( [ -1 ] ),
+            "insCode": new Uint8Array( [ 88 ] )
         },
         chainStore: {
             "chainId": new Uint8Array( [ 65, 0, 0, 0 ] ),
@@ -482,7 +482,6 @@ QUnit.test( "filled required", function( assert ) {
             "atomId": undefined,
             "bFactor": undefined,
             "groupIndex": new Uint32Array( 2 ),
-            "insCode": undefined,
             "occupancy": undefined,
             "xCoord": new Float32Array( [ 10, 11 ] ),
             "yCoord": new Float32Array( [ 20, 22 ] ),
@@ -494,7 +493,8 @@ QUnit.test( "filled required", function( assert ) {
             "chainIndex": new Uint32Array( [ 0 ] ),
             "groupId": new Int32Array( [ 100 ] ),
             "groupTypeId": new Uint16Array( [ 10 ] ),
-            "secStruct": undefined
+            "secStruct": undefined,
+            "insCode": undefined
         },
         chainStore: {
             "chainId": new Uint8Array( [ 65, 0, 0, 0 ] ),

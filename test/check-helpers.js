@@ -130,9 +130,9 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // bonds
         "bondAtomList", "bondOrderList",
         // atoms
-        "bFactorBig", "bFactorSmall", "atomIdList", "altLabelList", "insCodeList", "occList",
+        "bFactorBig", "bFactorSmall", "atomIdList", "altLabelList", "occList",
         // groups
-        "secStructList", "seqResIdList",
+        "secStructList", "insCodeList", "seqResIdList",
         // chains
         "chainNameList", "chainSeqList"
         // models
@@ -200,7 +200,7 @@ function checkMmtfFields( decodedMmtf, assert ){
 
     var reqAtomStoreFields = [
         "groupIndex", "xCoord", "yCoord", "zCoord", "bFactor",
-        "atomId", "altLabel", "insCode", "occupancy"
+        "atomId", "altLabel", "occupancy"
     ];
     checkDictFields(
         decodedMmtf.atomStore, reqAtomStoreFields, [], "atomStore", assert
@@ -421,12 +421,6 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
             "altLabelList must be an array"
         );
     }
-    if( decodedMsgpack.insCodeList !== undefined ){
-        assert.ok(
-            Array.isArray( decodedMsgpack.insCodeList ),
-            "insCodeList must be an array"
-        );
-    }
     if( decodedMsgpack.occList !== undefined ){
         assert.ok(
             decodedMsgpack.occList instanceof Uint8Array,
@@ -439,6 +433,12 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
         assert.ok(
             decodedMsgpack.secStructList instanceof Uint8Array,
             "secStructList must be a Uint8Array instance"
+        );
+    }
+    if( decodedMsgpack.insCodeList !== undefined ){
+        assert.ok(
+            Array.isArray( decodedMsgpack.insCodeList ),
+            "insCodeList must be an array"
         );
     }
     if( decodedMsgpack.seqResIdList !== undefined ){
@@ -535,12 +535,6 @@ function checkMmtfTypes( decodedMmtf, assert ){
             "when given, altLabel must be an Uint8Array instance"
         );
     }
-    if( decodedMmtf.atomStore.insCode !== undefined ){
-        assert.ok(
-            decodedMmtf.atomStore.insCode instanceof Uint8Array,
-            "when given, insCode must be an Uint8Array instance"
-        );
-    }
     if( decodedMmtf.atomStore.occupancy !== undefined ){
         assert.ok(
             decodedMmtf.atomStore.occupancy instanceof Float32Array,
@@ -573,6 +567,12 @@ function checkMmtfTypes( decodedMmtf, assert ){
         assert.ok(
             decodedMmtf.groupStore.secStruct instanceof Int8Array,
             "when given, secStruct must be an Int8Array instance"
+        );
+    }
+    if( decodedMmtf.atomStore.insCode !== undefined ){
+        assert.ok(
+            decodedMmtf.atomStore.insCode instanceof Uint8Array,
+            "when given, insCode must be an Uint8Array instance"
         );
     }
 
@@ -710,9 +710,6 @@ function checkMmtfConsistency( decodedMmtf, assert ){
     if( atomStore.altLabel !== undefined ){
         assert.equal( atomStore.altLabel.length, decodedMmtf.numAtoms, "numAtoms, altLabel" );
     }
-    if( atomStore.insCode !== undefined ){
-        assert.equal( atomStore.insCode.length, decodedMmtf.numAtoms, "numAtoms, insCode" );
-    }
     if( atomStore.occupancy !== undefined ){
         assert.equal( atomStore.occupancy.length, decodedMmtf.numAtoms, "numAtoms, occupancy" );
     }
@@ -725,6 +722,9 @@ function checkMmtfConsistency( decodedMmtf, assert ){
     assert.equal( groupStore.groupId.length, decodedMmtf.numGroups, "numGroups, groupId" );
     if( groupStore.secStruct !== undefined ){
         assert.equal( groupStore.secStruct.length, decodedMmtf.numGroups, "numGroups, secStruct" );
+    }
+    if( groupStore.insCode !== undefined ){
+        assert.equal( groupStore.insCode.length, decodedMmtf.numGroups, "numGroups, insCode" );
     }
 
     var chainStore = decodedMmtf.chainStore;

@@ -425,9 +425,9 @@ function decodeMmtf( binOrDict, params ){
     var decodeBfactor = raw.bFactorBig && raw.bFactorSmall && ignoreFields.indexOf( "bFactor" ) === -1;
     var decodeAtomId = raw.atomIdList && ignoreFields.indexOf( "atomId" ) === -1;
     var decodeAltLabel = raw.altLabelList && ignoreFields.indexOf( "altLabel" ) === -1;
-    var decodeInsCode = raw.insCodeList && ignoreFields.indexOf( "insCode" ) === -1;
     var decodeOccupancy = raw.occList && ignoreFields.indexOf( "occupancy" ) === -1;
     var decodeSecStruct = raw.secStructList && ignoreFields.indexOf( "secStruct" ) === -1;
+    var decodeInsCode = raw.insCodeList && ignoreFields.indexOf( "insCode" ) === -1;
     var decodeChainName = raw.chainNameList && ignoreFields.indexOf( "chainName" ) === -1;
 
     // hoisted loop variables
@@ -456,7 +456,6 @@ function decodeMmtf( binOrDict, params ){
     var aBfactor = decodeBfactor ? new Float32Array( numAtoms ) : undefined;
     var aAtomId = decodeAtomId ? new Int32Array( numAtoms ) : undefined;
     var aAltLabel = decodeAltLabel ? new Uint8Array( numAtoms ) : undefined;
-    var aInsCode = decodeInsCode ? new Uint8Array( numAtoms ) : undefined;
     var aOccupancy = decodeOccupancy ? new Float32Array( numAtoms ) : undefined;
 
     // groupStore
@@ -466,6 +465,7 @@ function decodeMmtf( binOrDict, params ){
     var gGroupTypeId = new Uint16Array( numGroups );
     var gGroupId = new Int32Array( numGroups );
     var gSecStruct = decodeSecStruct ? getInt8View( raw.secStructList ) : undefined;
+    var gInsCode = decodeInsCode ? new Uint8Array( numGroups ) : undefined;
 
     // chainStore
     var cModelIndex = new Uint16Array( numChains );
@@ -520,7 +520,7 @@ function decodeMmtf( binOrDict, params ){
             }
             rawInsCodeList[ i + 1 ] = parseInt( rawInsCodeList[ i + 1 ] );
         }
-        decodeRunLength( rawInsCodeList, aInsCode );
+        decodeRunLength( rawInsCodeList, gInsCode );
     }
 
     // run-length & integer decode occupancies
@@ -628,7 +628,6 @@ function decodeMmtf( binOrDict, params ){
             bFactor: aBfactor,
             atomId: aAtomId,
             altLabel: aAltLabel,
-            insCode: aInsCode,
             occupancy: aOccupancy
         },
         groupStore: {
@@ -637,7 +636,8 @@ function decodeMmtf( binOrDict, params ){
             atomCount: gAtomCount,
             groupTypeId: gGroupTypeId,
             groupId: gGroupId,
-            secStruct: gSecStruct
+            secStruct: gSecStruct,
+            insCode: gInsCode
         },
         chainStore: {
             modelIndex: cModelIndex,
