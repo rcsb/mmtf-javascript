@@ -63,15 +63,14 @@ function checkGroupMapFields( groupMap, assert ){
     }
 }
 
-function checkBioAssemblyFields( bioAssembly, assert ){
+function checkBioAssemblyFields( bioAssemblyList, assert ){
     var reqAssemblyFields = [
-        "macroMolecularSize", "transforms"
+        "transforms"
     ];
     var reqPartFields = [
         "chainIdList", "transformation"
     ];
-    for( var assemblyId in bioAssembly ){
-        var assembly = bioAssembly[ assemblyId ];
+    bioAssemblyList.forEach( function( assembly ){
         checkDictFields(
             assembly, reqAssemblyFields, [], "assembly", assert
         );
@@ -81,7 +80,7 @@ function checkBioAssemblyFields( bioAssembly, assert ){
                 part, reqPartFields, [], "part", assert
             );
         }
-    }
+    } );
 }
 
 function checkEntityListFields( entityList, assert ){
@@ -121,7 +120,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // meta
 
         // header
-        "title", "pdbId", "bioAssembly", "unitCell", "spaceGroup", "experimentalMethods",
+        "title", "pdbId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
@@ -144,8 +143,8 @@ function checkMsgpackFields( decodedMsgpack, assert ){
 
     checkGroupMapFields( decodedMsgpack.groupMap, assert );
 
-    if( decodedMsgpack.bioAssembly !== undefined ){
-        checkBioAssemblyFields( decodedMsgpack.bioAssembly, assert );
+    if( decodedMsgpack.bioAssemblyList !== undefined ){
+        checkBioAssemblyFields( decodedMsgpack.bioAssemblyList, assert );
     }
 
     if( decodedMsgpack.entityList !== undefined ){
@@ -168,7 +167,7 @@ function checkMmtfFields( decodedMmtf, assert ){
     ];
     var optTopLevelFields = [
         // header
-        "title", "pdbId", "bioAssembly", "unitCell", "spaceGroup", "experimentalMethods",
+        "title", "pdbId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
@@ -183,8 +182,8 @@ function checkMmtfFields( decodedMmtf, assert ){
 
     checkGroupMapFields( decodedMmtf.groupMap, assert );
 
-    if( decodedMmtf.bioAssembly !== undefined ){
-        checkBioAssemblyFields( decodedMmtf.bioAssembly, assert );
+    if( decodedMmtf.bioAssemblyList !== undefined ){
+        checkBioAssemblyFields( decodedMmtf.bioAssemblyList, assert );
     }
 
     if( decodedMmtf.entityList !== undefined ){
@@ -275,10 +274,10 @@ function checkCommonTypes( decodedDict, assert ){
             "pdbId must be a string"
         );
     }
-    if( decodedDict.bioAssembly !== undefined ){
+    if( decodedDict.bioAssemblyList !== undefined ){
         assert.ok(
-            isObject( decodedDict.bioAssembly ),
-            "when given, bioAssembly must be an object"
+            Array.isArray( decodedDict.bioAssemblyList ),
+            "when given, bioAssemblyList must be an array"
         );
     }
     if( decodedDict.unitCell !== undefined ){

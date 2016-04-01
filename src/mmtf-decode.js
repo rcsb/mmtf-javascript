@@ -272,7 +272,7 @@ function decodeMmtf( binOrDict, params ){
 
         unitCell: raw.unitCell,
         spaceGroup: raw.spaceGroup,
-        bioAssembly: raw.bioAssembly,
+        bioAssemblyList: raw.bioAssemblyList,
         pdbId: raw.pdbId,
         title: raw.title,
         entityList: raw.entityList,

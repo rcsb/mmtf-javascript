@@ -13,7 +13,7 @@ function getEmptyFullMmtfDict(){
         // header
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
         spaceGroup: "",
-        bioAssembly: {},
+        bioAssemblyList: [],
         pdbId: "",
         title: "",
         entityList: [],
@@ -106,12 +106,11 @@ function getFilledFullMmtfDict(){
         // header
         unitCell: [ 10, 12, 30, 90, 90, 120 ],
         spaceGroup: "P1",
-        bioAssembly: {
-            1: {
+        bioAssemblyList: [
+            {
                 transforms: [
                     {
-                        id: 1,
-                        chainId: [ "A" ],
+                        chainIdList: [ "A" ],
                         transformation: [
                             1, 0, 0, 0,
                             0, 1, 0, 0,
@@ -121,7 +120,7 @@ function getFilledFullMmtfDict(){
                     }
                 ]
             },
-        },
+        ],
         pdbId: "1XYZ",
         title: "Full Test",
         entityList: [],
@@ -233,7 +232,7 @@ QUnit.test( "empty full", function( assert ) {
         mmtfProducer: "",
         pdbId: "",
         spaceGroup: "",
-        bioAssembly: {},
+        bioAssemblyList: [],
         title: "",
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
         entityList: [],
@@ -294,7 +293,7 @@ QUnit.test( "empty required", function( assert ) {
         mmtfProducer: "",
         pdbId: undefined,
         spaceGroup: undefined,
-        bioAssembly: undefined,
+        bioAssemblyList: undefined,
         title: undefined,
         unitCell: undefined,
         entityList: undefined,
@@ -356,12 +355,11 @@ QUnit.test( "filled full", function( assert ) {
         unitCell: [ 10, 12, 30, 90, 90, 120 ],
         pdbId: "1XYZ",
         spaceGroup: "P1",
-        bioAssembly: {
-            1: {
+        bioAssemblyList: [
+            {
                 transforms: [
                     {
-                        id: 1,
-                        chainId: [ "A" ],
+                        chainIdList: [ "A" ],
                         transformation: [
                             1, 0, 0, 0,
                             0, 1, 0, 0,
@@ -371,7 +369,7 @@ QUnit.test( "filled full", function( assert ) {
                     }
                 ]
             },
-        },
+        ],
         title: "Full Test",
         numBonds: 1,
         numAtoms: 2,
@@ -453,7 +451,7 @@ QUnit.test( "filled required", function( assert ) {
         mmtfProducer: "unittest",
         pdbId: undefined,
         spaceGroup: undefined,
-        bioAssembly: undefined,
+        bioAssemblyList: undefined,
         title: undefined,
         unitCell: undefined,
         numBonds: 1,
@@ -510,7 +508,7 @@ QUnit.test( "filled required", function( assert ) {
     };
     assert.equal( decodedMmtf.pdbId, expectedMmtf.pdbId, "Passed pdbId!" );
     assert.equal( decodedMmtf.spaceGroup, expectedMmtf.spaceGroup, "Passed spaceGroup!" );
-    assert.deepEqual( decodedMmtf.bioAssembly, expectedMmtf.bioAssembly, "Passed bioAssembly!" );
+    assert.deepEqual( decodedMmtf.bioAssemblyList, expectedMmtf.bioAssemblyList, "Passed bioAssemblyList!" );
     assert.equal( decodedMmtf.title, expectedMmtf.title, "Passed title!" );
     assert.deepEqual( decodedMmtf.unitCell, expectedMmtf.unitCell, "Passed unitcell!" );
 
