@@ -16,8 +16,7 @@ function loadFile( url, onload, onerror ){
 //
 QUnit.module( "functional tests" );
 
-// curl http://mmtf.rcsb.org/full/1crn -o data/1crn.mmtf.gz
-// gzip -df data/1crn.mmtf.gz
+// curl http://mmtf.rcsb.org/full/1crn -o data/1crn.mmtf.gz && gzip -df data/1crn.mmtf.gz
 
 QUnit.test( "decode mmtf 1crn full", function( assert ) {
     var done = assert.async();
@@ -85,8 +84,7 @@ QUnit.test( "decode msgpack 1crn full", function( assert ) {
     loadFile( "../data/1crn.mmtf", onload, onerror );
 });
 
-// curl http://mmtf.rcsb.org/full/1d66 -o data/1d66.mmtf.gz
-// gzip -df data/1d66.mmtf.gz
+// curl http://mmtf.rcsb.org/full/1d66 -o data/1d66.mmtf.gz && gzip -df data/1d66.mmtf.gz
 
 QUnit.test( "decode mmtf 1d66 full", function( assert ) {
     var done = assert.async();
@@ -138,8 +136,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
     loadFile( "../data/1d66.mmtf", onload, onerror );
 });
 
-// curl http://mmtf.rcsb.org/backbone/1d66 -o data/1d66.bb.mmtf.gz
-// gzip -df data/1d66.bb.mmtf.gz
+// curl http://mmtf.rcsb.org/backbone/1d66 -o data/1d66.bb.mmtf.gz && gzip -df data/1d66.bb.mmtf.gz
 
 // QUnit.test( "decode mmtf 1d66 backbone", function( assert ) {
 //     var done = assert.async();
