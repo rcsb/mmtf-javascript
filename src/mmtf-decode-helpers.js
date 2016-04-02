@@ -121,7 +121,9 @@ function decodeSplitListDelta( bigArray, smallArray, dataArray ){
 }
 
 function decodeFloatSplitList( bigArray, smallArray, divisor, dataArray, littleEndian ){
-    var int32View = dataArray ? getInt32View( dataArray ) : undefined;
+    var fullLength = ( bigArray.length / 4 / 2 ) + smallArray.length / 2;
+    if( !dataArray ) dataArray = new Float32Array( fullLength );
+    var int32View = getInt32View( dataArray );
     var int32 = decodeSplitListDelta(
         getInt32( bigArray, undefined, littleEndian ),
         getInt16( smallArray, undefined, littleEndian ),
