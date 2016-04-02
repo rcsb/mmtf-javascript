@@ -163,10 +163,18 @@ function checkMmtfFields( decodedMmtf, assert ){
 
         // counts
         "numBonds", "numAtoms", "numGroups", "numChains", "numModels",
-        // stores
-        "bondStore", "atomStore", "groupStore", "chainStore", "modelStore",
         // maps
-        "groupMap"
+        "groupMap",
+        // bonds
+
+        // atoms
+        "xCoordList", "yCoordList", "zCoordList",
+        // groups
+        "groupIdList", "groupTypeList",
+        // chains
+        "chainIdList", "groupsPerChain",
+        // models
+        "chainsPerModel"
     ];
     var optTopLevelFields = [
         // header
@@ -174,9 +182,17 @@ function checkMmtfFields( decodedMmtf, assert ){
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
-        // stores
-
         // maps
+
+        // bonds
+        "bondAtomList", "bondOrderList",
+        // atoms
+        "bFactorList", "atomIdList", "altLabelList", "occList",
+        // groups
+        "secStructList", "insCodeList", "seqResIdList",
+        // chains
+        "chainNameList", "chainSeqList"
+        // models
 
     ];
     checkDictFields(
@@ -192,48 +208,6 @@ function checkMmtfFields( decodedMmtf, assert ){
     if( decodedMmtf.entityList !== undefined ){
         checkEntityListFields( decodedMmtf.entityList, assert );
     }
-
-    var reqBondStoreFields = [
-        "atomIndex1", "atomIndex2", "bondOrder"
-    ];
-    checkDictFields(
-        decodedMmtf.bondStore, reqBondStoreFields, [], "bondStore", assert
-    );
-
-    var reqAtomStoreFields = [
-        "groupIndex", "xCoord", "yCoord", "zCoord", "bFactor",
-        "atomId", "altLabel", "occupancy"
-    ];
-    checkDictFields(
-        decodedMmtf.atomStore, reqAtomStoreFields, [], "atomStore", assert
-    );
-
-    var reqGroupStoreFields = [
-        "chainIndex", "atomOffset", "atomCount", "groupId", "groupTypeId", "secStruct"
-    ];
-    var optGroupStoreFields = [
-        "insCode"
-    ];
-    checkDictFields(
-        decodedMmtf.groupStore, reqGroupStoreFields, optGroupStoreFields, "groupStore", assert
-    );
-
-    var reqChainStoreFields = [
-        "modelIndex", "groupOffset", "groupCount", "chainId"
-    ];
-    var optChainStoreFields = [
-        "chainName"
-    ];
-    checkDictFields(
-        decodedMmtf.chainStore, reqChainStoreFields, optChainStoreFields, "chainStore", assert
-    );
-
-    var reqModelStoreFields = [
-        "chainOffset", "chainCount"
-    ];
-    checkDictFields(
-        decodedMmtf.modelStore, reqModelStoreFields, [], "modelStore", assert
-    );
 }
 
 
@@ -329,6 +303,18 @@ function checkCommonTypes( decodedDict, assert ){
             "rWork must be a float"
         );
     }
+
+    // chains
+    assert.ok(
+        Array.isArray( decodedDict.groupsPerChain ),
+        "groupsPerChain must be an array"
+    );
+
+    // models
+    assert.ok(
+        Array.isArray( decodedDict.chainsPerModel ),
+        "chainsPerModel must be an array"
+    );
 }
 
 function checkMsgpackTypes( decodedMsgpack, assert ){
@@ -375,28 +361,18 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
         decodedMsgpack.chainIdList instanceof Uint8Array,
         "chainIdList must be a Uint8Array instance"
     );
-    assert.ok(
-        Array.isArray( decodedMsgpack.groupsPerChain ),
-        "groupsPerChain must be an array"
-    );
-
-    // models
-    assert.ok(
-        Array.isArray( decodedMsgpack.chainsPerModel ),
-        "chainsPerModel must be an array"
-    );
 
     // bonds
     if( decodedMsgpack.bondAtomList !== undefined ){
         assert.ok(
             decodedMsgpack.bondAtomList instanceof Uint8Array,
-            "bondAtomList must be a Uint8Array instance"
+            "when given, bondAtomList must be a Uint8Array instance"
         );
     }
     if( decodedMsgpack.bondOrderList !== undefined ){
         assert.ok(
             decodedMsgpack.bondOrderList instanceof Uint8Array,
-            "bondOrderList must be a Uint8Array instance"
+            "when given, bondOrderList must be a Uint8Array instance"
         );
     }
 
@@ -404,32 +380,32 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
     if( decodedMsgpack.bFactorBig !== undefined ){
         assert.ok(
             decodedMsgpack.bFactorBig instanceof Uint8Array,
-            "bFactorBig must be a Uint8Array instance"
+            "when given, bFactorBig must be a Uint8Array instance"
         );
     }
     if( decodedMsgpack.bFactorSmall !== undefined ){
         assert.ok(
             decodedMsgpack.bFactorSmall instanceof Uint8Array,
-            "bFactorSmall must be a Uint8Array instance"
+            "when given, bFactorSmall must be a Uint8Array instance"
         );
     }
 
     if( decodedMsgpack.atomIdList !== undefined ){
         assert.ok(
             decodedMsgpack.atomIdList instanceof Uint8Array,
-            "atomIdList must be a Uint8Array instance"
+            "when given, atomIdList must be a Uint8Array instance"
         );
     }
     if( decodedMsgpack.altLabelList !== undefined ){
         assert.ok(
             Array.isArray( decodedMsgpack.altLabelList ),
-            "altLabelList must be an array"
+            "when given, altLabelList must be an array"
         );
     }
     if( decodedMsgpack.occList !== undefined ){
         assert.ok(
             decodedMsgpack.occList instanceof Uint8Array,
-            "occList must be a Uint8Array instance"
+            "when given, occList must be a Uint8Array instance"
         );
     }
 
@@ -437,19 +413,19 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
     if( decodedMsgpack.secStructList !== undefined ){
         assert.ok(
             decodedMsgpack.secStructList instanceof Uint8Array,
-            "secStructList must be a Uint8Array instance"
+            "when given, secStructList must be a Uint8Array instance"
         );
     }
     if( decodedMsgpack.insCodeList !== undefined ){
         assert.ok(
             Array.isArray( decodedMsgpack.insCodeList ),
-            "insCodeList must be an array"
+            "when given, insCodeList must be an array"
         );
     }
     if( decodedMsgpack.seqResIdList !== undefined ){
         assert.ok(
             decodedMsgpack.seqResIdList instanceof Uint8Array,
-            "seqResIdList must be a Uint8Array instance"
+            "when given, seqResIdList must be a Uint8Array instance"
         );
     }
 
@@ -457,13 +433,7 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
     if( decodedMsgpack.chainNameList !== undefined ){
         assert.ok(
             decodedMsgpack.chainNameList instanceof Uint8Array,
-            "chainNameList must be a Uint8Array instance"
-        );
-    }
-    if( decodedMsgpack.chainSeqList !== undefined ){
-        assert.ok(
-            Array.isArray( decodedMsgpack.chainSeqList ),
-            "chainSeqList must be an array"
+            "when given, chainNameList must be a Uint8Array instance"
         );
     }
 }
@@ -486,134 +456,96 @@ function checkMmtfTypes( decodedMmtf, assert ){
     );
 
     // bonds
-    if( decodedMmtf.bondStore.atomIndex1 !== undefined ){
+    if( decodedMmtf.bondAtomList !== undefined ){
         assert.ok(
-            decodedMmtf.bondStore.atomIndex1 instanceof Uint32Array,
-            "when given, atomIndex1 must be an Uint32Array instance"
+            decodedMmtf.bondAtomList instanceof Int32Array,
+            "bondAtomList must be a Int32Array instance"
         );
     }
-    if( decodedMmtf.bondStore.atomIndex2 !== undefined ){
+    if( decodedMmtf.bondOrderList !== undefined ){
         assert.ok(
-            decodedMmtf.bondStore.atomIndex2 instanceof Uint32Array,
-            "when given, atomIndex2 must be an Uint32Array instance"
-        );
-    }
-    if( decodedMmtf.bondStore.bondOrder !== undefined ){
-        assert.ok(
-            decodedMmtf.bondStore.bondOrder instanceof Uint8Array,
-            "when given, bondOrder must be an Uint8Array instance"
+            decodedMmtf.bondOrderList instanceof Uint8Array,
+            "bondOrderList must be a Uint8Array instance"
         );
     }
 
     // atoms
     assert.ok(
-        decodedMmtf.atomStore.groupIndex instanceof Uint32Array,
-        "groupIndex must be an Uint32Array instance"
+        decodedMmtf.xCoordList instanceof Float32Array,
+        "xCoordList must be an Float32Array instance"
     );
     assert.ok(
-        decodedMmtf.atomStore.xCoord instanceof Float32Array,
-        "xCoord must be an Float32Array instance"
+        decodedMmtf.yCoordList instanceof Float32Array,
+        "yCoordList must be an Float32Array instance"
     );
     assert.ok(
-        decodedMmtf.atomStore.yCoord instanceof Float32Array,
-        "yCoord must be an Float32Array instance"
+        decodedMmtf.zCoordList instanceof Float32Array,
+        "zCoordList must be an Float32Array instance"
     );
-    assert.ok(
-        decodedMmtf.atomStore.zCoord instanceof Float32Array,
-        "zCoord must be an Float32Array instance"
-    );
-    if( decodedMmtf.atomStore.bFactor !== undefined ){
+    if( decodedMmtf.bFactorList !== undefined ){
         assert.ok(
-            decodedMmtf.atomStore.bFactor instanceof Float32Array,
-            "when given, bFactor must be an Float32Array instance"
+            decodedMmtf.bFactorList instanceof Float32Array,
+            "when given, bFactorList must be an Float32Array instance"
         );
     }
-    if( decodedMmtf.atomStore.atomId !== undefined ){
+    if( decodedMmtf.atomIdList !== undefined ){
         assert.ok(
-            decodedMmtf.atomStore.atomId instanceof Int32Array,
-            "when given, atomId must be an Int32Array instance"
+            decodedMmtf.atomIdList instanceof Int32Array,
+            "when given, atomIdList must be an Int32Array instance"
         );
     }
-    if( decodedMmtf.atomStore.altLabel !== undefined ){
+    if( decodedMmtf.altLabelList !== undefined ){
         assert.ok(
-            decodedMmtf.atomStore.altLabel instanceof Uint8Array,
-            "when given, altLabel must be an Uint8Array instance"
+            decodedMmtf.altLabelList instanceof Uint8Array,
+            "when given, altLabelList must be an Uint8Array instance"
         );
     }
-    if( decodedMmtf.atomStore.occupancy !== undefined ){
+    if( decodedMmtf.occList !== undefined ){
         assert.ok(
-            decodedMmtf.atomStore.occupancy instanceof Float32Array,
-            "when given, occupancy must be an Float32Array instance"
+            decodedMmtf.occList instanceof Float32Array,
+            "when given, occList must be an Float32Array instance"
         );
     }
 
     // groups
     assert.ok(
-        decodedMmtf.groupStore.chainIndex instanceof Uint32Array,
-        "chainIndex must be an Uint32Array instance"
+        decodedMmtf.groupIdList instanceof Int32Array,
+        "groupIdList must be an Int32Array instance"
     );
     assert.ok(
-        decodedMmtf.groupStore.atomOffset instanceof Uint32Array,
-        "atomOffset must be an Uint32Array instance"
+        decodedMmtf.groupTypeList instanceof Int32Array,
+        "groupTypeList must be an Int32Array instance"
     );
-    assert.ok(
-        decodedMmtf.groupStore.atomCount instanceof Uint16Array,
-        "atomCount must be an Uint16Array instance"
-    );
-    assert.ok(
-        decodedMmtf.groupStore.groupTypeId instanceof Uint16Array,
-        "groupTypeId must be an Uint16Array instance"
-    );
-    assert.ok(
-        decodedMmtf.groupStore.groupId instanceof Int32Array,
-        "groupId must be an Int32Array instance"
-    );
-    if( decodedMmtf.groupStore.secStruct !== undefined ){
+    if( decodedMmtf.secStructList !== undefined ){
         assert.ok(
-            decodedMmtf.groupStore.secStruct instanceof Int8Array,
-            "when given, secStruct must be an Int8Array instance"
+            decodedMmtf.secStructList instanceof Int8Array,
+            "when given, secStructList must be an Int8Array instance"
         );
     }
-    if( decodedMmtf.atomStore.insCode !== undefined ){
+    if( decodedMmtf.insCodeList !== undefined ){
         assert.ok(
-            decodedMmtf.atomStore.insCode instanceof Uint8Array,
-            "when given, insCode must be an Uint8Array instance"
+            decodedMmtf.insCodeList instanceof Uint8Array,
+            "when given, insCodeList must be an Uint8Array instance"
+        );
+    }
+    if( decodedMmtf.seqResIdList !== undefined ){
+        assert.ok(
+            decodedMmtf.seqResIdList instanceof Int32Array,
+            "when given, seqResIdList must be a Int32Array instance"
         );
     }
 
     // chains
     assert.ok(
-        decodedMmtf.chainStore.modelIndex instanceof Uint16Array,
-        "modelIndex must be an Uint16Array instance"
+        decodedMmtf.chainIdList instanceof Uint8Array,
+        "chainIdList must be an Uint8Array instance"
     );
-    assert.ok(
-        decodedMmtf.chainStore.groupOffset instanceof Uint32Array,
-        "groupOffset must be an Uint32Array instance"
-    );
-    assert.ok(
-        decodedMmtf.chainStore.groupCount instanceof Uint32Array,
-        "groupCount must be an Uint32Array instance"
-    );
-    assert.ok(
-        decodedMmtf.chainStore.chainId instanceof Uint8Array,
-        "chainId must be an Uint8Array instance"
-    );
-    if( decodedMmtf.chainStore.chainName !== undefined ){
+    if( decodedMmtf.chainNameList !== undefined ){
         assert.ok(
-            decodedMmtf.chainStore.chainName instanceof Uint8Array,
-            "when given, chainName must be an Uint8Array instance"
+            decodedMmtf.chainNameList instanceof Uint8Array,
+            "when given, chainNameList must be an Uint8Array instance"
         );
     }
-
-    // models
-    assert.ok(
-        decodedMmtf.modelStore.chainOffset instanceof Uint32Array,
-        "chainOffset must be an Uint32Array instance"
-    );
-    assert.ok(
-        decodedMmtf.modelStore.chainCount instanceof Uint32Array,
-        "chainCount must be an Uint32Array instance"
-    );
 }
 
 
@@ -698,54 +630,38 @@ function checkMmtfConsistency( decodedMmtf, assert ){
     checkGroupMapConsistency( decodedMmtf.groupMap, assert );
 
     // check sizes for consistency
-    var bondStore = decodedMmtf.bondStore;
-    assert.equal( bondStore.atomIndex1.length, decodedMmtf.numBonds + decodedMmtf.numGroups, "numBonds, atomIndex1" );
-    assert.equal( bondStore.atomIndex2.length, decodedMmtf.numBonds + decodedMmtf.numGroups, "numBonds, atomIndex2" );
-    assert.equal( bondStore.bondOrder.length, decodedMmtf.numBonds + decodedMmtf.numGroups, "numBonds, bondOrder" );
-
-    var atomStore = decodedMmtf.atomStore;
-    assert.equal( atomStore.groupIndex.length, decodedMmtf.numAtoms, "numAtoms, groupIndex" );
-    assert.equal( atomStore.xCoord.length, decodedMmtf.numAtoms, "numAtoms, xCoord" );
-    assert.equal( atomStore.yCoord.length, decodedMmtf.numAtoms, "numAtoms, yCoord" );
-    assert.equal( atomStore.zCoord.length, decodedMmtf.numAtoms, "numAtoms, zCoord" );
-    if( atomStore.bFactor ){
-        assert.equal( atomStore.bFactor.length, decodedMmtf.numAtoms, "numAtoms, bFactor" );
+    assert.equal( decodedMmtf.xCoordList.length, decodedMmtf.numAtoms, "numAtoms, xCoordList" );
+    assert.equal( decodedMmtf.yCoordList.length, decodedMmtf.numAtoms, "numAtoms, yCoordList" );
+    assert.equal( decodedMmtf.zCoordList.length, decodedMmtf.numAtoms, "numAtoms, zCoordList" );
+    if( decodedMmtf.bFactorList !== undefined ){
+        assert.equal( decodedMmtf.bFactorList.length, decodedMmtf.numAtoms, "numAtoms, bFactorList" );
     }
-    if( atomStore.atomId !== undefined ){
-        assert.equal( atomStore.atomId.length, decodedMmtf.numAtoms, "numAtoms, atomId" );
+    if( decodedMmtf.atomIdList !== undefined ){
+        assert.equal( decodedMmtf.atomIdList.length, decodedMmtf.numAtoms, "numAtoms, atomIdList" );
     }
-    if( atomStore.altLabel !== undefined ){
-        assert.equal( atomStore.altLabel.length, decodedMmtf.numAtoms, "numAtoms, altLabel" );
+    if( decodedMmtf.altLabelList !== undefined ){
+        assert.equal( decodedMmtf.altLabelList.length, decodedMmtf.numAtoms, "numAtoms, altLabelList" );
     }
-    if( atomStore.occupancy !== undefined ){
-        assert.equal( atomStore.occupancy.length, decodedMmtf.numAtoms, "numAtoms, occupancy" );
+    if( decodedMmtf.occList !== undefined ){
+        assert.equal( decodedMmtf.occList.length, decodedMmtf.numAtoms, "numAtoms, occList" );
     }
 
-    var groupStore = decodedMmtf.groupStore;
-    assert.equal( groupStore.chainIndex.length, decodedMmtf.numGroups, "numGroups, chainIndex" );
-    assert.equal( groupStore.atomOffset.length, decodedMmtf.numGroups, "numGroups, atomOffset" );
-    assert.equal( groupStore.atomCount.length, decodedMmtf.numGroups, "numGroups, atomCount" );
-    assert.equal( groupStore.groupTypeId.length, decodedMmtf.numGroups, "numGroups, groupTypeId" );
-    assert.equal( groupStore.groupId.length, decodedMmtf.numGroups, "numGroups, groupId" );
-    if( groupStore.secStruct !== undefined ){
-        assert.equal( groupStore.secStruct.length, decodedMmtf.numGroups, "numGroups, secStruct" );
+    assert.equal( decodedMmtf.groupTypeList.length, decodedMmtf.numGroups, "numGroups, groupTypeList" );
+    assert.equal( decodedMmtf.groupIdList.length, decodedMmtf.numGroups, "numGroups, groupIdList" );
+    if( decodedMmtf.secStructList !== undefined ){
+        assert.equal( decodedMmtf.secStructList.length, decodedMmtf.numGroups, "numGroups, secStructList" );
     }
-    if( groupStore.insCode !== undefined ){
-        assert.equal( groupStore.insCode.length, decodedMmtf.numGroups, "numGroups, insCode" );
+    if( decodedMmtf.insCodeList !== undefined ){
+        assert.equal( decodedMmtf.insCodeList.length, decodedMmtf.numGroups, "numGroups, insCodeList" );
     }
-
-    var chainStore = decodedMmtf.chainStore;
-    assert.equal( chainStore.modelIndex.length, decodedMmtf.numChains, "numChains, modelIndex" );
-    assert.equal( chainStore.groupOffset.length, decodedMmtf.numChains, "numChains, groupOffset" );
-    assert.equal( chainStore.groupCount.length, decodedMmtf.numChains, "numChains, groupCount" );
-    assert.equal( chainStore.chainId.length, decodedMmtf.numChains * 4, "numChains, chainId" );
-    if( chainStore.chainName !== undefined ){
-    	assert.equal( chainStore.chainName.length, decodedMmtf.numChains * 4, "numChains, chainName" );
+    if( decodedMmtf.seqResIdList !== undefined ){
+        assert.equal( decodedMmtf.seqResIdList.length, decodedMmtf.numGroups, "numGroups, seqResIdList" );
     }
 
-    var modelStore = decodedMmtf.modelStore;
-    assert.equal( modelStore.chainOffset.length, decodedMmtf.numModels, "numModels, chainOffset" );
-    assert.equal( modelStore.chainCount.length, decodedMmtf.numModels, "numModels, chainCount" );
+    assert.equal( decodedMmtf.chainIdList.length, decodedMmtf.numChains * 4, "numChains, chainIdList" );
+    if( decodedMmtf.chainNameList !== undefined ){
+    	assert.equal( decodedMmtf.chainNameList.length, decodedMmtf.numChains * 4, "numChains, chainNameList" );
+    }
 }
 
 

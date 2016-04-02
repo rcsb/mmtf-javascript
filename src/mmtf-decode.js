@@ -16,281 +16,161 @@ function decodeMmtf( binOrDict, params ){
     params = params || {};
 
     var littleEndian = params.littleEndian;
-    var ignoreFields = params.ignoreFields || [];
+    var ignoreFields = params.ignoreFields;
+
+    function decodeField( name ){
+        return ignoreFields ? ignoreFields.indexOf( name ) === -1 : true;
+    }
 
     // make sure binOrDict is not a plain Arraybuffer
     if( binOrDict instanceof ArrayBuffer ){
         binOrDict = new Uint8Array( binOrDict );
     }
 
-    var raw;
+    var inputDict;
     if( binOrDict instanceof Uint8Array ){
-        // get raw dict from msgpack
-        raw = decodeMsgpack( binOrDict );
+        // get dict from msgpack
+        inputDict = decodeMsgpack( binOrDict );
     }else{
-        // already raw dict
-        raw = binOrDict;
+        // already a dict
+        inputDict = binOrDict;
     }
-
-    // // workaround
-    if( raw.chainIdList === undefined && raw.chainList !== undefined ){
-      raw.chainIdList = raw.chainList;
-      raw.groupIdList = raw.groupNumList;
-    }
-
-    // determine what optional fields to decode
-    var decodeBfactor = raw.bFactorBig && raw.bFactorSmall && ignoreFields.indexOf( "bFactor" ) === -1;
-    var decodeAtomId = raw.atomIdList && ignoreFields.indexOf( "atomId" ) === -1;
-    var decodeAltLabel = raw.altLabelList && ignoreFields.indexOf( "altLabel" ) === -1;
-    var decodeOccupancy = raw.occList && ignoreFields.indexOf( "occupancy" ) === -1;
-    var decodeSecStruct = raw.secStructList && ignoreFields.indexOf( "secStruct" ) === -1;
-    var decodeInsCode = raw.insCodeList && ignoreFields.indexOf( "insCode" ) === -1;
-    var decodeChainName = raw.chainNameList && ignoreFields.indexOf( "chainName" ) === -1;
 
     // hoisted loop variables
-    var i, il, j, jl, k, kl;
+    var i, il;
 
     // counts
-    var numBonds = raw.numBonds || 0;
-    var numAtoms = raw.numAtoms || 0;
-    var numGroups = raw.groupTypeList.length / 4;
-    var numChains = raw.chainIdList.length / 4;
-    var numModels = raw.chainsPerModel.length;
+    var numBonds = inputDict.numBonds || 0;
+    var numAtoms = inputDict.numAtoms || 0;
+    var numGroups = inputDict.groupTypeList.length / 4;
+    var numChains = inputDict.chainIdList.length / 4;
+    var numModels = inputDict.chainsPerModel.length;
 
-    // maps
-    var groupMap = raw.groupMap;
+    // initialize output dict
+    var outputDict = {
+        numGroups: numGroups,
+        numChains: numChains,
+        numModels: numModels
+    };
 
-    // bondStore
-    var bAtomIndex1 = new Uint32Array( numBonds + numGroups );  // add numGroups
-    var bAtomIndex2 = new Uint32Array( numBonds + numGroups );  // to have space
-    var bBondOrder = new Uint8Array( numBonds + numGroups );    // for polymer bonds
+    // copy some fields over from the input dict
+    [
+        "mmtfVersion", "mmtfProducer",
+        "unitCell", "spaceGroup", "pdbId", "title",
+        "experimentalMethods", "resolution", "rFree", "rWork",
+        "bioAssemblyList", "entityList", "groupMap",
+        "numBonds", "numAtoms",
+        "groupsPerChain", "chainsPerModel"
+    ].forEach( function( name ){
+        if( inputDict[ name ] !== undefined ){
+            outputDict[ name ] = inputDict[ name ];
+        }
+    } );
 
-    // atomStore
-    var aGroupIndex = new Uint32Array( numAtoms );
-    var aXcoord = new Float32Array( numAtoms );
-    var aYcoord = new Float32Array( numAtoms );
-    var aZcoord = new Float32Array( numAtoms );
-    var aBfactor = decodeBfactor ? new Float32Array( numAtoms ) : undefined;
-    var aAtomId = decodeAtomId ? new Int32Array( numAtoms ) : undefined;
-    var aAltLabel = decodeAltLabel ? new Uint8Array( numAtoms ) : undefined;
-    var aOccupancy = decodeOccupancy ? new Float32Array( numAtoms ) : undefined;
+    //////////////
+    // bond data
 
-    // groupStore
-    var gChainIndex = new Uint32Array( numGroups );
-    var gAtomOffset = new Uint32Array( numGroups );
-    var gAtomCount = new Uint16Array( numGroups );
-    var gGroupTypeId = new Uint16Array( numGroups );
-    var gGroupId = new Int32Array( numGroups );
-    var gSecStruct = decodeSecStruct ? getInt8View( raw.secStructList ) : undefined;
-    var gInsCode = decodeInsCode ? new Uint8Array( numGroups ) : undefined;
+    var inputBondAtomList = inputDict.bondAtomList;
+    if( inputBondAtomList && decodeField( "bondAtomList" ) ){
+        outputDict.bondAtomList = getInt32( inputBondAtomList, undefined, littleEndian );
+    }
 
-    // chainStore
-    var cModelIndex = new Uint16Array( numChains );
-    var cGroupOffset = new Uint32Array( numChains );
-    var cGroupCount = new Uint32Array( numChains );
-    var cChainId = getUint8View( raw.chainIdList );
-    var cChainName = decodeChainName ? getUint8View( raw.chainNameList ) : undefined;
+    var inputBondOrderList = inputDict.bondOrderList;
+    if( inputBondOrderList && decodeField( "bondOrderList" ) ){
+        outputDict.bondOrderList = getUint8View( inputBondOrderList );
+    }
 
-    // modelStore
-    var mChainOffset = new Uint32Array( numModels );
-    var mChainCount = new Uint32Array( numModels );
+    //////////////
+    // atom data
 
-    // split-list delta & integer decode x, y, z coords
-    decodeFloatSplitList( raw.xCoordBig, raw.xCoordSmall, 1000, aXcoord, littleEndian );
-    decodeFloatSplitList( raw.yCoordBig, raw.yCoordSmall, 1000, aYcoord, littleEndian );
-    decodeFloatSplitList( raw.zCoordBig, raw.zCoordSmall, 1000, aZcoord, littleEndian );
+    // split-list delta & integer decode x, y, z atom coords
+    outputDict.xCoordList = decodeFloatSplitList(
+        inputDict.xCoordBig, inputDict.xCoordSmall, 1000, undefined, littleEndian
+    );
+    outputDict.yCoordList = decodeFloatSplitList(
+        inputDict.yCoordBig, inputDict.yCoordSmall, 1000, undefined, littleEndian
+    );
+    outputDict.zCoordList = decodeFloatSplitList(
+        inputDict.zCoordBig, inputDict.zCoordSmall, 1000, undefined, littleEndian
+    );
 
     // split-list delta & integer decode b-factors
-    if( decodeBfactor ){
-        decodeFloatSplitList( raw.bFactorBig, raw.bFactorSmall, 100, aBfactor, littleEndian );
+    var inputBfactorBig = inputDict.bFactorBig;
+    var inputBfactorSmall = inputDict.bFactorSmall;
+    if( inputBfactorBig && inputBfactorSmall && decodeField( "bFactorList" ) ){
+        outputDict.bFactorList = decodeFloatSplitList(
+            inputBfactorBig, inputBfactorSmall, 100, undefined, littleEndian
+        );
     }
 
     // delta & run-length decode atom ids
-    if( decodeAtomId ){
-        decodeDelta( decodeRunLength( getInt32( raw.atomIdList, undefined, littleEndian ), aAtomId ) );
+    var inputAtomIdList = inputDict.atomIdList;
+    if( inputAtomIdList && decodeField( "atomIdList" ) ){
+        outputDict.atomIdList = decodeDelta(
+            decodeRunLength( getInt32( inputAtomIdList, undefined, littleEndian ) )
+        );
     }
 
     // run-length decode alternate labels
-    if( decodeAltLabel ){
-        var rawAltLabelList = raw.altLabelList;
-        for( i = 0, il = rawAltLabelList.length; i < il; i+=2 ){
-            var rawAltLabel = rawAltLabelList[ i ];
-            if( rawAltLabel === "?" ){
-                rawAltLabelList[ i ] = 0;
-            }else{
-                rawAltLabelList[ i ] = rawAltLabel.charCodeAt( 0 );
-            }
-            rawAltLabelList[ i + 1 ] = parseInt( rawAltLabelList[ i + 1 ] );
+    var inputAltLabelList = inputDict.altLabelList;
+    if( inputAltLabelList && decodeField( "altLabelList" ) ){
+        for( i = 0, il = inputAltLabelList.length; i < il; i+=2 ){
+            var inputAltLabel = inputAltLabelList[ i ];
+            inputAltLabelList[ i ] = inputAltLabel === "?" ? 0 : inputAltLabel.charCodeAt( 0 );
+            inputAltLabelList[ i + 1 ] = parseInt( inputAltLabelList[ i + 1 ] );
         }
-        decodeRunLength( rawAltLabelList, aAltLabel );
-    }
-
-    // run-length decode insertion codes
-    if( decodeInsCode ){
-        var rawInsCodeList = raw.insCodeList;
-        for( i = 0, il = rawInsCodeList.length; i < il; i+=2 ){
-            var rawInsCode = rawInsCodeList[ i ];
-            if( rawInsCode === null ){
-                rawInsCodeList[ i ] = 0;
-            }else{
-                rawInsCodeList[ i ] = rawInsCode.charCodeAt( 0 );
-            }
-            rawInsCodeList[ i + 1 ] = parseInt( rawInsCodeList[ i + 1 ] );
-        }
-        decodeRunLength( rawInsCodeList, gInsCode );
+        outputDict.altLabelList = decodeRunLength( inputAltLabelList, new Uint8Array( numAtoms ) );
     }
 
     // run-length & integer decode occupancies
-    if( decodeOccupancy ){
-        decodeFloatRunLength( raw.occList, 100, aOccupancy, littleEndian );
+    var inputOccList = inputDict.occList;
+    if( inputOccList && decodeField( "occList" ) ){
+        outputDict.occList = decodeFloatRunLength(
+            inputOccList, 100, undefined, littleEndian
+        );
     }
 
-    // set-up model-chain relations
-    var chainsPerModel = raw.chainsPerModel;
-    var modelChainCount;
-    var chainOffset = 0;
-    for( i = 0; i < numModels; ++i ){
-        modelChainCount = chainsPerModel[ i ];
-        mChainOffset[ i ] = chainOffset;
-        mChainCount[ i ] = modelChainCount;
-        for( j = 0; j < modelChainCount; ++j ){
-            cModelIndex[ j + chainOffset ] = i;
-        }
-        chainOffset += modelChainCount;
-    }
-
-    // set-up chain-residue relations
-    var groupsPerChain = raw.groupsPerChain;
-    var chainGroupCount;
-    var groupOffset = 0;
-    for( i = 0; i < numChains; ++i ){
-        chainGroupCount = groupsPerChain[ i ];
-        cGroupOffset[ i ] = groupOffset;
-        cGroupCount[ i ] = chainGroupCount;
-        for( j = 0; j < chainGroupCount; ++j ){
-            gChainIndex[ j + groupOffset ] = i;
-        }
-        groupOffset += chainGroupCount;
-    }
+    ///////////////
+    // group data
 
     // run-length & delta decode group numbers
-    decodeDelta( decodeRunLength( getInt32( raw.groupIdList, undefined, littleEndian ), gGroupId ) );
+    outputDict.groupIdList = decodeDelta(
+        decodeRunLength( getInt32( inputDict.groupIdList, undefined, littleEndian ) )
+    );
 
-    // get group type pointers
-    getInt32( raw.groupTypeList, gGroupTypeId, littleEndian );
+    // decode group types, i.e. get int32 array
+    outputDict.groupTypeList = getInt32( inputDict.groupTypeList, undefined, littleEndian );
 
-    //////
-    // get data from group map
-
-    var atomOffset = 0;
-    var bondOffset = 0;
-
-    for( i = 0; i < numGroups; ++i ){
-
-        var groupData = groupMap[ gGroupTypeId[ i ] ];
-        var atomInfo = groupData.atomInfo;
-        var groupAtomCount = atomInfo.length / 2;
-
-        var bondIndices = groupData.bondIndices;
-        var bondOrders = groupData.bondOrders;
-
-        for( j = 0, jl = bondOrders.length; j < jl; ++j ){
-            bAtomIndex1[ bondOffset ] = atomOffset + bondIndices[ j * 2 ];
-            bAtomIndex2[ bondOffset ] = atomOffset + bondIndices[ j * 2 + 1 ];
-            bBondOrder[ bondOffset ] = bondOrders[ j ];
-            bondOffset += 1;
-        }
-
-        //
-
-        gAtomOffset[ i ] = atomOffset;
-        gAtomCount[ i ] = groupAtomCount;
-
-        for( j = 0; j < groupAtomCount; ++j ){
-            aGroupIndex[ atomOffset ] = i;
-            atomOffset += 1;
-        }
-
+    // decode secondary structure, i.e. get int8 view
+    var inputSecStructList = inputDict.secStructList;
+    if( inputSecStructList && decodeField( "secStructList" ) ){
+        outputDict.secStructList = getInt8View( inputSecStructList );
     }
 
-    if( raw.bondAtomList ){
-
-        // console.log( getInt32( raw.bondAtomList, undefined, littleEndian ) );
-
-        if( raw.bondOrderList ){
-            var bondOrderList =  raw.bondOrderList;
-            bBondOrder.set( bondOrderList, bondOffset );
+    // run-length decode insertion codes
+    var inputInsCodeList = inputDict.insCodeList;
+    if( inputInsCodeList && decodeField( "insCodeList" ) ){
+        for( i = 0, il = inputInsCodeList.length; i < il; i+=2 ){
+            var inputInsCode = inputInsCodeList[ i ];
+            inputInsCodeList[ i ] = inputInsCode === null ? 0 : inputInsCode.charCodeAt( 0 );
+            inputInsCodeList[ i + 1 ] = parseInt( inputInsCodeList[ i + 1 ] );
         }
-
-        var bondAtomList = getInt32( raw.bondAtomList, undefined, littleEndian );
-        for( i = 0, il = bondAtomList.length; i < il; i += 2 ){
-            bAtomIndex1[ bondOffset ] = bondAtomList[ i ];
-            bAtomIndex2[ bondOffset ] = bondAtomList[ i + 1 ];
-            bondOffset += 1;
-        }
-
+        outputDict.insCodeList = decodeRunLength( inputInsCodeList, new Uint8Array( numGroups ) );
     }
 
-    return {
-        bondStore: {
-            atomIndex1: bAtomIndex1,
-            atomIndex2: bAtomIndex2,
-            bondOrder: bBondOrder,
-        },
-        atomStore: {
-            groupIndex: aGroupIndex,
-            xCoord: aXcoord,
-            yCoord: aYcoord,
-            zCoord: aZcoord,
-            bFactor: aBfactor,
-            atomId: aAtomId,
-            altLabel: aAltLabel,
-            occupancy: aOccupancy
-        },
-        groupStore: {
-            chainIndex: gChainIndex,
-            atomOffset: gAtomOffset,
-            atomCount: gAtomCount,
-            groupTypeId: gGroupTypeId,
-            groupId: gGroupId,
-            secStruct: gSecStruct,
-            insCode: gInsCode
-        },
-        chainStore: {
-            modelIndex: cModelIndex,
-            groupOffset: cGroupOffset,
-            groupCount: cGroupCount,
-            chainId: cChainId,
-            chainName: cChainName
-        },
-        modelStore: {
-            chainOffset: mChainOffset,
-            chainCount: mChainCount
-        },
+    ///////////////
+    // chain data
 
-        groupMap: groupMap,
+    // decode chain ids, i.e. get int8 view
+    outputDict.chainIdList = getUint8View( inputDict.chainIdList );
 
-        unitCell: raw.unitCell,
-        spaceGroup: raw.spaceGroup,
-        bioAssemblyList: raw.bioAssemblyList,
-        pdbId: raw.pdbId,
-        title: raw.title,
-        entityList: raw.entityList,
+    // decode chain names, i.e. get int8 view
+    var inputChainNameList = inputDict.chainNameList;
+    if( inputChainNameList && decodeField( "chainNameList" ) ){
+        outputDict.chainNameList = getUint8View( inputChainNameList );
+    }
 
-        experimentalMethods: raw.experimentalMethods,
-        resolution: raw.resolution,
-        rFree: raw.rFree,
-        rWork: raw.rWork,
-
-        numBonds: numBonds,
-        numAtoms: numAtoms,
-        numGroups: numGroups,
-        numChains: numChains,
-        numModels: numModels,
-
-        mmtfVersion: raw.mmtfVersion,
-        mmtfProducer: raw.mmtfProducer
-    };
+    return outputDict;
 
 }
 
