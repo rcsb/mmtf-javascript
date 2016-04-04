@@ -18,6 +18,7 @@ function decodeMmtf( binOrDict, params ){
     var littleEndian = params.littleEndian;
     var ignoreFields = params.ignoreFields;
 
+    // helper functions to tell if a field should be decoded
     function decodeField( name ){
         return ignoreFields ? ignoreFields.indexOf( name ) === -1 : true;
     }
