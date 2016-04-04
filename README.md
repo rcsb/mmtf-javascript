@@ -7,57 +7,59 @@ JavaScript decoder for MMTF files. For a description of the format see the [MMTF
 
 ## Table of contents
 
-* [API](#api)
-* [SimpleStructure](#SimpleStructure)
+* [Decoder](#decoder)
+* [Properties](#properties)
+* [Iterator](#Iterator)
 
 
-## API
+
+## Decoder
 
 The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode.js)) is `decodeMmtf` which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns a decoded `mmtf` object with the following properties.
 
 
-### Properties
+## Properties
 
-| Name                       | Type           | Description                                |
-|----------------------------|----------------|--------------------------------------------|
-| mmtfVersion                | `String`       | MMTF specification version                 |
-| mmtfProducer               | `String`       | Program that created the file              |
-| unitCell                   | `Array`        | Crystallographic unit cell                 |
-| spaceGroup                 | `String`       | Hermann-Mauguin symbol                     |
-| pdbId                      | `String`       | Reference to wwPDB entry                   |
-| title                      | `String`       | Short description                          |
-| experimentalMethods        | `Array`        | Structure determination methods            |
-| resolution                 | `Number`       | Resolution in angstrom                     |
-| rFree                      | `Number`       | R-free value                               |
-| rWork                      | `Number`       | R-work value                               |
-| numBonds                   | `Number`       | Number of bonds                            |
-| numAtoms                   | `Number`       | Number of atoms                            |
-| numGroups                  | `Number`       | Number of groups (residues)                |
-| numChains                  | `Number`       | Number of chains                           |
-| numModels                  | `Number`       | Number of models                           |
-| entityList                 | `Array`        | List of [`entity`](#entity) objects        |
-| bioAssemblyList            | `Array`        | List of [`assembly`](#assembly) objects    |
-| groupList                  | `Array`        | List of [`groupType`](#groupType) objects  |
-| bondAtomList               | `Int32Array`   | List of bonded atom indices                |
-| bondOrderList              | `Uint8Array`   | List of bond orders                        |
-| xCoordList                 | `Float32Array` | List of x coordinates                      |
-| yCoordList                 | `Float32Array` | List of y coordinates                      |
-| zCoordList                 | `Float32Array` | List of z coordinates                      |
-| bFactorList                | `Float32Array` | List of b-factors                          |
-| atomIdList                 | `Int32Array`   | List of atom ids                           |
-| altLabelList               | `Uint8Array`   | List of alternate location labels          |
-| occupancyList              | `Float32Array` | List of occupancies                        |
-| groupIdList                | `Int32Array`   | List of group ids                          |
-| groupTypeList              | `Int32Array`   | List of group types                        |
-| secStructList              | `Int8Array`    | List of secondary structure codes          |
-| insCodeList                | `Uint8Array`   | List of insertion codes                    |
-| chainIdList                | `Uint8Array`   | List of chain ids                          |
-| chainNameList              | `Uint8Array`   | List of chain names                        |
+| Name                       | Type           | Description                                | Optional |
+|----------------------------|----------------|--------------------------------------------|:--------:|
+| mmtfVersion                | `String`       | MMTF specification version                 |          |
+| mmtfProducer               | `String`       | Program that created the file              |          |
+| unitCell                   | `Array`        | Crystallographic unit cell                 |    Y     |
+| spaceGroup                 | `String`       | Hermann-Mauguin symbol                     |    Y     |
+| pdbId                      | `String`       | Reference to wwPDB entry                   |    Y     |
+| title                      | `String`       | Short description                          |    Y     |
+| experimentalMethods        | `Array`        | Structure determination methods            |    Y     |
+| resolution                 | `Number`       | Resolution in angstrom                     |    Y     |
+| rFree                      | `Number`       | R-free value                               |    Y     |
+| rWork                      | `Number`       | R-work value                               |    Y     |
+| numBonds                   | `Number`       | Number of bonds                            |          |
+| numAtoms                   | `Number`       | Number of atoms                            |          |
+| numGroups                  | `Number`       | Number of groups (residues)                |          |
+| numChains                  | `Number`       | Number of chains                           |          |
+| numModels                  | `Number`       | Number of models                           |          |
+| entityList                 | `Array`        | List of [`entity`](#entity) objects        |    Y     |
+| bioAssemblyList            | `Array`        | List of [`assembly`](#assembly) objects    |    Y     |
+| groupList                  | `Array`        | List of [`groupType`](#groupType) objects  |    Y     |
+| bondAtomList               | `Int32Array`   | List of bonded atom indices                |    Y     |
+| bondOrderList              | `Uint8Array`   | List of bond orders                        |    Y     |
+| xCoordList                 | `Float32Array` | List of x coordinates                      |          |
+| yCoordList                 | `Float32Array` | List of y coordinates                      |          |
+| zCoordList                 | `Float32Array` | List of z coordinates                      |          |
+| bFactorList                | `Float32Array` | List of b-factors                          |    Y     |
+| atomIdList                 | `Int32Array`   | List of atom ids                           |    Y     |
+| altLabelList               | `Uint8Array`   | List of alternate location labels          |    Y     |
+| occupancyList              | `Float32Array` | List of occupancies                        |    Y     |
+| groupIdList                | `Int32Array`   | List of group ids                          |          |
+| groupTypeList              | `Int32Array`   | List of group types                        |          |
+| secStructList              | `Int8Array`    | List of secondary structure codes          |    Y     |
+| insCodeList                | `Uint8Array`   | List of insertion codes                    |    Y     |
+| chainIdList                | `Uint8Array`   | List of chain ids                          |          |
+| chainNameList              | `Uint8Array`   | List of chain names                        |    Y     |
 
 
-### Objects
+## Objects
 
-#### entity
+### entity
 
 Fields in an `entity` object:
 
@@ -69,7 +71,7 @@ Fields in an `entity` object:
 | sequence                  | `String`     | One letter code sequence          |
 
 
-#### assembly
+### assembly
 
 Fields in an `assembly` object:
 
@@ -86,7 +88,7 @@ Fields in an `transform` object:
 | transformation            | `Array`      | 4x4 transformation matrix         |
 
 
-#### groupType
+### groupType
 
 Fields of a `groupType` entry:
 
@@ -101,7 +103,7 @@ Fields of a `groupType` entry:
 | chemCompType              | `String`     | The chemical component type       |
 
 
-## SimpleStructure
+## Iterator
 
 Example of how to access the structural data from the decoded `mmtf` object. Available in file [structure.js](examples/structure.js).
 
@@ -111,30 +113,10 @@ var mmtfObject = decodeMmtf( bin );
 var structure = new SimpleStructure( mmtfObject );
 ```
 
+### Methods
 
-### Header fields
-
-- unitCell
-- spaceGroup
-- bioAssembly
-- pdbId
-- title
-
-
-### Entity getters
-
-- getBond( index )
-- getAtom( index )
-- getGroup( index )
-- getChain( index )
-- getModel( index )
-
-
-### Entity iterators
-
-- eachBond( fn )
-- eachAtom( fn )
-- eachGroup( fn )
-- eachChain( fn )
-- eachModel( fn )
-
+- eachBond( callback )
+- eachAtom( callback )
+- eachGroup( callback )
+- eachChain( callback )
+- eachModel( callback )

@@ -1,145 +1,153 @@
 
-function SimpleStructure( mmtfData ){
+function SimpleStructure( mmtfDict ){
 
-    var d = mmtfData;
+    var d = mmtfDict;
 
-    function getBond( index ){
-        return [
-            d.bondStore.atomIndex1[ index ],
-            d.bondStore.atomIndex2[ index ],
-            d.bondStore.bondOrder[ index ]
-        ];
-    }
-
-    function getAtom( index ){
-        var groupIndex = d.atomStore.groupIndex[ index ];
-        var group = d.groupMap[ d.groupStore.groupTypeId[ groupIndex ] ];
-        var groupAtomOffset = d.groupStore.atomOffset[ groupIndex ];
-        var groupAtomIndex = index - groupAtomOffset;
-        return [
-            groupIndex,
-            d.atomStore.xCoord[ index ],
-            d.atomStore.yCoord[ index ],
-            d.atomStore.zCoord[ index ],
-            d.atomStore.bFactor ? d.atomStore.bFactor[ index ] : null,
-            group.atomInfo[ groupAtomIndex * 2 ],
-            d.atomStore.atomId ? d.atomStore.atomId[ index ] : null,
-            group.chemCompType,
-            d.atomStore.altLabel ? String.fromCharCode( d.atomStore.altLabel[ index ] ) : null,
-            group.atomInfo[ groupAtomIndex * 2 + 1 ],
-            d.atomStore.insCode ? String.fromCharCode( d.atomStore.insCode[ index ] ) : null,
-            d.atomStore.occupancy ? d.atomStore.occupancy[ index ] : null,
-            group.singleLetterCode
-        ];
-    }
-
-    function getGroup( index ){
-        var group = d.groupMap[ d.groupStore.groupTypeId[ index ] ];
-        var sstrucCode = d.groupStore.secStruct[ index ];
-        return [
-            d.groupStore.chainIndex[ index ],
-            d.groupStore.atomOffset[ index ],
-            d.groupStore.atomCount[ index ],
-            d.groupStore.groupId[ index ],
-            group.groupName,
-            sstrucMap[ sstrucCode ]
-        ];
-    }
-
-    function getChain( index ){
-        var chainId = "";
-        for( var k = 0; k < 4; ++k ){
-            var code = d.chainStore.chainId[ 4 * index + k ];
-            if( code ){
-                chainId += String.fromCharCode( code );
-            }else{
-                break;
+    /**
+     * Invokes the callback for each bond
+     * @param  {Function} callback - called for each bond
+     *  - @param {Integer} callback.atomIndex1 - first atom index of the bond
+     *  - @param {Integer} callback.atomIndex2 - second atom index of the bond
+     *  - @param {Integer|undefined} callback.bondOrder - order of the bond
+     */
+    function eachBond( callback ){
+        // intra group bonds
+        var atomOffset = 0;
+        for( var i = 0, il = d.numGroups; i < il; ++i ){
+            var groupData = d.groupMap[ d.groupTypeList[ i ] ];
+            for( var j = 0, jl = bondOrders.length; j < jl; ++j ){
+                callback(
+                    atomOffset + groupData.bondIndices[ j * 2 ],
+                    atomOffset + groupData.bondIndices[ j * 2 + 1 ],
+                    groupData.bondOrders[ j ]
+                );
+            }
+            atomOffset += groupData.atomInfo.length / 2;
+        }
+        // inter group bonds
+        if( d.bondAtomList ){
+            for( var i = 0, il = d.bondAtomList.length; i < il; i += 2 ){
+                callback(
+                    d.bondAtomList[ i ],
+                    d.bondAtomList[ i + 1 ],
+                    d.bondOrderList ? d.bondOrderList[ i / 2 ] : undefined
+                );
             }
         }
-        return [
-            d.chainStore.modelIndex[ index ],
-            d.chainStore.groupOffset[ index ],
-            d.chainStore.groupCount[ index ],
-            chainId
-        ];
     }
 
-    function getModel( index ){
-        return [
-            d.modelStore.chainOffset[ index ],
-            d.modelStore.chainCount[ index ]
-        ];
-    }
-
-    function eachBond( callback ){
-        for( var i = 0; i < d.numBonds; ++i ){
-            callback.apply( null, getBond( i ) );
-        }
-    }
-
+    /**
+     * Invokes the callback for each atom
+     * @param  {Function} callback - called for each atom
+     *  - @param {Float} callback.element - element
+     *  - @param {Float} callback.atomName - atom name
+     *  - @param {Float|undefined} callback.charge - formal charge
+     *  - @param {Float} callback.xCoord - x coordinate
+     *  - @param {Float} callback.yCoord - y coordinate
+     *  - @param {Float} callback.zCoord - z coordinate
+     *  - @param {Float|undefined} callback.bFactor - b-factor
+     *  - @param {Integer|undefined} callback.atomId - atom id
+     *  - @param {Char|undefined} callback.altLabel - alternate location label
+     *  - @param {Float|undefined} callback.occupancy - occupancy
+     */
     function eachAtom( callback ){
-        for( var i = 0; i < d.numAtoms; ++i ){
-            callback.apply( null, getAtom( i ) );
+        var atomOffset = 0;
+        for( var i = 0, il = d.numGroups; i < il; ++i ){
+            var groupData = d.groupMap[ d.groupTypeList[ i ] ];
+            for( var j = 0, jl = groupData.atomInfo.length / 2; j < jl; ++j ){
+                callback(
+                    groupData.atomInfo[ j * 2 ].toUpperCase(),
+                    groupData.atomInfo[ j * 2 + 1 ],
+                    groupData.atomCharges[ j ],
+                    d.xCoordList[ atomOffset ],
+                    d.yCoordList[ atomOffset ],
+                    d.zCoordList[ atomOffset ],
+                    d.bFactorList ? d.bFactorList[ atomOffset ] : undefined,
+                    d.atomIdList ? d.atomIdList[ atomOffset ] : undefined,
+                    d.altLabelList ? d.altLabelList[ atomOffset ] : undefined,
+                    d.occupancyList ? d.occupancyList[ atomOffset ] : undefined
+                );
+                atomOffset += 1;
+            }
         }
     }
 
+    /**
+     * Invokes the callback for each group
+     * @param  {Function} callback - called for each group
+     *  - @param {String} callback.groupName - group name
+     *  - @param {Char} callback.singleLetterCode - group single letter code
+     *  - @param {String} callback.chemCompType - chemical component type
+     *  - @param {Integer} callback.groupId - group id
+     *  - @param {Integer} callback.groupType - group type
+     *  - @param {Integer|undefined} callback.secStruct - secondary structure code
+     *  - @param {Char|undefined} callback.insCode - insertion code
+     *  - @param {Integer} callback.atomOffset - pointer to data of the group's first atom
+     *  - @param {Integer} callback.atomCount - number of atoms in the group
+     */
     function eachGroup( callback ){
-        for( var i = 0; i < d.numGroups; ++i ){
-            callback.apply( null, getGroup( i ) );
+        var atomOffset = 0;
+        for( var i = 0, il = d.numGroups; i < il; ++i ){
+            var groupData = d.groupMap[ d.groupTypeList[ i ] ];
+            var groupAtomCount = groupData.atomInfo.length / 2;
+            gAtomOffset[ i ] = atomOffset;
+            gAtomCount[ i ] = groupAtomCount;
+            callback(
+                groupData.groupName,
+                groupData.singleLetterCode,
+                groupData.chemCompType,
+                d.groupIdList[ i ],
+                d.groupTypeList[ i ],
+                d.secStructList ? d.secStructList[ i ] : undefined,
+                d.insCodeList ? d.insCodeList[ i ] : undefined,
+                atomOffset,
+                groupAtomCount
+            );
+            atomOffset += groupAtomCount;
         }
     }
 
+    /**
+     * Invokes the callback for each chain
+     * @param  {Function} callback - called for each chain
+     *  - @param {Integer} callback.chainId - chain id
+     *  - @param {Integer|undefined} callback.chainName - chain name
+     *  - @param {Integer} callback.groupOffset - pointer to data of the chain's first group
+     *  - @param {Integer} callback.groupCount - number of groups in the chain
+     */
     function eachChain( callback ){
+        var groupOffset = 0;
         for( var i = 0; i < d.numChains; ++i ){
-            callback.apply( null, getChain( i ) );
+            var chainGroupCount = d.groupsPerChain[ i ];
+            callback(
+                d.chainIdList[ i ],
+                d.chainNameList ? d.chainNameList[ i ] : undefined,
+                groupOffset,
+                chainGroupCount
+            );
+            groupOffset += chainGroupCount;
         }
     }
 
+    /**
+     * Invokes the callback for each model
+     * @param  {Function} callback - called for each model
+     *  - @param {Integer} callback.chainOffset - pointer to data of the models's first chain
+     *  - @param {Integer} callback.chainCount - number of chains in the model
+     */
     function eachModel( callback ){
+        var chainOffset = 0;
         for( var i = 0; i < d.numModels; ++i ){
-            callback.apply( null, getModel( i ) );
+            var modelChainCount = d.chainsPerModel[ i ];
+            callback(
+                chainOffset,
+                modelChainCount
+            );
+            chainOffset += modelChainCount;
         }
     }
-
-    var sstrucMap = {
-        "0": "i",  // pi helix
-        "1": "s",  // bend
-        "2": "h",  // alpha helix
-        "3": "e",  // extended
-        "4": "g",  // 3-10 helix
-        "5": "b",  // bridge
-        "6": "t",  // turn
-        "7": "l",  // coil
-        "-1": ""   // NA
-    };
 
     // API
-
-    this.unitCell = d.unitCell;
-    this.spaceGroup = d.spaceGroup;
-    this.bioAssembly = d.bioAssembly;
-    this.pdbId = d.pdbId;
-    this.title = d.title;
-
-    this.numBonds = d.numBonds;
-    this.numAtoms = d.numAtoms;
-    this.numGroups = d.numGroups;
-    this.numChains = d.numChains;
-    this.numModels = d.numModels;
-
-    this.bondStore = d.bondStore;
-    this.atomStore = d.atomStore;
-    this.groupStore = d.groupStore;
-    this.chainStore = d.chainStore;
-    this.modelStore = d.modelStore;
-
-    this.groupMap = d.groupMap;
-
-    this.getBond = getBond;
-    this.getAtom = getAtom;
-    this.getGroup = getGroup;
-    this.getChain = getChain;
-    this.getModel = getModel;
 
     this.eachBond = eachBond;
     this.eachAtom = eachAtom;
