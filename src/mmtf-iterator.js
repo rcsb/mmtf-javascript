@@ -1,5 +1,14 @@
+/**
+ * @file mmtf-iterator
+ * @author Alexander Rose <alexander.rose@weirdbyte.de>
+ */
 
-function SimpleStructure( mmtfDict ){
+/**
+ * Helper methods to loop over MMTF data
+ * @class
+ * @param {Object} mmtfData - decoded mmtf data object
+ */
+function MmtfIterator( mmtfData ){
 
     var d = mmtfDict;
 
@@ -11,9 +20,10 @@ function SimpleStructure( mmtfDict ){
      *  - @param {Integer|undefined} arg2 - order of the bond
      */
     function eachBond( callback ){
+        var i, il;
         // intra group bonds
         var atomOffset = 0;
-        for( var i = 0, il = d.numGroups; i < il; ++i ){
+        for( i = 0, il = d.numGroups; i < il; ++i ){
             var groupData = d.groupList[ d.groupTypeList[ i ] ];
             for( var j = 0, jl = bondOrders.length; j < jl; ++j ){
                 callback(
@@ -26,7 +36,7 @@ function SimpleStructure( mmtfDict ){
         }
         // inter group bonds
         if( d.bondAtomList ){
-            for( var i = 0, il = d.bondAtomList.length; i < il; i += 2 ){
+            for( i = 0, il = d.bondAtomList.length; i < il; i += 2 ){
                 callback(
                     d.bondAtomList[ i ],
                     d.bondAtomList[ i + 1 ],
@@ -149,7 +159,7 @@ function SimpleStructure( mmtfDict ){
         }
     }
 
-    // API
+    // API - bind to instance for public access
 
     this.eachBond = eachBond;
     this.eachAtom = eachAtom;
@@ -158,3 +168,5 @@ function SimpleStructure( mmtfDict ){
     this.eachModel = eachModel;
 
 }
+
+export default MmtfIterator;

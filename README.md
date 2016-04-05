@@ -107,13 +107,7 @@ Fields of a `groupType` entry:
 
 ## Iterator
 
-Example of how to access the structural data from the decoded `mmtf` object. Available in file [structure.js](examples/structure.js).
-
-```JavaScript
-// bin is Uint8Array containing the mmtf msgpack
-var mmtfObject = decodeMmtf( bin );
-var structure = new SimpleStructure( mmtfObject );
-```
+Helper class to loop over the structural data in the decoded `mmtf` data. Available in file [mmtf-iterator.js](dist/mmtf-iterator.js).
 
 ### Methods
 
@@ -122,3 +116,11 @@ var structure = new SimpleStructure( mmtfObject );
 - eachGroup( callback )
 - eachChain( callback )
 - eachModel( callback )
+
+### Example
+
+```JavaScript
+// bin is Uint8Array containing the mmtf msgpack
+var mmtfData = decodeMmtf( bin );
+var mmtfIterator = new MmtfIterator( mmtfData );
+```

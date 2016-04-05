@@ -23,11 +23,20 @@ gulp.task('test', ['build-cjs'], function() {
     .pipe(qunit());
 });
 
-gulp.task('build', function(){
-  return gulp.src('./src/mmtf-decode.js', {read: false})
+gulp.task('build-decode', function(){
+  return gulp.src(['./src/mmtf-decode.js'], {read: false})
     .pipe(rollup({
       format: 'iife',
       moduleName: 'decodeMmtf'
+    }))
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('build-iterator', function(){
+  return gulp.src('./src/mmtf-iterator.js', {read: false})
+    .pipe(rollup({
+      format: 'iife',
+      moduleName: 'MmtfIterator'
     }))
     .pipe(gulp.dest('build'));
 });
@@ -38,8 +47,8 @@ gulp.task('build-cjs', function(){
     .pipe(gulp.dest('build/cjs'));
 });
 
-gulp.task('compress', ['build'], function(){
-  return gulp.src('./build/mmtf-decode.js')
+gulp.task('compress', ['build-decode', 'build-iterator'], function(){
+  return gulp.src(['./build/*.js'])
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
