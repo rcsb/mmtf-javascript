@@ -53,6 +53,7 @@ The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode
 | groupTypeList              | `Int32Array`   | List of group types                        |          |
 | secStructList              | `Int8Array`    | List of secondary structure codes          |    Y     |
 | insCodeList                | `Uint8Array`   | List of insertion codes                    |    Y     |
+| seuenceIdList              | `Int32Array`   | List of sequence ids                       |    Y     |
 | chainIdList                | `Uint8Array`   | List of chain ids                          |          |
 | chainNameList              | `Uint8Array`   | List of chain names                        |    Y     |
 

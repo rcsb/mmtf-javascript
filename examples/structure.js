@@ -100,6 +100,7 @@ function SimpleStructure( mmtfDict ){
                 d.groupTypeList[ i ],
                 d.secStructList ? d.secStructList[ i ] : undefined,
                 d.insCodeList ? d.insCodeList[ i ] : undefined,
+                d.sequenceIdList ? d.sequenceIdList[ i ] : undefined,
                 atomOffset,
                 groupAtomCount
             );

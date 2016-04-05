@@ -159,6 +159,14 @@ function decodeMmtf( binOrDict, params ){
         outputDict.insCodeList = decodeRunLength( inputInsCodeList, new Uint8Array( numGroups ) );
     }
 
+    // run-length & delta decode sequence ids
+    var inputSequenceIdList = inputDict.sequenceIdList;
+    if( inputSequenceIdList && decodeField( "sequenceIdList" ) ){
+        outputDict.sequenceIdList = decodeDelta(
+            decodeRunLength( getInt32( inputSequenceIdList, undefined, littleEndian ) )
+        );
+    }
+
     ///////////////
     // chain data
 

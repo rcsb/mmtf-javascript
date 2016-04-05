@@ -52,7 +52,7 @@ function getEmptyFullMmtfDict(){
         groupTypeList: new Uint8Array( 0 ),
         secStructList: new Uint8Array( 0 ),
         insCodeList: [],
-        seqResIdList: new Uint8Array( 0 ),
+        sequenceIdList: new Uint8Array( 0 ),
 
         // chains
         chainIdList: new Uint8Array( 0 ),
@@ -177,7 +177,7 @@ function getFilledFullMmtfDict(){
         groupTypeList: new Uint8Array( new Int32Array( [ 0 ] ).buffer ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
         insCodeList: new Array( "X", 1 ),
-        seqResIdList: new Uint8Array( new Int32Array( [ 0, 1 ] ).buffer ),
+        sequenceIdList: new Uint8Array( new Int32Array( [ 0, 1 ] ).buffer ),
 
         // chains
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
@@ -269,6 +269,7 @@ QUnit.test( "empty full", function( assert ) {
         rWork: 0,
         resolution: 0,
         secStructList: new Int8Array( 0 ),
+        sequenceIdList:  new Int32Array( 0 ),
         spaceGroup: "",
         title: "",
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
