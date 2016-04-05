@@ -5,10 +5,10 @@ function SimpleStructure( mmtfDict ){
 
     /**
      * Invokes the callback for each bond
-     * @param  {Function} callback - called for each bond
-     *  - @param {Integer} callback.atomIndex1 - first atom index of the bond
-     *  - @param {Integer} callback.atomIndex2 - second atom index of the bond
-     *  - @param {Integer|undefined} callback.bondOrder - order of the bond
+     * @param  {Function} callback(arg0, arg1, arg2) - called for each bond
+     *  - @param {Integer} arg0 - first atom index of the bond
+     *  - @param {Integer} arg1 - second atom index of the bond
+     *  - @param {Integer|undefined} arg2 - order of the bond
      */
     function eachBond( callback ){
         // intra group bonds
@@ -38,17 +38,17 @@ function SimpleStructure( mmtfDict ){
 
     /**
      * Invokes the callback for each atom
-     * @param  {Function} callback - called for each atom
-     *  - @param {Float} callback.element - element
-     *  - @param {Float} callback.atomName - atom name
-     *  - @param {Float|undefined} callback.charge - formal charge
-     *  - @param {Float} callback.xCoord - x coordinate
-     *  - @param {Float} callback.yCoord - y coordinate
-     *  - @param {Float} callback.zCoord - z coordinate
-     *  - @param {Float|undefined} callback.bFactor - b-factor
-     *  - @param {Integer|undefined} callback.atomId - atom id
-     *  - @param {Char|undefined} callback.altLabel - alternate location label
-     *  - @param {Float|undefined} callback.occupancy - occupancy
+     * @param  {Function} callback(arg0, ..., arg9) - called for each atom
+     *  - @param {Float} arg0 - element
+     *  - @param {Float} arg1 - atom name
+     *  - @param {Float|undefined} arg2 - formal charge
+     *  - @param {Float} arg3 - x coordinate
+     *  - @param {Float} arg4 - y coordinate
+     *  - @param {Float} arg5 - z coordinate
+     *  - @param {Float|undefined} arg6 - b-factor
+     *  - @param {Integer|undefined} arg7 - atom id
+     *  - @param {Char|undefined} arg8 - alternate location label
+     *  - @param {Float|undefined} arg9 - occupancy
      */
     function eachAtom( callback ){
         var atomOffset = 0;
@@ -74,16 +74,17 @@ function SimpleStructure( mmtfDict ){
 
     /**
      * Invokes the callback for each group
-     * @param  {Function} callback - called for each group
-     *  - @param {String} callback.groupName - group name
-     *  - @param {Char} callback.singleLetterCode - group single letter code
-     *  - @param {String} callback.chemCompType - chemical component type
-     *  - @param {Integer} callback.groupId - group id
-     *  - @param {Integer} callback.groupType - group type
-     *  - @param {Integer|undefined} callback.secStruct - secondary structure code
-     *  - @param {Char|undefined} callback.insCode - insertion code
-     *  - @param {Integer} callback.atomOffset - pointer to data of the group's first atom
-     *  - @param {Integer} callback.atomCount - number of atoms in the group
+     * @param  {Function} callback(arg0, ..., arg9) - called for each group
+     *  - @param {String} arg0 - group name
+     *  - @param {Char} arg1 - group single letter code
+     *  - @param {String} arg2 - chemical component type
+     *  - @param {Integer} arg3 - group id
+     *  - @param {Integer} arg4 - group type
+     *  - @param {Integer|undefined} arg5 - secondary structure code
+     *  - @param {Char|undefined} arg6 - insertion code
+     *  - @param {Integer|undefined} arg7 - sequence id
+     *  - @param {Integer} arg8 - pointer to data of the group's first atom
+     *  - @param {Integer} arg9 - number of atoms in the group
      */
     function eachGroup( callback ){
         var atomOffset = 0;
@@ -110,11 +111,11 @@ function SimpleStructure( mmtfDict ){
 
     /**
      * Invokes the callback for each chain
-     * @param  {Function} callback - called for each chain
-     *  - @param {Integer} callback.chainId - chain id
-     *  - @param {Integer|undefined} callback.chainName - chain name
-     *  - @param {Integer} callback.groupOffset - pointer to data of the chain's first group
-     *  - @param {Integer} callback.groupCount - number of groups in the chain
+     * @param  {Function} callback(arg0, ..., arg3) - called for each chain
+     *  - @param {Integer} arg0 - chain id
+     *  - @param {Integer|undefined} arg1 - chain name
+     *  - @param {Integer} arg2 - pointer to data of the chain's first group
+     *  - @param {Integer} arg3 - number of groups in the chain
      */
     function eachChain( callback ){
         var groupOffset = 0;
@@ -132,9 +133,9 @@ function SimpleStructure( mmtfDict ){
 
     /**
      * Invokes the callback for each model
-     * @param  {Function} callback - called for each model
-     *  - @param {Integer} callback.chainOffset - pointer to data of the models's first chain
-     *  - @param {Integer} callback.chainCount - number of chains in the model
+     * @param  {Function} callback(arg0, arg1) - called for each model
+     *  - @param {Integer} arg0 - pointer to data of the models's first chain
+     *  - @param {Integer} arg1 - number of chains in the model
      */
     function eachModel( callback ){
         var chainOffset = 0;
