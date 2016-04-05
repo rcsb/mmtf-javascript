@@ -10,7 +10,7 @@
  */
 function MmtfIterator( mmtfData ){
 
-    var d = mmtfDict;
+    var d = mmtfData;
 
     /**
      * Invokes the callback for each bond
@@ -25,7 +25,7 @@ function MmtfIterator( mmtfData ){
         var atomOffset = 0;
         for( i = 0, il = d.numGroups; i < il; ++i ){
             var groupData = d.groupList[ d.groupTypeList[ i ] ];
-            for( var j = 0, jl = bondOrders.length; j < jl; ++j ){
+            for( var j = 0, jl = groupData.bondOrders.length; j < jl; ++j ){
                 callback(
                     atomOffset + groupData.bondIndices[ j * 2 ],
                     atomOffset + groupData.bondIndices[ j * 2 + 1 ],
@@ -101,8 +101,6 @@ function MmtfIterator( mmtfData ){
         for( var i = 0, il = d.numGroups; i < il; ++i ){
             var groupData = d.groupList[ d.groupTypeList[ i ] ];
             var groupAtomCount = groupData.atomInfo.length / 2;
-            gAtomOffset[ i ] = atomOffset;
-            gAtomCount[ i ] = groupAtomCount;
             callback(
                 groupData.groupName,
                 groupData.singleLetterCode,
