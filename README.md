@@ -28,6 +28,7 @@ The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode
 | spaceGroup                 | `String`       | Hermann-Mauguin symbol                     |    Y     |
 | structureId                | `String`       | Some reference, e.g. a PDB ID              |    Y     |
 | title                      | `String`       | Short description                          |    Y     |
+| date                       | `String`       | Date in YYYY-MM-DD format                  |    Y     |
 | experimentalMethods        | `Array`        | Structure determination methods            |    Y     |
 | resolution                 | `Number`       | Resolution in angstrom                     |    Y     |
 | rFree                      | `Number`       | R-free value                               |    Y     |

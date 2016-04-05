@@ -122,7 +122,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // meta
 
         // header
-        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
+        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods", "date",
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
@@ -177,7 +177,7 @@ function checkMmtfFields( decodedMmtf, assert ){
     ];
     var optTopLevelFields = [
         // header
-        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
+        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods", "date",
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
@@ -245,6 +245,36 @@ function checkCommonTypes( decodedDict, assert ){
         assert.ok(
             typeof decodedDict.title === 'string',
             "title must be a string"
+        );
+    }
+    if( decodedDict.date !== undefined ){
+        assert.ok(
+            typeof decodedDict.date === 'string',
+            "date must be a string"
+        );
+        assert.ok(
+            decodedDict.date.length === 10,
+            "date must be a string of length 10"
+        );
+        assert.ok(
+            decodedDict.date[4] === "-",
+            "date char 4 must be a dash"
+        );
+        assert.ok(
+            decodedDict.date[7] === "-",
+            "date char 7 must be a dash"
+        );
+        assert.ok(
+            Number.isInteger( parseInt( decodedDict.date.substr( 0, 4 ) ) ),
+            "date YYYY must be an integer"
+        );
+        assert.ok(
+            Number.isInteger( parseInt( decodedDict.date.substr( 5, 2 ) ) ),
+            "date MM must be an integer"
+        );
+        assert.ok(
+            Number.isInteger( parseInt( decodedDict.date.substr( 8, 2 ) ) ),
+            "date DD must be an integer"
         );
     }
     if( decodedDict.structureId !== undefined ){

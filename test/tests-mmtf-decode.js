@@ -16,6 +16,7 @@ function getEmptyFullMmtfDict(){
         bioAssemblyList: [],
         structureId: "",
         title: "",
+        date: "0000-00-00",
         entityList: [],
 
         experimentalMethods: [],
@@ -124,6 +125,7 @@ function getFilledFullMmtfDict(){
         ],
         structureId: "1XYZ",
         title: "Full Test",
+        date: "2012-10-20",
         entityList: [
             {
                 chainIndexList: Array[1],
@@ -235,7 +237,7 @@ function getFilledRequiredMmtfDict(){
 
 QUnit.test( "empty full", function( assert ) {
     var dict = getEmptyFullMmtfDict();
-    assert.equal( Object.keys( dict ).length, 37, "Wrong number of fields in msgpack" );
+    assert.equal( Object.keys( dict ).length, 38, "Wrong number of fields in msgpack" );
     checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     checkMmtf( decodedMmtf, assert );
@@ -249,6 +251,7 @@ QUnit.test( "empty full", function( assert ) {
         chainIdList: new Uint8Array( 0 ),
         chainNameList: new Uint8Array( 0 ),
         chainsPerModel: [],
+        date: "0000-00-00",
         entityList: [],
         experimentalMethods: [],
         groupIdList: new Int32Array( 0 ),
@@ -308,7 +311,7 @@ QUnit.test( "empty required", function( assert ) {
 
 QUnit.test( "filled full", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    assert.equal( Object.keys( dict ).length, 37, "Wrong number of fields in msgpack" );
+    assert.equal( Object.keys( dict ).length, 38, "Wrong number of fields in msgpack" );
     checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     checkMmtf( decodedMmtf, assert );
@@ -334,6 +337,7 @@ QUnit.test( "filled full", function( assert ) {
             },
         ],
         title: "Full Test",
+        date: "2012-10-20",
         numBonds: 1,
         numAtoms: 2,
         numGroups: 1,
