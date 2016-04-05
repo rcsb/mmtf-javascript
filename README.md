@@ -26,7 +26,7 @@ The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode
 | mmtfProducer               | `String`       | Program that created the file              |          |
 | unitCell                   | `Array`        | Crystallographic unit cell                 |    Y     |
 | spaceGroup                 | `String`       | Hermann-Mauguin symbol                     |    Y     |
-| pdbId                      | `String`       | Reference to wwPDB entry                   |    Y     |
+| structureId                | `String`       | Some reference, e.g. a PDB ID              |    Y     |
 | title                      | `String`       | Short description                          |    Y     |
 | experimentalMethods        | `Array`        | Structure determination methods            |    Y     |
 | resolution                 | `Number`       | Resolution in angstrom                     |    Y     |
