@@ -110,11 +110,84 @@ Helper class to loop over the structural data in the decoded `mmtf` data. Availa
 
 ### Methods
 
-- eachBond( callback )
-- eachAtom( callback )
-- eachGroup( callback )
-- eachChain( callback )
-- eachModel( callback )
+#### eachBond
+
+*Signature*: `eachBond( callback )`
+
+Arguments passed to `callback`:
+
+| Name                      | Type         | Description                                    |
+|---------------------------|--------------|------------------------------------------------|
+| atomIndex1                | `Integer`    | First atom index of the bond                   |
+| atomIndex2                | `Integer`    | Second atom index of the bond                  |
+| bondOrder                 | `Integer`    | Order of the bond                              |
+
+
+#### eachAtom
+
+*Signature*: `eachAtom( callback )`
+
+Arguments passed to `callback`:
+
+| Name                      | Type         | Description                                    |
+|---------------------------|--------------|------------------------------------------------|
+| element                   | `String`     | Element                                        |
+| atomName                  | `String`     | Atom name                                      |
+| formalCharge              | `Integer`    | Formal charge                                  |
+| xCoord                    | `Float`      | X coordinate                                   |
+| yCoord                    | `Float`      | Y coordinate                                   |
+| zCoord                    | `Float`      | Z coordinate                                   |
+| bFactor                   | `Float`      | B-factor                                       |
+| atomId                    | `Integer`    | Atom ID                                        |
+| altLabel                  | `Char`       | Alternate location label                       |
+| occupancy                 | `Float`      | Occupancy                                      |
+
+
+#### eachGroup
+
+*Signature*: `eachGroup( callback )`
+
+Arguments passed to `callback`:
+
+| Name                      | Type         | Description                                    |
+|---------------------------|--------------|------------------------------------------------|
+| groupName                 | `String`     | Group name                                     |
+| singleLetterCode          | `Char`       | Group single letter code                       |
+| checmCompType             | `Integer`    | Chemical component type                        |
+| groupId                   | `Integer`    | Group ID                                       |
+| groupType                 | `Integer`    | Group type                                     |
+| secStruct                 | `Integer`    | Secondary structure code                       |
+| insCode                   | `Char`       | Insertion code                                 |
+| sequenceId                | `Integer`    | Sequence ID                                    |
+| atomOffset                | `Integer`    | Pointer to data of the group's first atom      |
+| atomCount                 | `Integer`    | Number of atoms in the group                   |
+
+
+#### eachChain
+
+*Signature*: `eachChain( callback )`
+
+Arguments passed to `callback`:
+
+| Name                      | Type         | Description                                    |
+|---------------------------|--------------|------------------------------------------------|
+| chainId                   | `String`     | Chain ID                                       |
+| chainName                 | `String`     | Chain name                                     |
+| groupOffset               | `Integer`    | Pointer to data of the chain's first group     |
+| groupCount                | `Integer`    | Number of groups in the chain                  |
+
+
+#### eachModel
+
+*Signature*: `eachModel( callback )`
+
+Arguments passed to `callback`:
+
+| Name                      | Type         | Description                                    |
+|---------------------------|--------------|------------------------------------------------|
+| chainOffset               | `Integer`    | Pointer to data of the models's first chain    |
+| chainCount                | `Integer`    | Number of chains in the model                  |
+
 
 ### Example
 
@@ -122,4 +195,17 @@ Helper class to loop over the structural data in the decoded `mmtf` data. Availa
 // bin is Uint8Array containing the mmtf msgpack
 var mmtfData = decodeMmtf( bin );
 var mmtfIterator = new MmtfIterator( mmtfData );
+mmtfIterator.eachAtom(
+    function(
+        element, atomName, formalCharge,
+        xCoord, yCoord, zCoord, bFactor,
+        atomId, altLabel, occupancy
+    ){
+        console.log(
+            element, atomName, formalCharge,
+            xCoord, yCoord, zCoord, bFactor,
+            atomId, altLabel, occupancy
+        );
+    }
+)
 ```
