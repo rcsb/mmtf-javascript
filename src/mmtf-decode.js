@@ -1,5 +1,5 @@
 /**
- * @file msgpack-decode
+ * @file mmtf-decode
  * @author Alexander Rose <alexander.rose@weirdbyte.de>
  */
 
@@ -11,6 +11,14 @@ import {
     decodeFloatSplitList, decodeFloatRunLength
 } from "./mmtf-decode-helpers.js";
 
+/**
+ * Decode MMTF fields
+ * @param  {Uint8Array|ArrayBuffer|Object} binOrDict - binary MessagePack or encoded MMTF data
+ * @param  {Object} [params] - decoding parameters
+ *  - @param {Boolean} params.littleEndian - decoded field's byte order is little endian
+ *  - @param {Array} params.ignoreFields - names of optional fields not to decode
+ * @return {Object} mmtfData
+ */
 function decodeMmtf( binOrDict, params ){
 
     params = params || {};
@@ -40,7 +48,7 @@ function decodeMmtf( binOrDict, params ){
     // hoisted loop variables
     var i, il;
 
-    // counts
+    // get counts
     var numBonds = inputDict.numBonds || 0;
     var numAtoms = inputDict.numAtoms || 0;
     var numGroups = inputDict.groupTypeList.length / 4;
@@ -71,11 +79,13 @@ function decodeMmtf( binOrDict, params ){
     //////////////
     // bond data
 
+    // decode inter group bond atom indices, i.e. get int32 array
     var inputBondAtomList = inputDict.bondAtomList;
     if( inputBondAtomList && decodeField( "bondAtomList" ) ){
         outputDict.bondAtomList = getInt32( inputBondAtomList, undefined, littleEndian );
     }
 
+    // decode inter group bond orders, i.e. get uint8 array
     var inputBondOrderList = inputDict.bondOrderList;
     if( inputBondOrderList && decodeField( "bondOrderList" ) ){
         outputDict.bondOrderList = getUint8View( inputBondOrderList );

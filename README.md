@@ -8,17 +8,16 @@ JavaScript decoder for MMTF files. For a description of the format see the [MMTF
 ## Table of contents
 
 * [Decoder](#decoder)
-* [Properties](#properties)
 * [Iterator](#Iterator)
 
 
 
 ## Decoder
 
-The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode.js)) is `decodeMmtf` which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns a decoded `mmtf` object with the following properties.
+The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode.js)) is `decodeMmtf` which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns the decoded `mmtf` data as an object with the following properties.
 
 
-## Properties
+### Properties
 
 | Name                       | Type           | Description                                | Optional |
 |----------------------------|----------------|--------------------------------------------|:--------:|
@@ -59,9 +58,9 @@ The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode
 | chainNameList              | `Uint8Array`   | List of chain names                        |    Y     |
 
 
-## Objects
+### Objects
 
-### entity
+#### entity
 
 Fields in an `entity` object:
 
@@ -73,7 +72,7 @@ Fields in an `entity` object:
 | sequence                  | `String`     | One letter code sequence          |
 
 
-### assembly
+#### assembly
 
 Fields in an `assembly` object:
 
@@ -90,7 +89,7 @@ Fields in an `transform` object:
 | transformation            | `Array`      | 4x4 transformation matrix         |
 
 
-### groupType
+#### groupType
 
 Fields of a `groupType` entry:
 
