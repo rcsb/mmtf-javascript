@@ -132,7 +132,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // bonds
         "bondAtomList", "bondOrderList",
         // atoms
-        "bFactorBig", "bFactorSmall", "atomIdList", "altLabelList", "occList",
+        "bFactorBig", "bFactorSmall", "atomIdList", "altLabelList", "occupancyList",
         // groups
         "secStructList", "insCodeList", "seqResIdList",
         // chains
@@ -187,7 +187,7 @@ function checkMmtfFields( decodedMmtf, assert ){
         // bonds
         "bondAtomList", "bondOrderList",
         // atoms
-        "bFactorList", "atomIdList", "altLabelList", "occList",
+        "bFactorList", "atomIdList", "altLabelList", "occupancyList",
         // groups
         "secStructList", "insCodeList", "seqResIdList",
         // chains
@@ -402,10 +402,10 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
             "when given, altLabelList must be an array"
         );
     }
-    if( decodedMsgpack.occList !== undefined ){
+    if( decodedMsgpack.occupancyList !== undefined ){
         assert.ok(
-            decodedMsgpack.occList instanceof Uint8Array,
-            "when given, occList must be a Uint8Array instance"
+            decodedMsgpack.occupancyList instanceof Uint8Array,
+            "when given, occupancyList must be a Uint8Array instance"
         );
     }
 
@@ -500,10 +500,10 @@ function checkMmtfTypes( decodedMmtf, assert ){
             "when given, altLabelList must be an Uint8Array instance"
         );
     }
-    if( decodedMmtf.occList !== undefined ){
+    if( decodedMmtf.occupancyList !== undefined ){
         assert.ok(
-            decodedMmtf.occList instanceof Float32Array,
-            "when given, occList must be an Float32Array instance"
+            decodedMmtf.occupancyList instanceof Float32Array,
+            "when given, occupancyList must be an Float32Array instance"
         );
     }
 
@@ -597,8 +597,8 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
     if( decodedMsgpack.altLabelList !== undefined ){
         assert.equal( getRunLengthSize( decodedMsgpack.altLabelList ), decodedMsgpack.numAtoms, "numatoms, altLabelList" );
     }
-    if( decodedMsgpack.occList !== undefined ){
-        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.occList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, occList" );
+    if( decodedMsgpack.occupancyList !== undefined ){
+        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.occupancyList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
     }
 
     // group data sizes
@@ -642,8 +642,8 @@ function checkMmtfConsistency( decodedMmtf, assert ){
     if( decodedMmtf.altLabelList !== undefined ){
         assert.equal( decodedMmtf.altLabelList.length, decodedMmtf.numAtoms, "numAtoms, altLabelList" );
     }
-    if( decodedMmtf.occList !== undefined ){
-        assert.equal( decodedMmtf.occList.length, decodedMmtf.numAtoms, "numAtoms, occList" );
+    if( decodedMmtf.occupancyList !== undefined ){
+        assert.equal( decodedMmtf.occupancyList.length, decodedMmtf.numAtoms, "numAtoms, occupancyList" );
     }
 
     assert.equal( decodedMmtf.groupTypeList.length, decodedMmtf.numGroups, "numGroups, groupTypeList" );

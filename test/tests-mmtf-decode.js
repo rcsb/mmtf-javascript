@@ -45,7 +45,7 @@ function getEmptyFullMmtfDict(){
         bFactorSmall: new Uint8Array( 0 ),
         atomIdList: new Uint8Array( 0 ),
         altLabelList: [],
-        occList: new Uint8Array( 0 ),
+        occupancyList: new Uint8Array( 0 ),
 
         // groups
         groupIdList: new Uint8Array( 0 ),
@@ -170,7 +170,7 @@ function getFilledFullMmtfDict(){
         bFactorSmall: new Uint8Array( new Int16Array( [] ).buffer ),
         atomIdList: new Uint8Array( new Int32Array( [ 1, 2 ] ).buffer ),
         altLabelList: new Array( "A", 1, "B", 1 ),
-        occList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
+        occupancyList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
 
         // groups
         groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
@@ -263,7 +263,7 @@ QUnit.test( "empty full", function( assert ) {
         numChains: 0,
         numGroups: 0,
         numModels: 0,
-        occList: new Float32Array( 0 ),
+        occupancyList: new Float32Array( 0 ),
         structureId: "",
         rFree: 0,
         rWork: 0,
@@ -354,7 +354,7 @@ QUnit.test( "filled full", function( assert ) {
         altLabelList: new Uint8Array( [ 65, 66 ] ),
         atomIdList: new Int32Array( [ 1, 2 ] ),
         bFactorList: new Float32Array( [ 99.99, 100.00 ] ),
-        occList: new Float32Array( [ 0.6, 0.4 ] ),
+        occupancyList: new Float32Array( [ 0.6, 0.4 ] ),
         xCoordListList: new Float32Array( [ 50, 52 ] ),
         yCoordListList: new Float32Array( [ 60, 63 ] ),
         zCoordListList: new Float32Array( [ 70, 74 ] ),

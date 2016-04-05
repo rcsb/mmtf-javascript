@@ -124,10 +124,10 @@ function decodeMmtf( binOrDict, params ){
     }
 
     // run-length & integer decode occupancies
-    var inputOccList = inputDict.occList;
-    if( inputOccList && decodeField( "occList" ) ){
-        outputDict.occList = decodeFloatRunLength(
-            inputOccList, 100, undefined, littleEndian
+    var inputOccupancyList = inputDict.occupancyList;
+    if( inputOccupancyList && decodeField( "occupancyList" ) ){
+        outputDict.occupancyList = decodeFloatRunLength(
+            inputOccupancyList, 100, undefined, littleEndian
         );
     }
 
