@@ -123,7 +123,7 @@ function getFilledFullMmtfDict(){
         date: "2012-10-20",
         entityList: [
             {
-                chainIndexList: Array[1],
+                chainIndexList: [ 1 ],
                 description: "Some Protein",
                 sequence: "A",
                 type: "polymer"
@@ -153,8 +153,8 @@ function getFilledFullMmtfDict(){
         ],
 
         // bonds
-        bondAtomList: new Uint8Array( 0 ),
-        bondOrderList: new Uint8Array( 0 ),
+        bondAtomList: new Uint8Array( new Int32Array( [ 0, 1, 0, 0 ] ).buffer ),
+        bondOrderList: new Uint8Array( new Uint8Array( [ 2, 0 ] ).buffer ),
 
         // atoms
         xCoordBig: new Uint8Array( new Int32Array( [ 50000, 1 ] ).buffer ),
@@ -177,8 +177,8 @@ function getFilledFullMmtfDict(){
         sequenceIdList: new Uint8Array( new Int32Array( [ 0, 1 ] ).buffer ),
 
         // chains
-        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
-        chainNameList: new Uint8Array( [ 66, 0, 0, 0 ] ),
+        chainIdList: new Uint8Array( [ 0, 0, 68, 65 ] ),
+        chainNameList: new Uint8Array( [ 0, 0, 0, 66 ] ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -222,7 +222,7 @@ function getFilledRequiredMmtfDict(){
         groupTypeList: new Uint8Array( new Int32Array( [ 0 ] ).buffer ),
 
         // chains
-        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
+        chainIdList: new Uint8Array( [ 0, 65, 0, 0 ] ),
         groupsPerChain: [ 1 ],
 
         // models

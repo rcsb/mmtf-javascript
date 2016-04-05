@@ -17,7 +17,7 @@ function MmtfIterator( mmtfData ){
      * @param  {Function} callback(arg0, arg1, arg2) - called for each bond
      *  - @param {Integer} arg0 - first atom index of the bond
      *  - @param {Integer} arg1 - second atom index of the bond
-     *  - @param {Integer|undefined} arg2 - order of the bond
+     *  - @param {Integer|null} arg2 - order of the bond
      */
     function eachBond( callback ){
         var i, il;
@@ -40,7 +40,7 @@ function MmtfIterator( mmtfData ){
                 callback(
                     d.bondAtomList[ i ],
                     d.bondAtomList[ i + 1 ],
-                    d.bondOrderList ? d.bondOrderList[ i / 2 ] : undefined
+                    d.bondOrderList ? d.bondOrderList[ i / 2 ] : null
                 );
             }
         }
@@ -49,16 +49,16 @@ function MmtfIterator( mmtfData ){
     /**
      * Invokes the callback for each atom
      * @param  {Function} callback(arg0, ..., arg9) - called for each atom
-     *  - @param {Float} arg0 - element
-     *  - @param {Float} arg1 - atom name
-     *  - @param {Float|undefined} arg2 - formal charge
+     *  - @param {String} arg0 - element
+     *  - @param {String} arg1 - atom name
+     *  - @param {Integer} arg2 - formal charge
      *  - @param {Float} arg3 - x coordinate
      *  - @param {Float} arg4 - y coordinate
      *  - @param {Float} arg5 - z coordinate
-     *  - @param {Float|undefined} arg6 - b-factor
-     *  - @param {Integer|undefined} arg7 - atom id
-     *  - @param {Char|undefined} arg8 - alternate location label
-     *  - @param {Float|undefined} arg9 - occupancy
+     *  - @param {Float|null} arg6 - b-factor
+     *  - @param {Integer|null} arg7 - atom id
+     *  - @param {Char|null} arg8 - alternate location label
+     *  - @param {Float|null} arg9 - occupancy
      */
     function eachAtom( callback ){
         var atomOffset = 0;
@@ -72,10 +72,10 @@ function MmtfIterator( mmtfData ){
                     d.xCoordList[ atomOffset ],
                     d.yCoordList[ atomOffset ],
                     d.zCoordList[ atomOffset ],
-                    d.bFactorList ? d.bFactorList[ atomOffset ] : undefined,
-                    d.atomIdList ? d.atomIdList[ atomOffset ] : undefined,
-                    d.altLabelList ? d.altLabelList[ atomOffset ] : undefined,
-                    d.occupancyList ? d.occupancyList[ atomOffset ] : undefined
+                    d.bFactorList ? d.bFactorList[ atomOffset ] : null,
+                    d.atomIdList ? d.atomIdList[ atomOffset ] : null,
+                    d.altLabelList ? String.fromCharCode( d.altLabelList[ atomOffset ] ) : null,
+                    d.occupancyList ? d.occupancyList[ atomOffset ] : null
                 );
                 atomOffset += 1;
             }
@@ -90,9 +90,9 @@ function MmtfIterator( mmtfData ){
      *  - @param {String} arg2 - chemical component type
      *  - @param {Integer} arg3 - group id
      *  - @param {Integer} arg4 - group type
-     *  - @param {Integer|undefined} arg5 - secondary structure code
-     *  - @param {Char|undefined} arg6 - insertion code
-     *  - @param {Integer|undefined} arg7 - sequence id
+     *  - @param {Integer|null} arg5 - secondary structure code
+     *  - @param {Char|null} arg6 - insertion code
+     *  - @param {Integer|null} arg7 - sequence id
      *  - @param {Integer} arg8 - pointer to data of the group's first atom
      *  - @param {Integer} arg9 - number of atoms in the group
      */
@@ -107,9 +107,9 @@ function MmtfIterator( mmtfData ){
                 groupData.chemCompType,
                 d.groupIdList[ i ],
                 d.groupTypeList[ i ],
-                d.secStructList ? d.secStructList[ i ] : undefined,
-                d.insCodeList ? d.insCodeList[ i ] : undefined,
-                d.sequenceIdList ? d.sequenceIdList[ i ] : undefined,
+                d.secStructList ? d.secStructList[ i ] : null,
+                d.insCodeList ? String.fromCharCode( d.insCodeList[ i ] ) : null,
+                d.sequenceIdList ? d.sequenceIdList[ i ] : null,
                 atomOffset,
                 groupAtomCount
             );
@@ -120,8 +120,8 @@ function MmtfIterator( mmtfData ){
     /**
      * Invokes the callback for each chain
      * @param  {Function} callback(arg0, ..., arg3) - called for each chain
-     *  - @param {Integer} arg0 - chain id
-     *  - @param {Integer|undefined} arg1 - chain name
+     *  - @param {String} arg0 - chain id
+     *  - @param {String|undefined} arg1 - chain name
      *  - @param {Integer} arg2 - pointer to data of the chain's first group
      *  - @param {Integer} arg3 - number of groups in the chain
      */
@@ -130,8 +130,8 @@ function MmtfIterator( mmtfData ){
         for( var i = 0; i < d.numChains; ++i ){
             var chainGroupCount = d.groupsPerChain[ i ];
             callback(
-                d.chainIdList[ i ],
-                d.chainNameList ? d.chainNameList[ i ] : undefined,
+                String.fromCharCode.apply( null, d.chainIdList.subarray( i, i + 4 ) ),
+                d.chainNameList ? String.fromCharCode.apply( null, d.chainNameList.subarray( i, i + 4 ) ) : null,
                 groupOffset,
                 chainGroupCount
             );

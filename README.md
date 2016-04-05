@@ -148,11 +148,11 @@ mmtfIterator.eachAtom(
 
 Arguments passed to `callback`:
 
-| Name                      | Type         | Description                                    |
-|---------------------------|--------------|------------------------------------------------|
-| atomIndex1                | `Integer`    | First atom index of the bond                   |
-| atomIndex2                | `Integer`    | Second atom index of the bond                  |
-| bondOrder                 | `Integer`    | Order of the bond                              |
+| Name                      | Type           | Description                                    |
+|---------------------------|----------------|------------------------------------------------|
+| atomIndex1                | `Integer`      | First atom index of the bond                   |
+| atomIndex2                | `Integer`      | Second atom index of the bond                  |
+| bondOrder                 | `Integer|null` | Order of the bond                              |
 
 
 #### eachAtom
@@ -161,18 +161,18 @@ Arguments passed to `callback`:
 
 Arguments passed to `callback`:
 
-| Name                      | Type         | Description                                    |
-|---------------------------|--------------|------------------------------------------------|
-| element                   | `String`     | Element                                        |
-| atomName                  | `String`     | Atom name                                      |
-| formalCharge              | `Integer`    | Formal charge                                  |
-| xCoord                    | `Float`      | X coordinate                                   |
-| yCoord                    | `Float`      | Y coordinate                                   |
-| zCoord                    | `Float`      | Z coordinate                                   |
-| bFactor                   | `Float`      | B-factor                                       |
-| atomId                    | `Integer`    | Atom ID                                        |
-| altLabel                  | `Char`       | Alternate location label                       |
-| occupancy                 | `Float`      | Occupancy                                      |
+| Name                      | Type           | Description                                    |
+|---------------------------|----------------|------------------------------------------------|
+| element                   | `String`       | Element                                        |
+| atomName                  | `String`       | Atom name                                      |
+| formalCharge              | `Integer`      | Formal charge                                  |
+| xCoord                    | `Float`        | X coordinate                                   |
+| yCoord                    | `Float`        | Y coordinate                                   |
+| zCoord                    | `Float`        | Z coordinate                                   |
+| bFactor                   | `Float|null`   | B-factor                                       |
+| atomId                    | `Integer|null` | Atom ID                                        |
+| altLabel                  | `Char|null`    | Alternate location label                       |
+| occupancy                 | `Float|null`   | Occupancy                                      |
 
 
 #### eachGroup
@@ -181,18 +181,18 @@ Arguments passed to `callback`:
 
 Arguments passed to `callback`:
 
-| Name                      | Type         | Description                                    |
-|---------------------------|--------------|------------------------------------------------|
-| groupName                 | `String`     | Group name                                     |
-| singleLetterCode          | `Char`       | Group single letter code                       |
-| checmCompType             | `Integer`    | Chemical component type                        |
-| groupId                   | `Integer`    | Group ID                                       |
-| groupType                 | `Integer`    | Group type                                     |
-| secStruct                 | `Integer`    | Secondary structure code                       |
-| insCode                   | `Char`       | Insertion code                                 |
-| sequenceId                | `Integer`    | Sequence ID                                    |
-| atomOffset                | `Integer`    | Pointer to data of the group's first atom      |
-| atomCount                 | `Integer`    | Number of atoms in the group                   |
+| Name                      | Type           | Description                                    |
+|---------------------------|----------------|------------------------------------------------|
+| groupName                 | `String`       | Group name                                     |
+| singleLetterCode          | `Char`         | Group single letter code                       |
+| checmCompType             | `Integer`      | Chemical component type                        |
+| groupId                   | `Integer`      | Group ID                                       |
+| groupType                 | `Integer`      | Group type                                     |
+| secStruct                 | `Integer|null` | Secondary structure code                       |
+| insCode                   | `Char|null`    | Insertion code                                 |
+| sequenceId                | `Integer|null` | Sequence ID                                    |
+| atomOffset                | `Integer`      | Pointer to data of the group's first atom      |
+| atomCount                 | `Integer`      | Number of atoms in the group                   |
 
 
 #### eachChain
@@ -201,12 +201,12 @@ Arguments passed to `callback`:
 
 Arguments passed to `callback`:
 
-| Name                      | Type         | Description                                    |
-|---------------------------|--------------|------------------------------------------------|
-| chainId                   | `String`     | Chain ID                                       |
-| chainName                 | `String`     | Chain name                                     |
-| groupOffset               | `Integer`    | Pointer to data of the chain's first group     |
-| groupCount                | `Integer`    | Number of groups in the chain                  |
+| Name                      | Type           | Description                                    |
+|---------------------------|----------------|------------------------------------------------|
+| chainId                   | `String`       | Chain ID                                       |
+| chainName                 | `String|null`  | Chain name                                     |
+| groupOffset               | `Integer`      | Pointer to data of the chain's first group     |
+| groupCount                | `Integer`      | Number of groups in the chain                  |
 
 
 #### eachModel
@@ -215,9 +215,7 @@ Arguments passed to `callback`:
 
 Arguments passed to `callback`:
 
-| Name                      | Type         | Description                                    |
-|---------------------------|--------------|------------------------------------------------|
-| chainOffset               | `Integer`    | Pointer to data of the models's first chain    |
-| chainCount                | `Integer`    | Number of chains in the model                  |
-
-
+| Name                      | Type           | Description                                    |
+|---------------------------|----------------|------------------------------------------------|
+| chainOffset               | `Integer`      | Pointer to data of the models's first chain    |
+| chainCount                | `Integer`      | Number of chains in the model                  |

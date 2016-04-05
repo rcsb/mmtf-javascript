@@ -87,6 +87,7 @@ QUnit.test( "filled full", function( assert ) {
     var expectedMmtf = {
         mmtfVersion: "0.1",
         mmtfProducer: "unittest",
+
         unitCell: [ 10, 12, 30, 90, 90, 120 ],
         structureId: "1XYZ",
         spaceGroup: "P1",
@@ -107,6 +108,20 @@ QUnit.test( "filled full", function( assert ) {
         ],
         title: "Full Test",
         date: "2012-10-20",
+        entityList: [
+            {
+                chainIndexList: [ 1 ],
+                description: "Some Protein",
+                sequence: "A",
+                type: "polymer"
+            }
+        ],
+
+        experimentalMethods: [ "X-RAY DIFFRACTION" ],
+        resolution: 2.5,
+        rFree: 0.7,
+        rWork: 0.5,
+
         numBonds: 1,
         numAtoms: 2,
         numGroups: 1,
@@ -123,40 +138,30 @@ QUnit.test( "filled full", function( assert ) {
                 groupName: "GLY"
             }
         ],
-        bondAtomList: new Uint32Array( [ 0, 1, 0, 0 ] ),
+        bondAtomList: new Int32Array( [ 0, 1, 0, 0 ] ),
         bondOrderList: new Uint8Array( [ 2, 0 ] ),
+
         altLabelList: new Uint8Array( [ 65, 66 ] ),
         atomIdList: new Int32Array( [ 1, 2 ] ),
         bFactorList: new Float32Array( [ 99.99, 100.00 ] ),
         occupancyList: new Float32Array( [ 0.6, 0.4 ] ),
-        xCoordListList: new Float32Array( [ 50, 52 ] ),
-        yCoordListList: new Float32Array( [ 60, 63 ] ),
-        zCoordListList: new Float32Array( [ 70, 74 ] ),
+        xCoordList: new Float32Array( [ 50, 52 ] ),
+        yCoordList: new Float32Array( [ 60, 63 ] ),
+        zCoordList: new Float32Array( [ 70, 74 ] ),
+
         groupIdList: new Int32Array( [ 100 ] ),
-        groupTypeList: new Uint16Array( [ 102 ] ),
+        groupTypeList: new Int32Array( [ 0 ] ),
         secStructList: new Int8Array( [ -1 ] ),
         insCodeList: new Uint8Array( [ 88 ] ),
-        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
-        chainNameList: new Uint8Array( [  66, 0, 0, 0 ] )
+        sequenceIdList: new Int32Array( [ 0 ] ),
+
+        chainIdList: new Uint8Array( [ 0, 0, 68, 65 ] ),
+        chainNameList: new Uint8Array( [  0, 0, 0, 66 ] ),
+        groupsPerChain: [ 1 ],
+
+        chainsPerModel: [ 1 ],
     };
-    assert.equal( decodedMmtf.structureId, expectedMmtf.structureId, "Passed structureId!" );
-    assert.equal( decodedMmtf.spaceGroup, expectedMmtf.spaceGroup, "Passed spaceGroup!" );
-    assert.deepEqual( decodedMmtf.bioAssemblyList, expectedMmtf.bioAssemblyList, "Passed bioAssemblyList!" );
-    assert.equal( decodedMmtf.title, expectedMmtf.title, "Passed title!" );
-    assert.deepEqual( decodedMmtf.unitCell, expectedMmtf.unitCell, "Passed unitcell!" );
-
-    assert.equal( decodedMmtf.numBonds, expectedMmtf.numBonds, "Passed numBonds!" );
-    assert.equal( decodedMmtf.numAtoms, expectedMmtf.numAtoms, "Passed numAtoms!" );
-    assert.equal( decodedMmtf.numGroups, expectedMmtf.numGroups, "Passed numGroups!" );
-    assert.equal( decodedMmtf.numChains, expectedMmtf.numChains, "Passed numChains!" );
-    assert.equal( decodedMmtf.numModels, expectedMmtf.numModels, "Passed numModels!" );
-
-    assert.deepEqual( decodedMmtf.groupList, expectedMmtf.groupList, "Passed groupList!" );
-    assert.deepEqual( decodedMmtf.bondStore, expectedMmtf.bondStore, "Passed bondStore!" );
-    assert.deepEqual( decodedMmtf.atomStore, expectedMmtf.atomStore, "Passed atomStore!" );
-    assert.deepEqual( decodedMmtf.groupStore, expectedMmtf.groupStore, "Passed groupStore!" );
-    assert.deepEqual( decodedMmtf.chainStore, expectedMmtf.chainStore, "Passed chainStore!" );
-    assert.deepEqual( decodedMmtf.modelStore, expectedMmtf.modelStore, "Passed modelStore!" );
+    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });
 
 QUnit.test( "filled required", function( assert ) {
@@ -167,11 +172,6 @@ QUnit.test( "filled required", function( assert ) {
     var expectedMmtf = {
         mmtfVersion: "0.1",
         mmtfProducer: "unittest",
-        structureId: undefined,
-        spaceGroup: undefined,
-        bioAssemblyList: undefined,
-        title: undefined,
-        unitCell: undefined,
         numBonds: 1,
         numAtoms: 2,
         numGroups: 1,
@@ -192,27 +192,13 @@ QUnit.test( "filled required", function( assert ) {
         yCoordList: new Float32Array( [ 20, 22 ] ),
         zCoordList: new Float32Array( [ 30, 33 ] ),
         groupIdList: new Int32Array( [ 100 ] ),
-        groupTypeList: new Int32Array( [ 10 ] ),
-        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] )
+        groupTypeList: new Int32Array( [ 0 ] ),
+        chainIdList: new Uint8Array( [ 0, 65, 0, 0 ] ),
+        groupsPerChain: [ 1 ],
+
+        chainsPerModel: [ 1 ],
     };
-    assert.equal( decodedMmtf.structureId, expectedMmtf.structureId, "Passed structureId!" );
-    assert.equal( decodedMmtf.spaceGroup, expectedMmtf.spaceGroup, "Passed spaceGroup!" );
-    assert.deepEqual( decodedMmtf.bioAssemblyList, expectedMmtf.bioAssemblyList, "Passed bioAssemblyList!" );
-    assert.equal( decodedMmtf.title, expectedMmtf.title, "Passed title!" );
-    assert.deepEqual( decodedMmtf.unitCell, expectedMmtf.unitCell, "Passed unitcell!" );
-
-    assert.equal( decodedMmtf.numBonds, expectedMmtf.numBonds, "Passed numBonds!" );
-    assert.equal( decodedMmtf.numAtoms, expectedMmtf.numAtoms, "Passed numAtoms!" );
-    assert.equal( decodedMmtf.numGroups, expectedMmtf.numGroups, "Passed numGroups!" );
-    assert.equal( decodedMmtf.numChains, expectedMmtf.numChains, "Passed numChains!" );
-    assert.equal( decodedMmtf.numModels, expectedMmtf.numModels, "Passed numModels!" );
-
-    assert.deepEqual( decodedMmtf.groupList, expectedMmtf.groupList, "Passed groupList!" );
-    assert.deepEqual( decodedMmtf.bondStore, expectedMmtf.bondStore, "Passed bondStore!" );
-    assert.deepEqual( decodedMmtf.atomStore, expectedMmtf.atomStore, "Passed atomStore!" );
-    assert.deepEqual( decodedMmtf.groupStore, expectedMmtf.groupStore, "Passed groupStore!" );
-    assert.deepEqual( decodedMmtf.chainStore, expectedMmtf.chainStore, "Passed chainStore!" );
-    assert.deepEqual( decodedMmtf.modelStore, expectedMmtf.modelStore, "Passed modelStore!" );
+    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });
 
 QUnit.test( "empty required missing", function( assert ) {
