@@ -23,7 +23,7 @@ QUnit.test( "decode mmtf 1crn full", function( assert ) {
     function onload(){
         var decodedMmtf = decodeMmtf( this.response );
 
-        assert.equal( decodedMmtf.pdbId, "1CRN", "Wrong PDB ID" );
+        assert.equal( decodedMmtf.structureId, "1CRN", "Wrong PDB ID" );
         assert.equal( decodedMmtf.spaceGroup, "P 1 21 1", "Wrong spacegroup" );
         assert.close( decodedMmtf.unitCell[ 0 ], 40.959, 0.001, "Wrong unitcell a length" );
         assert.close( decodedMmtf.unitCell[ 1 ], 18.649, 0.001, "Wrong unitcell b length" );
@@ -56,7 +56,7 @@ QUnit.test( "decode msgpack 1crn full", function( assert ) {
     function onload(){
         var decodedMsgpack = decodeMsgpack( new Uint8Array( this.response ) );
 
-        assert.equal( decodedMsgpack.pdbId, "1CRN", "Wrong PDB ID" );
+        assert.equal( decodedMsgpack.structureId, "1CRN", "Wrong PDB ID" );
         assert.equal( decodedMsgpack.spaceGroup, "P 1 21 1", "Wrong spacegroup" );
         assert.close( decodedMsgpack.unitCell[ 0 ], 40.959, 0.001, "Wrong unitcell a length" );
         assert.close( decodedMsgpack.unitCell[ 1 ], 18.649, 0.001, "Wrong unitcell b length" );
@@ -91,7 +91,7 @@ QUnit.test( "decode mmtf 1d66 full", function( assert ) {
     function onload(){
         var decodedMmtf = decodeMmtf( this.response );
 
-        assert.equal( decodedMmtf.pdbId, "1D66", "Wrong PDB ID" );
+        assert.equal( decodedMmtf.structureId, "1D66", "Wrong PDB ID" );
 
         assert.equal( decodedMmtf.numBonds, 1960,  "Wrong number of bonds" );
         assert.equal( decodedMmtf.numAtoms, 1762,  "Wrong number of atoms" );
@@ -116,7 +116,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
     function onload(){
         var decodedMsgpack = decodeMsgpack( new Uint8Array( this.response ) );
 
-        assert.equal( decodedMsgpack.pdbId, "1D66", "Wrong PDB ID" );
+        assert.equal( decodedMsgpack.structureId, "1D66", "Wrong PDB ID" );
 
         assert.equal( decodedMsgpack.numBonds, 1960, "Wrong number of bonds" );
         assert.equal( decodedMsgpack.numAtoms, 1762, "Wrong number of atoms" );
@@ -143,7 +143,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 //     function onload(){
 //         var decodedMmtf = decodeMmtf( this.response );
 
-//         assert.equal( decodedMmtf.pdbId, "1D66", "Wrong PDB ID" );
+//         assert.equal( decodedMmtf.structureId, "1D66", "Wrong PDB ID" );
 
 //         assert.equal( decodedMmtf.numBonds, 0,  "Wrong number of bonds" );
 //         assert.equal( decodedMmtf.numAtoms, 154,  "Wrong number of atoms" );
@@ -168,7 +168,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 //     function onload(){
 //         var decodedMsgpack = decodeMsgpack( new Uint8Array( this.response ) );
 
-//         assert.equal( decodedMsgpack.pdbId, "1D66", "Wrong PDB ID" );
+//         assert.equal( decodedMsgpack.structureId, "1D66", "Wrong PDB ID" );
 
 //         assert.equal( decodedMsgpack.numBonds, 0, "Wrong number of bonds" );
 //         assert.equal( decodedMsgpack.numAtoms, 154, "Wrong number of atoms" );

@@ -123,7 +123,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // meta
 
         // header
-        "title", "pdbId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
+        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
@@ -178,7 +178,7 @@ function checkMmtfFields( decodedMmtf, assert ){
     ];
     var optTopLevelFields = [
         // header
-        "title", "pdbId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
+        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
@@ -248,10 +248,10 @@ function checkCommonTypes( decodedDict, assert ){
             "title must be a string"
         );
     }
-    if( decodedDict.pdbId !== undefined ){
+    if( decodedDict.structureId !== undefined ){
         assert.ok(
-            typeof decodedDict.pdbId === 'string',
-            "pdbId must be a string"
+            typeof decodedDict.structureId === 'string',
+            "structureId must be a string"
         );
     }
     if( decodedDict.bioAssemblyList !== undefined ){

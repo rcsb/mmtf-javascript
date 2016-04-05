@@ -14,7 +14,7 @@ function getEmptyFullMmtfDict(){
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
         spaceGroup: "",
         bioAssemblyList: [],
-        pdbId: "",
+        structureId: "",
         title: "",
         entityList: [],
 
@@ -122,7 +122,7 @@ function getFilledFullMmtfDict(){
                 ]
             },
         ],
-        pdbId: "1XYZ",
+        structureId: "1XYZ",
         title: "Full Test",
         entityList: [
             {
@@ -264,7 +264,7 @@ QUnit.test( "empty full", function( assert ) {
         numGroups: 0,
         numModels: 0,
         occList: new Float32Array( 0 ),
-        pdbId: "",
+        structureId: "",
         rFree: 0,
         rWork: 0,
         resolution: 0,
@@ -315,7 +315,7 @@ QUnit.test( "filled full", function( assert ) {
         mmtfVersion: "0.1",
         mmtfProducer: "unittest",
         unitCell: [ 10, 12, 30, 90, 90, 120 ],
-        pdbId: "1XYZ",
+        structureId: "1XYZ",
         spaceGroup: "P1",
         bioAssemblyList: [
             {
@@ -365,7 +365,7 @@ QUnit.test( "filled full", function( assert ) {
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
         chainNameList: new Uint8Array( [  66, 0, 0, 0 ] )
     };
-    assert.equal( decodedMmtf.pdbId, expectedMmtf.pdbId, "Passed pdbId!" );
+    assert.equal( decodedMmtf.structureId, expectedMmtf.structureId, "Passed structureId!" );
     assert.equal( decodedMmtf.spaceGroup, expectedMmtf.spaceGroup, "Passed spaceGroup!" );
     assert.deepEqual( decodedMmtf.bioAssemblyList, expectedMmtf.bioAssemblyList, "Passed bioAssemblyList!" );
     assert.equal( decodedMmtf.title, expectedMmtf.title, "Passed title!" );
@@ -393,7 +393,7 @@ QUnit.test( "filled required", function( assert ) {
     var expectedMmtf = {
         mmtfVersion: "0.1",
         mmtfProducer: "unittest",
-        pdbId: undefined,
+        structureId: undefined,
         spaceGroup: undefined,
         bioAssemblyList: undefined,
         title: undefined,
@@ -421,7 +421,7 @@ QUnit.test( "filled required", function( assert ) {
         groupTypeList: new Int32Array( [ 10 ] ),
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] )
     };
-    assert.equal( decodedMmtf.pdbId, expectedMmtf.pdbId, "Passed pdbId!" );
+    assert.equal( decodedMmtf.structureId, expectedMmtf.structureId, "Passed structureId!" );
     assert.equal( decodedMmtf.spaceGroup, expectedMmtf.spaceGroup, "Passed spaceGroup!" );
     assert.deepEqual( decodedMmtf.bioAssemblyList, expectedMmtf.bioAssemblyList, "Passed bioAssemblyList!" );
     assert.equal( decodedMmtf.title, expectedMmtf.title, "Passed title!" );
