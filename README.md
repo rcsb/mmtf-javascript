@@ -17,6 +17,15 @@ JavaScript decoder for MMTF files. For a description of the format see the [MMTF
 The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode.js)) is `decodeMmtf` which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns the decoded `mmtf` data as an object with the following properties.
 
 
+### Example
+
+```JavaScript
+// bin is Uint8Array containing the mmtf msgpack
+var mmtfData = decodeMmtf( bin );
+console.log( mmtfData.numAtoms );
+```
+
+
 ### Properties
 
 | Name                       | Type           | Description                                | Optional |
@@ -108,6 +117,29 @@ Fields of a `groupType` entry:
 
 Helper class to loop over the structural data in the decoded `mmtf` data. Available in file [mmtf-iterator.js](dist/mmtf-iterator.js).
 
+
+### Example
+
+```JavaScript
+// bin is Uint8Array containing the mmtf msgpack
+var mmtfData = decodeMmtf( bin );
+var mmtfIterator = new MmtfIterator( mmtfData );
+mmtfIterator.eachAtom(
+    function(
+        element, atomName, formalCharge,
+        xCoord, yCoord, zCoord, bFactor,
+        atomId, altLabel, occupancy
+    ){
+        console.log(
+            element, atomName, formalCharge,
+            xCoord, yCoord, zCoord, bFactor,
+            atomId, altLabel, occupancy
+        );
+    }
+)
+```
+
+
 ### Methods
 
 #### eachBond
@@ -189,23 +221,3 @@ Arguments passed to `callback`:
 | chainCount                | `Integer`    | Number of chains in the model                  |
 
 
-### Example
-
-```JavaScript
-// bin is Uint8Array containing the mmtf msgpack
-var mmtfData = decodeMmtf( bin );
-var mmtfIterator = new MmtfIterator( mmtfData );
-mmtfIterator.eachAtom(
-    function(
-        element, atomName, formalCharge,
-        xCoord, yCoord, zCoord, bFactor,
-        atomId, altLabel, occupancy
-    ){
-        console.log(
-            element, atomName, formalCharge,
-            xCoord, yCoord, zCoord, bFactor,
-            atomId, altLabel, occupancy
-        );
-    }
-)
-```
