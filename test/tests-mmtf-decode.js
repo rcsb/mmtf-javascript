@@ -27,8 +27,8 @@ function getEmptyFullMmtfDict(){
         numBonds: 0,
         numAtoms: 0,
 
-        // maps
-        groupMap: {},
+        // lists
+        groupList: [],
 
         // bonds
         bondAtomList: new Uint8Array( 0 ),
@@ -74,8 +74,8 @@ function getEmptyRequiredMmtfDict(){
         numBonds: 0,
         numAtoms: 0,
 
-        // maps
-        groupMap: {},
+        // lists
+        groupList: [],
 
         // atoms
         xCoordBig: new Uint8Array( 0 ),
@@ -142,9 +142,9 @@ function getFilledFullMmtfDict(){
         numBonds: 1,
         numAtoms: 2,
 
-        // maps
-        groupMap: {
-            102: {
+        // lists
+        groupList: [
+            {
                 atomCharges: [ 2, 1 ],
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
@@ -153,7 +153,7 @@ function getFilledFullMmtfDict(){
                 singleLetterCode: "G",
                 groupName: "GLY"
             }
-        },
+        ],
 
         // bonds
         bondAtomList: new Uint8Array( 0 ),
@@ -174,7 +174,7 @@ function getFilledFullMmtfDict(){
 
         // groups
         groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
-        groupTypeList: new Uint8Array( new Int32Array( [ 102 ] ).buffer ),
+        groupTypeList: new Uint8Array( new Int32Array( [ 0 ] ).buffer ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
         insCodeList: new Array( "X", 1 ),
         seqResIdList: new Uint8Array( new Int32Array( [ 0, 1 ] ).buffer ),
@@ -199,9 +199,9 @@ function getFilledRequiredMmtfDict(){
         numBonds: 1,
         numAtoms: 2,
 
-        // maps
-        groupMap: {
-            10: {
+        // lists
+        groupList: [
+            {
                 atomCharges: [ 1, 0 ],
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
@@ -210,7 +210,7 @@ function getFilledRequiredMmtfDict(){
                 singleLetterCode: "G",
                 groupName: "GLY"
             }
-        },
+        ],
 
         // atoms
         xCoordBig: new Uint8Array( new Int32Array( [ 10000, 1 ] ).buffer ),
@@ -222,7 +222,7 @@ function getFilledRequiredMmtfDict(){
 
         // groups
         groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
-        groupTypeList: new Uint8Array( new Int32Array( [ 10 ] ).buffer ),
+        groupTypeList: new Uint8Array( new Int32Array( [ 0 ] ).buffer ),
 
         // chains
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
@@ -252,7 +252,7 @@ QUnit.test( "empty full", function( assert ) {
         entityList: [],
         experimentalMethods: [],
         groupIdList: new Int32Array( 0 ),
-        groupMap: {},
+        groupList: [],
         groupTypeList: new Int32Array( 0 ),
         groupsPerChain: [],
         insCodeList: new Uint8Array( 0 ),
@@ -288,7 +288,7 @@ QUnit.test( "empty required", function( assert ) {
         chainIdList: new Uint8Array( 0 ),
         chainsPerModel: [],
         groupIdList: new Int32Array( 0 ),
-        groupMap: {},
+        groupList: [],
         groupTypeList: new Int32Array( 0 ),
         groupsPerChain: [],
         mmtfProducer: "",
@@ -338,8 +338,8 @@ QUnit.test( "filled full", function( assert ) {
         numGroups: 1,
         numChains: 1,
         numModels: 1,
-        groupMap: {
-            102: {
+        groupList: [
+            {
                 atomCharges: [ 2, 1 ],
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
@@ -348,7 +348,7 @@ QUnit.test( "filled full", function( assert ) {
                 singleLetterCode: "G",
                 groupName: "GLY"
             }
-        },
+        ],
         bondAtomList: new Uint32Array( [ 0, 1, 0, 0 ] ),
         bondOrderList: new Uint8Array( [ 2, 0 ] ),
         altLabelList: new Uint8Array( [ 65, 66 ] ),
@@ -377,7 +377,7 @@ QUnit.test( "filled full", function( assert ) {
     assert.equal( decodedMmtf.numChains, expectedMmtf.numChains, "Passed numChains!" );
     assert.equal( decodedMmtf.numModels, expectedMmtf.numModels, "Passed numModels!" );
 
-    assert.deepEqual( decodedMmtf.groupMap, expectedMmtf.groupMap, "Passed groupMap!" );
+    assert.deepEqual( decodedMmtf.groupList, expectedMmtf.groupList, "Passed groupList!" );
     assert.deepEqual( decodedMmtf.bondStore, expectedMmtf.bondStore, "Passed bondStore!" );
     assert.deepEqual( decodedMmtf.atomStore, expectedMmtf.atomStore, "Passed atomStore!" );
     assert.deepEqual( decodedMmtf.groupStore, expectedMmtf.groupStore, "Passed groupStore!" );
@@ -403,8 +403,8 @@ QUnit.test( "filled required", function( assert ) {
         numGroups: 1,
         numChains: 1,
         numModels: 1,
-        groupMap: {
-            10: {
+        groupList: [
+            {
                 atomCharges: [ 1, 0 ],
                 atomInfo: [ "C", "C", "N", "N" ],
                 bondIndices: [ 0, 1 ],
@@ -413,7 +413,7 @@ QUnit.test( "filled required", function( assert ) {
                 singleLetterCode: "G",
                 groupName: "GLY"
             }
-        },
+        ],
         xCoordList: new Float32Array( [ 10, 11 ] ),
         yCoordList: new Float32Array( [ 20, 22 ] ),
         zCoordList: new Float32Array( [ 30, 33 ] ),
@@ -433,7 +433,7 @@ QUnit.test( "filled required", function( assert ) {
     assert.equal( decodedMmtf.numChains, expectedMmtf.numChains, "Passed numChains!" );
     assert.equal( decodedMmtf.numModels, expectedMmtf.numModels, "Passed numModels!" );
 
-    assert.deepEqual( decodedMmtf.groupMap, expectedMmtf.groupMap, "Passed groupMap!" );
+    assert.deepEqual( decodedMmtf.groupList, expectedMmtf.groupList, "Passed groupList!" );
     assert.deepEqual( decodedMmtf.bondStore, expectedMmtf.bondStore, "Passed bondStore!" );
     assert.deepEqual( decodedMmtf.atomStore, expectedMmtf.atomStore, "Passed atomStore!" );
     assert.deepEqual( decodedMmtf.groupStore, expectedMmtf.groupStore, "Passed groupStore!" );
@@ -444,7 +444,7 @@ QUnit.test( "filled required", function( assert ) {
 QUnit.test( "empty required missing", function( assert ) {
     // not all throw an error with an empty mmtf dict, only tested with a filled mmtf dict
     var names = [
-        // "groupMap", "numBonds", "numAtoms",
+        // "groupList", "numBonds", "numAtoms",
         "xCoordBig", "xCoordSmall", "yCoordBig", "yCoordSmall", "zCoordBig", "zCoordSmall",
         "groupIdList", "groupTypeList", "chainIdList",
         // "groupsPerChain",

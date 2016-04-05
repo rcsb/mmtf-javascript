@@ -53,17 +53,16 @@ function checkDictFields( dict, reqFields, optFields, label, assert ){
     assert.equal( reqCount, reqFields.length, label + " req props missing" );
 }
 
-function checkGroupMapFields( groupMap, assert ){
+function checkGroupListFields( groupList, assert ){
     var reqGroupTypeFields = [
         "atomCharges", "atomInfo", "bondIndices", "bondOrders",
         "groupName", "singleLetterCode", "chemCompType"
     ];
-    for( var groupTypeId in groupMap ){
-        var groupType = groupMap[ groupTypeId ];
+    groupList.forEach( function( groupType ){
         checkDictFields(
             groupType, reqGroupTypeFields, [], "groupType", assert
         );
-    }
+    } );
 }
 
 function checkBioAssemblyFields( bioAssemblyList, assert ){
@@ -106,8 +105,8 @@ function checkMsgpackFields( decodedMsgpack, assert ){
 
         // counts
         "numBonds", "numAtoms",
-        // maps
-        "groupMap",
+        // lists
+        "groupList",
         // bonds
 
         // atoms
@@ -127,7 +126,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
-        // maps
+        // lists
 
         // bonds
         "bondAtomList", "bondOrderList",
@@ -144,7 +143,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         decodedMsgpack, reqTopLevelFields, optTopLevelFields, "topLevel", assert
     );
 
-    checkGroupMapFields( decodedMsgpack.groupMap, assert );
+    checkGroupListFields( decodedMsgpack.groupList, assert );
 
     if( decodedMsgpack.bioAssemblyList !== undefined ){
         checkBioAssemblyFields( decodedMsgpack.bioAssemblyList, assert );
@@ -163,8 +162,8 @@ function checkMmtfFields( decodedMmtf, assert ){
 
         // counts
         "numBonds", "numAtoms", "numGroups", "numChains", "numModels",
-        // maps
-        "groupMap",
+        // lists
+        "groupList",
         // bonds
 
         // atoms
@@ -182,7 +181,7 @@ function checkMmtfFields( decodedMmtf, assert ){
         "resolution", "rFree", "rWork", "entityList",
         // counts
 
-        // maps
+        // lists
 
         // bonds
         "bondAtomList", "bondOrderList",
@@ -199,7 +198,7 @@ function checkMmtfFields( decodedMmtf, assert ){
         decodedMmtf, reqTopLevelFields, optTopLevelFields, "topLevel", assert
     );
 
-    checkGroupMapFields( decodedMmtf.groupMap, assert );
+    checkGroupListFields( decodedMmtf.groupList, assert );
 
     if( decodedMmtf.bioAssemblyList !== undefined ){
         checkBioAssemblyFields( decodedMmtf.bioAssemblyList, assert );
@@ -235,10 +234,10 @@ function checkCommonTypes( decodedDict, assert ){
         "numAtoms must be an integer"
     );
 
-    // maps
+    // lists
     assert.ok(
-        isObject( decodedDict.groupMap ),
-        "groupMap must be an object"
+        Array.isArray( decodedDict.groupList ),
+        "groupList must be an array"
     );
 
     // header
@@ -552,12 +551,11 @@ function checkMmtfTypes( decodedMmtf, assert ){
 //////////////////////
 // check consistency
 //
-function checkGroupMapConsistency( groupMap, assert ){
+function checkGroupListConsistency( groupList, assert ){
     var groupTypeFields = [
         "atomCharges", "atomInfo", "bondIndices", "bondOrders"
     ];
-    for( var groupId in groupMap ){
-        var groupType = groupMap[ groupId ];
+    groupList.forEach( function( groupType ){
         groupTypeFields.forEach( function( name ){
             assert.ok(
                 groupType[ name ] !== undefined,
@@ -572,12 +570,12 @@ function checkGroupMapConsistency( groupMap, assert ){
             groupType.bondOrders.length * 2 === groupType.bondIndices.length,
             "atomInfo.length must equal bondOrders.length"
         );
-    }
+    } );
 }
 
 function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
-    // check consistency of groupMap entries
-    checkGroupMapConsistency( decodedMsgpack.groupMap, assert );
+    // check consistency of groupList entries
+    checkGroupListConsistency( decodedMsgpack.groupList, assert );
 
     // check bond data sizes for consistency
     if( decodedMsgpack.bondAtomList !== undefined && decodedMsgpack.bondOrderList !== undefined ){
@@ -626,8 +624,8 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
 }
 
 function checkMmtfConsistency( decodedMmtf, assert ){
-    // check consistency of groupMap entries
-    checkGroupMapConsistency( decodedMmtf.groupMap, assert );
+    // check consistency of groupList entries
+    checkGroupListConsistency( decodedMmtf.groupList, assert );
 
     // check sizes for consistency
     assert.equal( decodedMmtf.xCoordList.length, decodedMmtf.numAtoms, "numAtoms, xCoordList" );
@@ -707,15 +705,14 @@ function checkCommonVocabulary( decodedDict, assert ){
         "non-polymer", "other", "peptide linking", "peptide-like", "saccharide"
     ].map( toUpperCase );
 
-    for( var groupId in decodedDict.groupMap ){
-        var groupType = decodedDict.groupMap[ groupId ];
+    decodedDict.groupList.forEach( function( groupType ){
         if( groupType.chemCompType !== "" ){
             assert.ok(
                 knownChemCompTypes.indexOf( groupType.chemCompType.toUpperCase() ) !== -1,
                 "unknown chemCompType '" + groupType.chemCompType + "'"
             );
         }
-    }
+    } );
 
     // entity.type
 

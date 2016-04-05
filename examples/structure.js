@@ -14,7 +14,7 @@ function SimpleStructure( mmtfDict ){
         // intra group bonds
         var atomOffset = 0;
         for( var i = 0, il = d.numGroups; i < il; ++i ){
-            var groupData = d.groupMap[ d.groupTypeList[ i ] ];
+            var groupData = d.groupList[ d.groupTypeList[ i ] ];
             for( var j = 0, jl = bondOrders.length; j < jl; ++j ){
                 callback(
                     atomOffset + groupData.bondIndices[ j * 2 ],
@@ -53,7 +53,7 @@ function SimpleStructure( mmtfDict ){
     function eachAtom( callback ){
         var atomOffset = 0;
         for( var i = 0, il = d.numGroups; i < il; ++i ){
-            var groupData = d.groupMap[ d.groupTypeList[ i ] ];
+            var groupData = d.groupList[ d.groupTypeList[ i ] ];
             for( var j = 0, jl = groupData.atomInfo.length / 2; j < jl; ++j ){
                 callback(
                     groupData.atomInfo[ j * 2 ].toUpperCase(),
@@ -88,7 +88,7 @@ function SimpleStructure( mmtfDict ){
     function eachGroup( callback ){
         var atomOffset = 0;
         for( var i = 0, il = d.numGroups; i < il; ++i ){
-            var groupData = d.groupMap[ d.groupTypeList[ i ] ];
+            var groupData = d.groupList[ d.groupTypeList[ i ] ];
             var groupAtomCount = groupData.atomInfo.length / 2;
             gAtomOffset[ i ] = atomOffset;
             gAtomCount[ i ] = groupAtomCount;

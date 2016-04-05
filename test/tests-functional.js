@@ -39,7 +39,7 @@ QUnit.test( "decode mmtf 1crn full", function( assert ) {
         assert.equal( decodedMmtf.numChains, 1,  "Wrong number of chains" );
         assert.equal( decodedMmtf.numModels, 1,  "Wrong number of models" );
 
-        assert.equal( Object.keys( decodedMmtf.groupMap ).length, 16, "Passed!" );
+        assert.equal( decodedMmtf.groupList.length, 16, "Passed!" );
 
         checkMmtf( decodedMmtf, assert );
 
@@ -72,7 +72,7 @@ QUnit.test( "decode msgpack 1crn full", function( assert ) {
         assert.equal( decodedMsgpack.groupsPerChain.length, 1, "Wrong number of chains" );
         assert.equal( decodedMsgpack.chainsPerModel.length, 1, "Wrong number of models" );
 
-        assert.equal( Object.keys( decodedMsgpack.groupMap ).length, 16, "Wrong number of groupMap entries" );
+        assert.equal( decodedMsgpack.groupList.length, 16, "Wrong number of groupList entries" );
 
         checkMsgpack( decodedMsgpack, assert );
 
@@ -99,7 +99,7 @@ QUnit.test( "decode mmtf 1d66 full", function( assert ) {
         assert.equal( decodedMmtf.numChains, 12,  "Wrong number of chains" );
         assert.equal( decodedMmtf.numModels, 1,  "Wrong number of models" );
 
-        assert.equal( Object.keys( decodedMmtf.groupMap ).length, 24, "Wrong number of groupMap entries" );
+        assert.equal( decodedMmtf.groupList.length, 24, "Wrong number of groupList entries" );
 
         checkMmtf( decodedMmtf, assert );
 
@@ -124,7 +124,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
         assert.equal( decodedMsgpack.groupsPerChain.length, 12, "Wrong number of chains" );
         assert.equal( decodedMsgpack.chainsPerModel.length, 1, "Wrong number of models" );
 
-        assert.equal( Object.keys( decodedMsgpack.groupMap ).length, 24, "Wrong number of groupMap entries" );
+        assert.equal( decodedMsgpack.groupList.length, 24, "Wrong number of groupList entries" );
 
         checkMsgpack( decodedMsgpack, assert );
 
@@ -151,7 +151,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 //         assert.equal( decodedMmtf.numChains, 4,  "Wrong number of chains" );
 //         assert.equal( decodedMmtf.numModels, 1,  "Wrong number of models" );
 
-//         assert.equal( Object.keys( decodedMmtf.groupMap ).length, 22, "Wrong number of groupMap entries" );
+//         assert.equal( decodedMmtf.groupList.length, 22, "Wrong number of groupList entries" );
 
 //         checkMmtf( decodedMmtf, assert );
 
@@ -176,7 +176,7 @@ QUnit.test( "decode msgpack 1d66 full", function( assert ) {
 //         assert.equal( decodedMsgpack.groupsPerChain.length, 1, "Wrong number of chains" );
 //         assert.equal( decodedMsgpack.chainsPerModel.length, 1, "Wrong number of models" );
 
-//         assert.equal( Object.keys( decodedMsgpack.groupMap ).length, 24, "Wrong number of groupMap entries" );
+//         assert.equal( decodedMsgpack.groupList.length, 24, "Wrong number of groupList entries" );
 
 //         checkMsgpack( decodedMsgpack, assert );
 

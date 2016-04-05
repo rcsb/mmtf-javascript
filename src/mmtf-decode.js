@@ -59,7 +59,7 @@ function decodeMmtf( binOrDict, params ){
         "mmtfVersion", "mmtfProducer",
         "unitCell", "spaceGroup", "structureId", "title",
         "experimentalMethods", "resolution", "rFree", "rWork",
-        "bioAssemblyList", "entityList", "groupMap",
+        "bioAssemblyList", "entityList", "groupList",
         "numBonds", "numAtoms",
         "groupsPerChain", "chainsPerModel"
     ].forEach( function( name ){
