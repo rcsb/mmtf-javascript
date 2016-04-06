@@ -56,7 +56,7 @@ console.log( mmtfData.numAtoms );
 | zCoordList                 | `Float32Array` | List of z coordinates                      |          |
 | bFactorList                | `Float32Array` | List of b-factors                          |    Y     |
 | atomIdList                 | `Int32Array`   | List of atom ids                           |    Y     |
-| altLabelList               | `Uint8Array`   | List of alternate location labels          |    Y     |
+| altLocList                 | `Uint8Array`   | List of alternate location labels          |    Y     |
 | occupancyList              | `Float32Array` | List of occupancies                        |    Y     |
 | groupIdList                | `Int32Array`   | List of group ids                          |          |
 | groupTypeList              | `Int32Array`   | List of group types                        |          |
@@ -128,12 +128,12 @@ mmtfIterator.eachAtom(
     function(
         element, atomName, formalCharge,
         xCoord, yCoord, zCoord, bFactor,
-        atomId, altLabel, occupancy
+        atomId, altLoc, occupancy
     ){
         console.log(
             element, atomName, formalCharge,
             xCoord, yCoord, zCoord, bFactor,
-            atomId, altLabel, occupancy
+            atomId, altLoc, occupancy
         );
     }
 )
@@ -171,7 +171,7 @@ Arguments passed to `callback`:
 | zCoord                    | `Float`        | Z coordinate                                   |
 | bFactor                   | `Float|null`   | B-factor                                       |
 | atomId                    | `Integer|null` | Atom ID                                        |
-| altLabel                  | `Char|null`    | Alternate location label                       |
+| altLoc                    | `Char|null`    | Alternate location label                       |
 | occupancy                 | `Float|null`   | Occupancy                                      |
 
 

@@ -131,7 +131,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // bonds
         "bondAtomList", "bondOrderList",
         // atoms
-        "bFactorBig", "bFactorSmall", "atomIdList", "altLabelList", "occupancyList",
+        "bFactorBig", "bFactorSmall", "atomIdList", "altLocList", "occupancyList",
         // groups
         "secStructList", "insCodeList", "sequenceIdList",
         // chains
@@ -186,7 +186,7 @@ function checkMmtfFields( decodedMmtf, assert ){
         // bonds
         "bondAtomList", "bondOrderList",
         // atoms
-        "bFactorList", "atomIdList", "altLabelList", "occupancyList",
+        "bFactorList", "atomIdList", "altLocList", "occupancyList",
         // groups
         "secStructList", "insCodeList", "sequenceIdList",
         // chains
@@ -425,10 +425,10 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
             "when given, atomIdList must be a Uint8Array instance"
         );
     }
-    if( decodedMsgpack.altLabelList !== undefined ){
+    if( decodedMsgpack.altLocList !== undefined ){
         assert.ok(
-            Array.isArray( decodedMsgpack.altLabelList ),
-            "when given, altLabelList must be an array"
+            Array.isArray( decodedMsgpack.altLocList ),
+            "when given, altLocList must be an array"
         );
     }
     if( decodedMsgpack.occupancyList !== undefined ){
@@ -523,10 +523,10 @@ function checkMmtfTypes( decodedMmtf, assert ){
             "when given, atomIdList must be an Int32Array instance"
         );
     }
-    if( decodedMmtf.altLabelList !== undefined ){
+    if( decodedMmtf.altLocList !== undefined ){
         assert.ok(
-            decodedMmtf.altLabelList instanceof Uint8Array,
-            "when given, altLabelList must be an Uint8Array instance"
+            decodedMmtf.altLocList instanceof Uint8Array,
+            "when given, altLocList must be an Uint8Array instance"
         );
     }
     if( decodedMmtf.occupancyList !== undefined ){
@@ -622,8 +622,8 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
     if( decodedMsgpack.atomIdList !== undefined ){
         assert.equal( getRunLengthSize( getInt32( decodedMsgpack.atomIdList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
     }
-    if( decodedMsgpack.altLabelList !== undefined ){
-        assert.equal( getRunLengthSize( decodedMsgpack.altLabelList ), decodedMsgpack.numAtoms, "numatoms, altLabelList" );
+    if( decodedMsgpack.altLocList !== undefined ){
+        assert.equal( getRunLengthSize( decodedMsgpack.altLocList ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
     }
     if( decodedMsgpack.occupancyList !== undefined ){
         assert.equal( getRunLengthSize( getInt32( decodedMsgpack.occupancyList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
@@ -667,8 +667,8 @@ function checkMmtfConsistency( decodedMmtf, assert ){
     if( decodedMmtf.atomIdList !== undefined ){
         assert.equal( decodedMmtf.atomIdList.length, decodedMmtf.numAtoms, "numAtoms, atomIdList" );
     }
-    if( decodedMmtf.altLabelList !== undefined ){
-        assert.equal( decodedMmtf.altLabelList.length, decodedMmtf.numAtoms, "numAtoms, altLabelList" );
+    if( decodedMmtf.altLocList !== undefined ){
+        assert.equal( decodedMmtf.altLocList.length, decodedMmtf.numAtoms, "numAtoms, altLocList" );
     }
     if( decodedMmtf.occupancyList !== undefined ){
         assert.equal( decodedMmtf.occupancyList.length, decodedMmtf.numAtoms, "numAtoms, occupancyList" );

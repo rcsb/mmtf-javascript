@@ -40,7 +40,7 @@ function getEmptyFullMmtfDict(){
         bFactorBig: new Uint8Array( 0 ),
         bFactorSmall: new Uint8Array( 0 ),
         atomIdList: new Uint8Array( 0 ),
-        altLabelList: [],
+        altLocList: [],
         occupancyList: new Uint8Array( 0 ),
 
         // groups
@@ -166,7 +166,7 @@ function getFilledFullMmtfDict(){
         bFactorBig: new Uint8Array( new Int32Array( [ 9999, 0, 1, 0 ] ).buffer ),
         bFactorSmall: new Uint8Array( new Int16Array( [] ).buffer ),
         atomIdList: new Uint8Array( new Int32Array( [ 1, 2 ] ).buffer ),
-        altLabelList: new Array( "A", 1, "B", 1 ),
+        altLocList: new Array( "A", 1, "B", 1 ),
         occupancyList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
 
         // groups

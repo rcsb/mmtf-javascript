@@ -123,14 +123,14 @@ function decodeMmtf( binOrDict, params ){
     }
 
     // run-length decode alternate labels
-    var inputAltLabelList = inputDict.altLabelList;
-    if( inputAltLabelList && decodeField( "altLabelList" ) ){
-        for( i = 0, il = inputAltLabelList.length; i < il; i+=2 ){
-            var inputAltLabel = inputAltLabelList[ i ];
-            inputAltLabelList[ i ] = inputAltLabel === "?" ? 0 : inputAltLabel.charCodeAt( 0 );
-            inputAltLabelList[ i + 1 ] = parseInt( inputAltLabelList[ i + 1 ] );
+    var inputAltLocList = inputDict.altLocList;
+    if( inputAltLocList && decodeField( "altLocList" ) ){
+        for( i = 0, il = inputAltLocList.length; i < il; i+=2 ){
+            var inputAltLoc = inputAltLocList[ i ];
+            inputAltLocList[ i ] = inputAltLoc === "?" ? 0 : inputAltLoc.charCodeAt( 0 );
+            inputAltLocList[ i + 1 ] = parseInt( inputAltLocList[ i + 1 ] );
         }
-        outputDict.altLabelList = decodeRunLength( inputAltLabelList, new Uint8Array( numAtoms ) );
+        outputDict.altLocList = decodeRunLength( inputAltLocList, new Uint8Array( numAtoms ) );
     }
 
     // run-length & integer decode occupancies

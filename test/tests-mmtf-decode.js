@@ -11,7 +11,7 @@ QUnit.test( "empty full", function( assert ) {
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     checkMmtf( decodedMmtf, assert );
     var expectedMmtf = {
-        altLabelList: new Uint8Array( 0 ),
+        altLocList: new Uint8Array( 0 ),
         atomIdList: new Int32Array( 0 ),
         bFactorList: new Float32Array( 0 ),
         bioAssemblyList: [],
@@ -141,7 +141,7 @@ QUnit.test( "filled full", function( assert ) {
         bondAtomList: new Int32Array( [ 0, 1, 0, 0 ] ),
         bondOrderList: new Uint8Array( [ 2, 0 ] ),
 
-        altLabelList: new Uint8Array( [ 65, 66 ] ),
+        altLocList: new Uint8Array( [ 65, 66 ] ),
         atomIdList: new Int32Array( [ 1, 2 ] ),
         bFactorList: new Float32Array( [ 99.99, 100.00 ] ),
         occupancyList: new Float32Array( [ 0.6, 0.4 ] ),

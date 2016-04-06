@@ -83,7 +83,7 @@ function MmtfIterator( mmtfData ){
                     d.zCoordList[ atomOffset ],
                     d.bFactorList ? d.bFactorList[ atomOffset ] : null,
                     d.atomIdList ? d.atomIdList[ atomOffset ] : null,
-                    d.altLabelList ? fromCharCode( [ d.altLabelList[ atomOffset ] ] ) : null,
+                    d.altLocList ? fromCharCode( [ d.altLocList[ atomOffset ] ] ) : null,
                     d.occupancyList ? d.occupancyList[ atomOffset ] : null
                 );
                 atomOffset += 1;
