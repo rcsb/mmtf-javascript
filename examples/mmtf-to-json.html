@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>decodeMmtf example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+    <script src="../dist/mmtf-decode.js"></script>
+    <script>
+
+        /**
+         * Replacer function for JSON.stringify
+         * Convert TypedArrays to normal Arrays, return other values unmodified
+         * @param  {String} key - the key
+         * @param  {Any} value - the value
+         * @return {Any} the return value
+         */
+        function replacer( key, value ){
+            if( value instanceof Int8Array || value instanceof Uint8Array ||
+                value instanceof Int16Array || value instanceof Uint16Array ||
+                value instanceof Int32Array || value instanceof Uint32Array ||
+                value instanceof Float32Array || value instanceof Float64Array
+            ){
+                return Array.prototype.slice.call( value );
+            }
+            return value;
+        }
+
+        document.addEventListener( "DOMContentLoaded", function(){
+
+            // request mmtf file as binary data (arraybuffer)
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener( "load", function onload(){
+                // decode the binary response data
+                var mmtfData = decodeMmtf( this.response );
+                // convert the mmtf data to JSON and show in the #json element
+                document.getElementById( "json" ).innerText = JSON.stringify( mmtfData, replacer, '\t' );
+            }, true );
+            xhr.responseType = "arraybuffer";
+            xhr.open( "GET", "../data/1crn.mmtf" );
+            xhr.send();
+
+        } );
+
+    </script>
+
+    <div>
+        <h3>Load MMTF file, decode and create a JSON representation of the MMTF data.</h3>
+        <pre id="json"></pre>
+    </div>
+</body>
+</html>

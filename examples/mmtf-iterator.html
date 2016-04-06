@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>decodeMmtf example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+    <script src="../dist/mmtf-decode.js"></script>
+    <script src="../dist/mmtf-iterator.js"></script>
+    <script>
+
+        document.addEventListener( "DOMContentLoaded", function(){
+
+            // request mmtf file as binary data (arraybuffer)
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener( "load", function onload(){
+                // decode the binary response data
+                var mmtfData = decodeMmtf( this.response );
+                // create mmtfIterator instance
+                var mmtfIterator = new MmtfIterator( mmtfData );
+                // loop over all groups and display the data in #text
+                mmtfIterator.eachGroup(
+                    function(
+                        groupName, singleLetterCode, chemCompType, groupId, groupType,
+                        secStruct, insCode, sequenceId, atomOffset, atomCount
+                    ){
+                        // console.log(
+                        //     groupName, singleLetterCode, chemCompType, groupId, groupType,
+                        //     secStruct, insCode, sequenceId, atomOffset, atomCount
+                        // );
+                        document.getElementById( "json" ).innerText += [
+                            groupName, singleLetterCode, chemCompType, groupId, groupType,
+                            secStruct, insCode, sequenceId, atomOffset, atomCount
+                        ].join( ", " );
+                    }
+                );
+            }, true );
+            xhr.responseType = "arraybuffer";
+            xhr.open( "GET", "../data/1crn.mmtf" );
+            xhr.send();
+
+        } );
+
+    </script>
+
+    <div>
+        <h3>Load MMTF file and decode. Use an MmtfIterator instance loop over each group and print its data.</h3>
+        <pre id="text"></pre>
+    </div>
+</body>
+</html>
