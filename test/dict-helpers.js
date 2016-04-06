@@ -166,14 +166,14 @@ function getFilledFullMmtfDict(){
         bFactorBig: new Uint8Array( new Int32Array( [ 9999, 0, 1, 0 ] ).buffer ),
         bFactorSmall: new Uint8Array( new Int16Array( [] ).buffer ),
         atomIdList: new Uint8Array( new Int32Array( [ 1, 2 ] ).buffer ),
-        altLocList: new Array( "A", 1, "B", 1 ),
+        altLocList: new Array( 65, 1, 66, 1 ),
         occupancyList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
 
         // groups
         groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
         groupTypeList: new Uint8Array( new Int32Array( [ 0 ] ).buffer ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
-        insCodeList: new Array( "X", 1 ),
+        insCodeList: new Array( 88, 1 ),
         sequenceIdList: new Uint8Array( new Int32Array( [ 0, 1 ] ).buffer ),
 
         // chains
