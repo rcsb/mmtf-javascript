@@ -9,11 +9,13 @@ QUnit.test( "eachBond", function( assert ) {
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     var mmtfIterator = new MmtfIterator( decodedMmtf );
     var expected = [
-        [ 0, 1, 2 ]
+        [ 0, 1, 2 ],
+        [ 0, 1, 2 ],
+        [ 0, 0, 0 ]
     ];
     var i = 0;
     mmtfIterator.eachBond( function(){
-        var e = expected[ i ]
+        var e = expected[ i ];
         assert.equal( arguments[ 0 ], e[ 0 ], "atom index 1 differs" );
         assert.equal( arguments[ 1 ], e[ 1 ], "atom index 2 differs" );
         assert.equal( arguments[ 2 ], e[ 2 ], "bond order differs" );
@@ -79,7 +81,7 @@ QUnit.test( "eachChain", function( assert ) {
     ];
     var i = 0;
     mmtfIterator.eachChain( function(){
-        var e = expected[ i ]
+        var e = expected[ i ];
         assert.equal( arguments[ 0 ], e[ 0 ], "chain id differs" );
         assert.equal( arguments[ 1 ], e[ 1 ], "chain name differs" );
         assert.equal( arguments[ 2 ], e[ 2 ], "group offset differs" );
@@ -97,7 +99,7 @@ QUnit.test( "eachModel", function( assert ) {
     ];
     var i = 0;
     mmtfIterator.eachModel( function(){
-        var e = expected[ i ]
+        var e = expected[ i ];
         assert.equal( arguments[ 2 ], e[ 2 ], "chain offset differs" );
         assert.equal( arguments[ 3 ], e[ 3 ], "chain count differs" );
         i += 1;
