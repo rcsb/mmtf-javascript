@@ -95,7 +95,7 @@ QUnit.test( "filled full", function( assert ) {
             {
                 transforms: [
                     {
-                        chainIdList: [ "A" ],
+                        chainIndexList: [ 0 ],
                         transformation: [
                             1, 0, 0, 0,
                             0, 1, 0, 0,

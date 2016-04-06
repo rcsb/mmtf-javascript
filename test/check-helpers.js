@@ -70,7 +70,7 @@ function checkBioAssemblyFields( bioAssemblyList, assert ){
         "transforms"
     ];
     var reqPartFields = [
-        "chainIdList", "transformation"
+        "chainIndexList", "transformation"
     ];
     bioAssemblyList.forEach( function( assembly ){
         checkDictFields(
