@@ -125,11 +125,6 @@ function decodeMmtf( binOrDict, params ){
     // run-length decode alternate labels
     var inputAltLocList = inputDict.altLocList;
     if( inputAltLocList && decodeField( "altLocList" ) ){
-        for( i = 0, il = inputAltLocList.length; i < il; i+=2 ){
-            var inputAltLoc = inputAltLocList[ i ];
-            inputAltLocList[ i ] = inputAltLoc === "?" ? 0 : inputAltLoc.charCodeAt( 0 );
-            inputAltLocList[ i + 1 ] = parseInt( inputAltLocList[ i + 1 ] );
-        }
         outputDict.altLocList = decodeRunLength( inputAltLocList, new Uint8Array( numAtoms ) );
     }
 
@@ -161,11 +156,6 @@ function decodeMmtf( binOrDict, params ){
     // run-length decode insertion codes
     var inputInsCodeList = inputDict.insCodeList;
     if( inputInsCodeList && decodeField( "insCodeList" ) ){
-        for( i = 0, il = inputInsCodeList.length; i < il; i+=2 ){
-            var inputInsCode = inputInsCodeList[ i ];
-            inputInsCodeList[ i ] = inputInsCode === null ? 0 : inputInsCode.charCodeAt( 0 );
-            inputInsCodeList[ i + 1 ] = parseInt( inputInsCodeList[ i + 1 ] );
-        }
         outputDict.insCodeList = decodeRunLength( inputInsCodeList, new Uint8Array( numGroups ) );
     }
 
