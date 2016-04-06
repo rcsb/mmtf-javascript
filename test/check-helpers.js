@@ -213,6 +213,81 @@ function checkMmtfFields( decodedMmtf, assert ){
 ////////////////
 // check types
 //
+function checkGroupListTypes( groupList, assert ){
+    var regexpElement = /^[A-Z]{1,1}[a-z]{0,2}$/;
+    var regexpSingleLetter = /^[A-Z]{1,1}$/;
+    groupList.forEach( function( groupType ){
+        assert.ok(
+            Array.isArray( groupType.atomCharges ),
+            "groupType.atomCharges must be an array"
+        );
+        for( var i = 0, il = groupType.atomCharges.length; i < il; ++i ){
+            assert.ok(
+                Number.isInteger( groupType.atomCharges[ i ] ),
+                "groupType.atomInfo atomnames must be integers"
+            );
+        }
+        assert.ok(
+            Array.isArray( groupType.atomInfo ),
+            "groupType.atomInfo must be an array"
+        );
+        for( var i = 0, il = groupType.atomInfo.length; i < il; i += 2 ){
+            assert.ok(
+                typeof groupType.atomInfo[ i ] === 'string',
+                "groupType.atomInfo elements must be strings"
+            );
+            assert.ok(
+                regexpElement.test( groupType.atomInfo[ i ] ),
+                "groupType.atomInfo elements must match /^[A-Z]{1,1}[a-z]{0,2}$/"
+            );
+            assert.ok(
+                typeof groupType.atomInfo[ i + 1 ] === 'string',
+                "groupType.atomInfo atomnames must be strings"
+            );
+        }
+        assert.ok(
+            Array.isArray( groupType.bondIndices ),
+            "groupType.bondIndices must be an array"
+        );
+        for( var i = 0, il = groupType.bondIndices.length; i < il; ++i ){
+            assert.ok(
+                Number.isInteger( groupType.bondIndices[ i ] ),
+                "groupType.bondIndices must be integers"
+            );
+        }
+        assert.ok(
+            Array.isArray( groupType.bondOrders ),
+            "groupType.bondOrders must be an array"
+        );
+        for( var i = 0, il = groupType.bondOrders.length; i < il; ++i ){
+            assert.ok(
+                Number.isInteger( groupType.bondOrders[ i ] ),
+                "groupType.bondOrders must be integers"
+            );
+            assert.ok(
+                groupType.bondOrders[ i ] >= 1 && groupType.bondOrders[ i ] <= 3,
+                "groupType.bondOrders must be between 1 and 3"
+            );
+        }
+        assert.ok(
+            typeof groupType.groupName === 'string',
+            "groupType.groupName must be a string"
+        );
+        assert.ok(
+            typeof groupType.singleLetterCode === 'string',
+            "groupType.singleLetterCode must be a string"
+        );
+        assert.ok(
+            regexpSingleLetter.test( groupType.singleLetterCode ),
+            "groupType.singleLetterCode must match /^[A-Z]{1,1}$/"
+        );
+        assert.ok(
+            typeof groupType.chemCompType === 'string',
+            "groupType.chemCompType must be a string"
+        );
+    } );
+}
+
 function checkCommonTypes( decodedDict, assert ){
     // meta
     assert.ok(
@@ -239,6 +314,7 @@ function checkCommonTypes( decodedDict, assert ){
         Array.isArray( decodedDict.groupList ),
         "groupList must be an array"
     );
+    checkGroupListTypes( decodedDict.groupList, assert );
 
     // header
     if( decodedDict.title !== undefined ){
@@ -697,7 +773,6 @@ function checkMmtfConsistency( decodedMmtf, assert ){
 // check vocabulary
 //
 function checkCommonVocabulary( decodedDict, assert ){
-
     function toUpperCase( str ){
         return str.toUpperCase();
     }
@@ -760,7 +835,6 @@ function checkCommonVocabulary( decodedDict, assert ){
             }
         } );
     }
-
 }
 
 function checkMsgpackVocabulary( msgpackDict, assert ){
