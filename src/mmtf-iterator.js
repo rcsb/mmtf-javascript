@@ -13,6 +13,15 @@ function MmtfIterator( mmtfData ){
     var d = mmtfData;
 
     /**
+     * Converts an array of ASCII codes trimming '\0' bytes
+     * @param  {Array} charCodeArray - array of ASCII char codes
+     * @return {String} '\0' trimmed string
+     */
+    function fromCharCode( charCodeArray ){
+        return String.fromCharCode.apply( null, charCodeArray ).replace(/\0/g, '');
+    }
+
+    /**
      * Invokes the callback for each bond
      * @param  {Function} callback(arg0, arg1, arg2) - called for each bond
      *  - @param {Integer} arg0 - first atom index of the bond
@@ -74,7 +83,7 @@ function MmtfIterator( mmtfData ){
                     d.zCoordList[ atomOffset ],
                     d.bFactorList ? d.bFactorList[ atomOffset ] : null,
                     d.atomIdList ? d.atomIdList[ atomOffset ] : null,
-                    d.altLabelList ? String.fromCharCode( d.altLabelList[ atomOffset ] ) : null,
+                    d.altLabelList ? fromCharCode( [ d.altLabelList[ atomOffset ] ] ) : null,
                     d.occupancyList ? d.occupancyList[ atomOffset ] : null
                 );
                 atomOffset += 1;
@@ -99,7 +108,7 @@ function MmtfIterator( mmtfData ){
     function eachGroup( callback ){
         var atomOffset = 0;
         for( var i = 0, il = d.numGroups; i < il; ++i ){
-            var groupData = d.groupList[ d.groupTypeList[ i ] ];
+            var groupData = {}; // d.groupList[ d.groupTypeList[ i ] ];
             var groupAtomCount = groupData.atomInfo.length / 2;
             callback(
                 groupData.groupName,
@@ -108,7 +117,7 @@ function MmtfIterator( mmtfData ){
                 d.groupIdList[ i ],
                 d.groupTypeList[ i ],
                 d.secStructList ? d.secStructList[ i ] : null,
-                d.insCodeList ? String.fromCharCode( d.insCodeList[ i ] ) : null,
+                d.insCodeList ? fromCharCode( [ d.insCodeList[ i ] ] ) : null,
                 d.sequenceIdList ? d.sequenceIdList[ i ] : null,
                 atomOffset,
                 groupAtomCount
@@ -130,8 +139,8 @@ function MmtfIterator( mmtfData ){
         for( var i = 0; i < d.numChains; ++i ){
             var chainGroupCount = d.groupsPerChain[ i ];
             callback(
-                String.fromCharCode.apply( null, d.chainIdList.subarray( i, i + 4 ) ),
-                d.chainNameList ? String.fromCharCode.apply( null, d.chainNameList.subarray( i, i + 4 ) ) : null,
+                fromCharCode( d.chainIdList.subarray( i, i + 4 ) ),
+                d.chainNameList ? fromCharCode( d.chainNameList.subarray( i, i + 4 ) ) : null,
                 groupOffset,
                 chainGroupCount
             );
