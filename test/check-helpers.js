@@ -214,7 +214,9 @@ function checkMmtfFields( decodedMmtf, assert ){
 // check types
 //
 function checkGroupListTypes( groupList, assert ){
-    var regexpElement = /^[A-Z]{1,1}[a-z]{0,2}$/;
+    var regexpElement = /^[A-Z]{1,1}[a-z]{0,2}|$/;
+    var regexpAtomname = /^.{0,5}$/;
+    var regexpGroupname = /^.{0,5}$/;
     var regexpSingleLetter = /^[A-Z]{1,1}$/;
     groupList.forEach( function( groupType ){
         assert.ok(
@@ -238,11 +240,15 @@ function checkGroupListTypes( groupList, assert ){
             );
             assert.ok(
                 regexpElement.test( groupType.atomInfo[ i ] ),
-                "groupType.atomInfo elements must match /^[A-Z]{1,1}[a-z]{0,2}$/"
+                "groupType.atomInfo elements must match /^[A-Z]{1,1}[a-z]{0,2}|$/"
             );
             assert.ok(
                 typeof groupType.atomInfo[ i + 1 ] === 'string',
                 "groupType.atomInfo atomnames must be strings"
+            );
+            assert.ok(
+                regexpAtomname.test( groupType.atomInfo[ i + 1 ] ),
+                "groupType.atomInfo atomnames must match /^.{0,5}$/"
             );
         }
         assert.ok(
@@ -272,6 +278,10 @@ function checkGroupListTypes( groupList, assert ){
         assert.ok(
             typeof groupType.groupName === 'string',
             "groupType.groupName must be a string"
+        );
+        assert.ok(
+            regexpAtomname.test( groupType.groupName ),
+            "groupType.groupName must match /^.{0,5}$/"
         );
         assert.ok(
             typeof groupType.singleLetterCode === 'string',
