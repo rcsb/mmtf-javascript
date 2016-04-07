@@ -3,13 +3,24 @@
  * @author Alexander Rose <alexander.rose@weirdbyte.de>
  */
 
+/**
+ * decode binary encoded MessagePack v5 (http://msgpack.org/) data
+ * @param  {Uint8Array} buffer - binary encoded MessagePack data
+ * @return {Object|Array|String|Number|Boolean|null} decoded Messagepack data
+ */
 function decodeMsgpack(buffer) {
   // Loosely based on
   // The MIT License (MIT)
   // Copyright (c) 2013 Tim Caswell <tim@creationix.com>
+  // https://github.com/creationix/msgpack-js
   var offset = 0;
   var dataView = new DataView(buffer.buffer);
 
+  /**
+   * decode all key-value pairs of a map into an object
+   * @param  {Integer} length - number of key-value pairs
+   * @return {Object} decoded map
+   */
   function map(length) {
     var value = {};
     for (var i = 0; i < length; i++) {
@@ -19,12 +30,22 @@ function decodeMsgpack(buffer) {
     return value;
   }
 
+  /**
+   * decode binary array
+   * @param  {Integer} length - number of elements in the array
+   * @return {Uint8Array} decoded array
+   */
   function bin(length) {
     var value = buffer.subarray(offset, offset + length);
     offset += length;
     return value;
   }
 
+  /**
+   * decode string
+   * @param  {Integer} length - number string characters
+   * @return {String} decoded string
+   */
   function str(length) {
     var array = buffer.subarray(offset, offset + length);
     offset += length;
@@ -44,6 +65,11 @@ function decodeMsgpack(buffer) {
     }
   }
 
+  /**
+   * decode array
+   * @param  {Integer} length - number of array elements
+   * @return {Array} decoded array
+   */
   function array(length) {
     var value = new Array(length);
     for (var i = 0; i < length; i++) {
@@ -52,6 +78,10 @@ function decodeMsgpack(buffer) {
     return value;
   }
 
+  /**
+   * recursively parse the MessagePack data
+   * @return {Object|Array|String|Number|Boolean|null} decoded MessagePack data
+   */
   function parse() {
     var type = buffer[offset];
     var value, length, extType;
@@ -89,7 +119,7 @@ function decodeMsgpack(buffer) {
     case 0xc0:
       offset++;
       return null;
-    // 0xc1: (never used)
+    // 0xc1: (never used, could be employed for padding)
     // false
     case 0xc2:
       offset++;
@@ -251,6 +281,7 @@ function decodeMsgpack(buffer) {
     throw new Error("Unknown type 0x" + type.toString(16));
   }
 
+  // start the recursive parsing
   return parse();
 }
 
