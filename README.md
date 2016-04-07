@@ -38,7 +38,7 @@ console.log( mmtfData.numAtoms );
 | title                      | `String`       | Short description                          |    Y     |
 | date                       | `String`       | Date in YYYY-MM-DD format                  |    Y     |
 | experimentalMethods        | `Array`        | Structure determination methods            |    Y     |
-| resolution                 | `Number`       | Resolution in angstrom                     |    Y     |
+| resolution                 | `Number`       | Resolution in Å                            |    Y     |
 | rFree                      | `Number`       | R-free value                               |    Y     |
 | rWork                      | `Number`       | R-work value                               |    Y     |
 | numBonds                   | `Number`       | Number of bonds                            |          |
@@ -51,10 +51,10 @@ console.log( mmtfData.numAtoms );
 | groupList                  | `Array`        | List of [`groupType`](#groupType) objects  |    Y     |
 | bondAtomList               | `Int32Array`   | List of bonded atom indices                |    Y     |
 | bondOrderList              | `Uint8Array`   | List of bond orders                        |    Y     |
-| xCoordList                 | `Float32Array` | List of x coordinates                      |          |
-| yCoordList                 | `Float32Array` | List of y coordinates                      |          |
-| zCoordList                 | `Float32Array` | List of z coordinates                      |          |
-| bFactorList                | `Float32Array` | List of b-factors                          |    Y     |
+| xCoordList                 | `Float32Array` | List of x coordinates in Å                 |          |
+| yCoordList                 | `Float32Array` | List of y coordinates in Å                 |          |
+| zCoordList                 | `Float32Array` | List of z coordinates in Å                 |          |
+| bFactorList                | `Float32Array` | List of B-factors in Å^2                   |    Y     |
 | atomIdList                 | `Int32Array`   | List of atom ids                           |    Y     |
 | altLocList                 | `Uint8Array`   | List of alternate location labels          |    Y     |
 | occupancyList              | `Float32Array` | List of occupancies                        |    Y     |
