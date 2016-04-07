@@ -36,7 +36,7 @@ console.log( mmtfData.numAtoms );
 | spaceGroup                 | `String`       | Hermann-Mauguin symbol                     |    Y     |
 | structureId                | `String`       | Some reference, e.g. a PDB ID              |    Y     |
 | title                      | `String`       | Short description                          |    Y     |
-| date                       | `String`       | Date in YYYY-MM-DD format                  |    Y     |
+| depositionDate             | `String`       | Deposition date in YYYY-MM-DD format       |    Y     |
 | experimentalMethods        | `Array`        | Structure determination methods            |    Y     |
 | resolution                 | `Number`       | Resolution in Å                            |    Y     |
 | rFree                      | `Number`       | R-free value                               |    Y     |

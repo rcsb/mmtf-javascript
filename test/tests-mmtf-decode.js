@@ -20,7 +20,7 @@ QUnit.test( "empty full", function( assert ) {
         chainIdList: new Uint8Array( 0 ),
         chainNameList: new Uint8Array( 0 ),
         chainsPerModel: [],
-        date: "0000-00-00",
+        depositionDate: "0000-00-00",
         entityList: [],
         experimentalMethods: [],
         groupIdList: new Int32Array( 0 ),
@@ -107,7 +107,7 @@ QUnit.test( "filled full", function( assert ) {
             },
         ],
         title: "Full Test",
-        date: "2012-10-20",
+        depositionDate: "2012-10-20",
         entityList: [
             {
                 chainIndexList: [ 1 ],

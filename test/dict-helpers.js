@@ -11,7 +11,7 @@ function getEmptyFullMmtfDict(){
         bioAssemblyList: [],
         structureId: "",
         title: "",
-        date: "0000-00-00",
+        depositionDate: "0000-00-00",
         entityList: [],
 
         experimentalMethods: [],
@@ -120,7 +120,7 @@ function getFilledFullMmtfDict(){
         ],
         structureId: "1XYZ",
         title: "Full Test",
-        date: "2012-10-20",
+        depositionDate: "2012-10-20",
         entityList: [
             {
                 chainIndexList: [ 1 ],

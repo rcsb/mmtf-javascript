@@ -65,7 +65,7 @@ function decodeMmtf( binOrDict, params ){
     // copy some fields over from the input dict
     [
         "mmtfVersion", "mmtfProducer",
-        "unitCell", "spaceGroup", "structureId", "title", "date",
+        "unitCell", "spaceGroup", "structureId", "title", "depositionDate",
         "experimentalMethods", "resolution", "rFree", "rWork",
         "bioAssemblyList", "entityList", "groupList",
         "numBonds", "numAtoms",
