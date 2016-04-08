@@ -6,8 +6,8 @@
 import decodeMsgpack from "./msgpack-decode.js";
 
 import {
-    getUint8View, getInt8View, getInt16, getInt32, getInt32View,
-    decodeRunLength, decodeDelta, decodeSplitListDelta,
+    getUint8View, getInt8View, getInt32,
+    decodeRunLength, decodeDelta,
     decodeFloatSplitListDelta, decodeFloatRunLength
 } from "./mmtf-decode-helpers.js";
 
@@ -15,7 +15,6 @@ import {
  * Decode MMTF fields
  * @param  {Uint8Array|ArrayBuffer|Object} binOrDict - binary MessagePack or encoded MMTF data
  * @param  {Object} [params] - decoding parameters
- *  - @param {Boolean} params.littleEndian - decoded field's byte order is little endian
  *  - @param {Array} params.ignoreFields - names of optional fields not to decode
  * @return {Object} mmtfData
  */
@@ -23,10 +22,9 @@ function decodeMmtf( binOrDict, params ){
 
     params = params || {};
 
-    var littleEndian = params.littleEndian;
     var ignoreFields = params.ignoreFields;
 
-    // helper functions to tell if a field should be decoded
+    // helper function to tell if a field should be decoded
     function decodeField( name ){
         return ignoreFields ? ignoreFields.indexOf( name ) === -1 : true;
     }
@@ -82,7 +80,7 @@ function decodeMmtf( binOrDict, params ){
     // decode inter group bond atom indices, i.e. get int32 array
     var inputBondAtomList = inputDict.bondAtomList;
     if( inputBondAtomList && decodeField( "bondAtomList" ) ){
-        outputDict.bondAtomList = getInt32( inputBondAtomList, undefined, littleEndian );
+        outputDict.bondAtomList = getInt32( inputBondAtomList );
     }
 
     // decode inter group bond orders, i.e. get uint8 array
@@ -96,13 +94,13 @@ function decodeMmtf( binOrDict, params ){
 
     // split-list delta & integer decode x, y, z atom coords
     outputDict.xCoordList = decodeFloatSplitListDelta(
-        inputDict.xCoordBig, inputDict.xCoordSmall, 1000, undefined, littleEndian
+        inputDict.xCoordBig, inputDict.xCoordSmall, 1000
     );
     outputDict.yCoordList = decodeFloatSplitListDelta(
-        inputDict.yCoordBig, inputDict.yCoordSmall, 1000, undefined, littleEndian
+        inputDict.yCoordBig, inputDict.yCoordSmall, 1000
     );
     outputDict.zCoordList = decodeFloatSplitListDelta(
-        inputDict.zCoordBig, inputDict.zCoordSmall, 1000, undefined, littleEndian
+        inputDict.zCoordBig, inputDict.zCoordSmall, 1000
     );
 
     // split-list delta & integer decode b-factors
@@ -110,7 +108,7 @@ function decodeMmtf( binOrDict, params ){
     var inputBfactorSmall = inputDict.bFactorSmall;
     if( inputBfactorBig && inputBfactorSmall && decodeField( "bFactorList" ) ){
         outputDict.bFactorList = decodeFloatSplitListDelta(
-            inputBfactorBig, inputBfactorSmall, 100, undefined, littleEndian
+            inputBfactorBig, inputBfactorSmall, 100
         );
     }
 
@@ -118,7 +116,7 @@ function decodeMmtf( binOrDict, params ){
     var inputAtomIdList = inputDict.atomIdList;
     if( inputAtomIdList && decodeField( "atomIdList" ) ){
         outputDict.atomIdList = decodeDelta(
-            decodeRunLength( getInt32( inputAtomIdList, undefined, littleEndian ) )
+            decodeRunLength( getInt32( inputAtomIdList ) )
         );
     }
 
@@ -131,9 +129,7 @@ function decodeMmtf( binOrDict, params ){
     // run-length & integer decode occupancies
     var inputOccupancyList = inputDict.occupancyList;
     if( inputOccupancyList && decodeField( "occupancyList" ) ){
-        outputDict.occupancyList = decodeFloatRunLength(
-            inputOccupancyList, 100, undefined, littleEndian
-        );
+        outputDict.occupancyList = decodeFloatRunLength( inputOccupancyList, 100 );
     }
 
     ///////////////
@@ -141,11 +137,11 @@ function decodeMmtf( binOrDict, params ){
 
     // run-length & delta decode group numbers
     outputDict.groupIdList = decodeDelta(
-        decodeRunLength( getInt32( inputDict.groupIdList, undefined, littleEndian ) )
+        decodeRunLength( getInt32( inputDict.groupIdList ) )
     );
 
     // decode group types, i.e. get int32 array
-    outputDict.groupTypeList = getInt32( inputDict.groupTypeList, undefined, littleEndian );
+    outputDict.groupTypeList = getInt32( inputDict.groupTypeList );
 
     // decode secondary structure, i.e. get int8 view
     var inputSecStructList = inputDict.secStructList;
@@ -163,7 +159,7 @@ function decodeMmtf( binOrDict, params ){
     var inputSequenceIdList = inputDict.sequenceIdList;
     if( inputSequenceIdList && decodeField( "sequenceIdList" ) ){
         outputDict.sequenceIdList = decodeDelta(
-            decodeRunLength( getInt32( inputSequenceIdList, undefined, littleEndian ) )
+            decodeRunLength( getInt32( inputSequenceIdList ) )
         );
     }
 

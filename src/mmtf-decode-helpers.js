@@ -27,53 +27,52 @@ function getInt8View( dataArray ){
 
 /**
  * get an Int16Array copy of the the input array data
- * @param  {TypedArray} view - input data
+ * @param  {TypedArray} view - input data in big endian format
  * @param  {Int16Array} [dataArray] - pre-allocated output array
- * @param  {Boolean} [littleEndian=false] - flag to indicate input data endianess
  * @return {Int16Array} copy of the input array data
  */
-function getInt16( view, dataArray, littleEndian ){
+function getInt16( view, dataArray ){
     var o = view.byteOffset;
     var n = view.byteLength;
     var i, i2, il;
     if( !dataArray ) dataArray = new Int16Array( n / 2 );
-    if( littleEndian ){
-        var dv = new DataView( view.buffer );
-        for( i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
-            dataArray[ i ] = dv.getInt16( o + i2, littleEndian );
-        }
-    }else{
-        for( i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
-            dataArray[ i ] = view[ i2 ] << 8 ^ view[ i2 + 1 ] << 0;
-        }
+    for( i = 0, i2 = 0, il = n / 2; i < il; ++i, i2 += 2 ){
+        dataArray[ i ] = view[ i2 ] << 8 ^ view[ i2 + 1 ] << 0;
     }
     return dataArray;
 }
 
 /**
+ * make big endian buffer of an int16 array
+ * @param  {Array|TypedArray} array - array of int16 values
+ * @return {ArrayBuffer} big endian buffer
+ */
+function makeInt16Buffer( array ){
+    var n = array.length;
+    var buffer = new ArrayBuffer( 2 * n );
+    var dv = new DataView( buffer );
+    for( var i = 0; i < n; ++i ){
+        dv.setInt16( 2 * i, array[ i ] );
+    }
+    return buffer;
+}
+
+/**
  * get an Int32Array copy of the the input array data
- * @param  {TypedArray} view - input data
+ * @param  {TypedArray} view - input data in big endian format
  * @param  {Int32Array} [dataArray] - pre-allocated output array
- * @param  {Boolean} [littleEndian=false] - flag to indicate input data endianess
  * @return {Int32Array} copy of the input array data
  */
-function getInt32( view, dataArray, littleEndian ){
+function getInt32( view, dataArray ){
     var o = view.byteOffset;
     var n = view.byteLength;
     var i, i4, il;
     if( !dataArray ) dataArray = new Int32Array( n / 4 );
-    if( littleEndian ){
-        var dv = new DataView( view.buffer );
-        for( i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
-            dataArray[ i ] = dv.getInt32( o + i4, littleEndian );
-        }
-    }else{
-        for( i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
-            dataArray[ i ] = (
-                view[ i4     ] << 24 ^ view[ i4 + 1 ] << 16 ^
-                view[ i4 + 2 ] <<  8 ^ view[ i4 + 3 ] <<  0
-            );
-        }
+    for( i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+        dataArray[ i ] = (
+            view[ i4     ] << 24 ^ view[ i4 + 1 ] << 16 ^
+            view[ i4 + 2 ] <<  8 ^ view[ i4 + 3 ] <<  0
+        );
     }
     return dataArray;
 }
@@ -87,6 +86,21 @@ function getInt32View( dataArray ){
     return new Int32Array(
         dataArray.buffer, dataArray.byteOffset, dataArray.byteLength/4
     );
+}
+
+/**
+ * make big endian buffer of an int32 array
+ * @param  {Array|TypedArray} array - array of int32 values
+ * @return {ArrayBuffer} big endian buffer
+ */
+function makeInt32Buffer( array ){
+    var n = array.length;
+    var buffer = new ArrayBuffer( 4 * n );
+    var dv = new DataView( buffer );
+    for( var i = 0; i < n; ++i ){
+        dv.setInt32( 4 * i, array[ i ] );
+    }
+    return buffer;
 }
 
 /**
@@ -166,10 +180,11 @@ function decodeDelta( dataArray ){
  *     bigArray: [ 200, 3, 100, 2 ]
  *     smallArray: [ 0, 2, -1, -3, 5 ]
  *     return: [ 200, 200, 202, 201, 301, 298, 303 ]
- * @param  {Int32Array} bigArray - pairs of large delta values and number of
+ * @param  {Uint8Array} bigArray - int32 array as bytes in big endian format,
+ *                                 pairs of large delta values and number of following
  *                                 small delta values to be read from smallArray
- *                                 before reading the next pair
- * @param  {Int16Array} smallArray - small delta values
+ * @param  {Uint8Array} smallArray - int16 array as bytes in big endian format,
+ *                                   small delta values
  * @param  {Int32Array} dataArray - pre-allocated output array
  * @return {Int32Array} decoded array
  */
@@ -203,22 +218,21 @@ function decodeSplitListDelta( bigArray, smallArray, dataArray ){
  *     smallArray: [ 0, 2, -1, -3, 5 ]
  *     divisor: 100
  *     return: [ 1.00, 1.00, 1.02, 1.01, -0.99, -1.02, -0.97 ]
- * @param  {Int32Array} bigArray - pairs of large delta values and number of following
+ * @param  {Uint8Array} bigArray - int32 array as bytes in big endian format,
+ *                                 pairs of large delta values and number of following
  *                                 small delta values to be read from smallArray
- * @param  {Int16Array} smallArray - small delta values
+ * @param  {Uint8Array} smallArray - int16 array as bytes in big endian format,
+ *                                   small delta values
  * @param  {Integer} divisor  - number to devide the integers to obtain floats
  * @param  {Float32Array} dataArray - pre-allocated output array
- * @param  {Boolean} littleEndian - flag to indicate input data endianess
  * @return {Float32Array} decoded array
  */
-function decodeFloatSplitListDelta( bigArray, smallArray, divisor, dataArray, littleEndian ){
+function decodeFloatSplitListDelta( bigArray, smallArray, divisor, dataArray ){
     var fullLength = ( bigArray.length / 4 / 2 ) + smallArray.length / 2;
     if( !dataArray ) dataArray = new Float32Array( fullLength );
     var int32View = getInt32View( dataArray );
     var int32 = decodeSplitListDelta(
-        getInt32( bigArray, undefined, littleEndian ),
-        getInt16( smallArray, undefined, littleEndian ),
-        int32View
+        getInt32( bigArray ), getInt16( smallArray ), int32View
     );
     return decodeIntegerToFloat( int32, divisor, dataArray );
 }
@@ -230,20 +244,21 @@ function decodeFloatSplitListDelta( bigArray, smallArray, divisor, dataArray, li
  *     array: [ 320, 3, 100, 2 ]
  *     divisor: 100
  *     return: [ 3.20, 3.20, 3.20, 1.00, 1.00 ]
- * @param  {Int32Array} array - run-length encoded input array
+ * @param  {Uint8Array} array - run-length encoded int32 array as bytes in big endian format
  * @param  {Integer} divisor - number to devide the integers to obtain floats
  * @param  {Float32Array} dataArray - pre-allocated output array
- * @param  {Boolean} littleEndian - flag to indicate input data endianess
  * @return {Float32Array} decoded array
  */
-function decodeFloatRunLength( array, divisor, dataArray, littleEndian ){
+function decodeFloatRunLength( bytes, divisor, dataArray ){
     var int32View = dataArray ? getInt32View( dataArray ) : undefined;
-    var int32 = decodeRunLength( getInt32( array, undefined, littleEndian ), int32View );
+    var int32 = decodeRunLength( getInt32( bytes ), int32View );
     return decodeIntegerToFloat( int32, divisor, dataArray );
 }
 
 export {
-    getUint8View, getInt8View, getInt16, getInt32, getInt32View,
-    decodeIntegerToFloat, decodeRunLength, decodeDelta, decodeSplitListDelta,
-    decodeFloatSplitListDelta, decodeFloatRunLength
+    getUint8View, getInt8View,
+    getInt16, makeInt16Buffer,
+    getInt32, getInt32View, makeInt32Buffer,
+    decodeIntegerToFloat, decodeRunLength, decodeDelta,
+    decodeSplitListDelta, decodeFloatSplitListDelta, decodeFloatRunLength
 };

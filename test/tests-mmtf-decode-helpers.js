@@ -6,10 +6,10 @@ QUnit.module( "decoding helpers" );
 
 QUnit.test( "getInt8View", function( assert ) {
     var buffer = new ArrayBuffer( 1 * 20 );
-    var view = new Int8Array( buffer, 4 );
-    view[0] = 12;
-    view[2] = -4;
-    var view2 = new Uint8Array( buffer, 4 );
+    var dv = new DataView( buffer );
+    dv.setInt8( 0, 12 );
+    dv.setInt8( 2, -4 );
+    var view2 = new Uint8Array( buffer, 0, 4 );
     var int8 = getInt8View( view2 );
     assert.equal( int8[0], 12, "Passed!" );
     assert.equal( int8[1], 0, "Passed!" );
@@ -18,10 +18,10 @@ QUnit.test( "getInt8View", function( assert ) {
 
 QUnit.test( "getUint8View", function( assert ) {
     var buffer = new ArrayBuffer( 1 * 20 );
-    var view = new Uint8Array( buffer, 4 );
-    view[0] = 16;
-    view[2] = 5;
-    var view2 = new Uint8Array( buffer, 4 );
+    var dv = new DataView( buffer );
+    dv.setUint8( 0, 16 );
+    dv.setUint8( 2, 5 );
+    var view2 = new Uint8Array( buffer, 0, 4 );
     var int8 = getUint8View( view2 );
     assert.equal( int8[0], 16, "Passed!" );
     assert.equal( int8[1], 0, "Passed!" );
@@ -30,10 +30,10 @@ QUnit.test( "getUint8View", function( assert ) {
 
 QUnit.test( "getInt16", function( assert ) {
     var buffer = new ArrayBuffer( 2 * 20 );
-    var view = new Int16Array( buffer, 8 );
-    view[0] = 18902;
-    view[2] = -4467;
-    var view2 = new Uint8Array( buffer, 8 );
+    var dv = new DataView( buffer );
+    dv.setInt16( 0, 18902 );
+    dv.setInt16( 2 * 2, -4467 );
+    var view2 = new Uint8Array( buffer, 0, 8 );
     var int16 = getInt16( view2, undefined, true );
     assert.equal( int16[0], 18902, "Passed!" );
     assert.equal( int16[1], 0, "Passed!" );
@@ -42,10 +42,10 @@ QUnit.test( "getInt16", function( assert ) {
 
 QUnit.test( "getInt32", function( assert ) {
     var buffer = new ArrayBuffer( 4 * 40 );
-    var view = new Int32Array( buffer, 16 );
-    view[0] = 3418902;
-    view[2] = -743467;
-    var view2 = new Uint8Array( buffer, 16 );
+    var dv = new DataView( buffer );
+    dv.setInt32( 0, 3418902 );
+    dv.setInt32( 4 * 2, -743467 );
+    var view2 = new Uint8Array( buffer, 0, 16 );
     var int32 = getInt32( view2, undefined, true );
     assert.equal( int32[0], 3418902, "Passed!" );
     assert.equal( int32[1], 0, "Passed!" );
@@ -151,22 +151,26 @@ QUnit.test( "decodeSplitListDelta empty arrays", function( assert ) {
 });
 
 QUnit.test( "decodeFloatSplitListDelta", function( assert ) {
-    var deltasBig = new Int32Array([
+    var deltasBigBuffer = makeInt32Buffer([
         100, 3, -200, 2
     ]);
-    var deltasSmall = new Int16Array([
+    var deltasSmallBuffer = makeInt16Buffer([
         0, 2, -1, -3, 5
     ]);
     var expected = new Float32Array([
         1.00, 1.00, 1.02, 1.01, -0.99, -1.02, -0.97
     ]);
-    var deltasBigUint8 = new Uint8Array( deltasBig.buffer );
-    var deltasSmallUint8 = new Uint8Array( deltasSmall.buffer );
+    var deltasBigUint8 = new Uint8Array( deltasBigBuffer );
+    var deltasSmallUint8 = new Uint8Array( deltasSmallBuffer );
     var divisor = 100;
     var decoded = decodeFloatSplitListDelta(
-        deltasBigUint8, deltasSmallUint8, divisor, undefined, true
+        deltasBigUint8, deltasSmallUint8, divisor
     );
-    assert.equal( decoded.length, deltasBig.length/2 + deltasSmall.length, "Passed!" );
+    assert.equal(
+        decoded.length,
+        deltasBigBuffer.byteLength/4/2 + deltasSmallBuffer.byteLength/2,
+        "Passed!"
+    );
     assert.close( decoded[0], expected[0], 0.001, "Passed!" );
     assert.close( decoded[1], expected[1], 0.001, "Passed!" );
     assert.close( decoded[2], expected[2], 0.001, "Passed!" );
@@ -184,24 +188,22 @@ QUnit.test( "decodeFloatSplitListDelta empty arrays", function( assert ) {
     var deltasSmallUint8 = new Uint8Array( deltasSmall.buffer );
     var divisor = 100;
     var decoded = decodeFloatSplitListDelta(
-        deltasBigUint8, deltasSmallUint8, divisor, undefined, true
+        deltasBigUint8, deltasSmallUint8, divisor
     );
     assert.equal( decoded.length, deltasBig.length/2 + deltasSmall.length, "Passed!" );
     assert.deepEqual( decoded, expected, "Passed!" );
 });
 
 QUnit.test( "decodeFloatRunLength", function( assert ) {
-    var array = new Int32Array([
+    var arrayBuffer = new makeInt32Buffer([
         320, 3, 100, 2
     ]);
     var expected = new Float32Array([
         3.20, 3.20, 3.20, 1.00, 1.00
     ]);
-    var arrayUint8 = new Uint8Array( array.buffer );
+    var arrayUint8 = new Uint8Array( arrayBuffer );
     var divisor = 100;
-    var decoded = decodeFloatRunLength(
-        arrayUint8, divisor, undefined, true
-    );
+    var decoded = decodeFloatRunLength( arrayUint8, divisor );
     assert.equal( decoded.length, expected.length, "Passed!" );
     assert.close( decoded[0], expected[0], 0.001, "Passed!" );
     assert.close( decoded[1], expected[1], 0.001, "Passed!" );
@@ -215,9 +217,7 @@ QUnit.test( "decodeFloatRunLength empty arrays", function( assert ) {
     var expected = new Float32Array([]);
     var arrayUint8 = new Uint8Array( array.buffer );
     var divisor = 100;
-    var decoded = decodeFloatRunLength(
-        arrayUint8, divisor, undefined, true
-    );
+    var decoded = decodeFloatRunLength( arrayUint8, divisor );
     assert.equal( decoded.length, expected.length, "Passed!" );
     assert.deepEqual( decoded, expected, "Passed!" );
 });

@@ -153,28 +153,28 @@ function getFilledFullMmtfDict(){
         ],
 
         // bonds
-        bondAtomList: new Uint8Array( new Int32Array( [ 0, 1, 0, 0 ] ).buffer ),
+        bondAtomList: new Uint8Array( makeInt32Buffer( [ 0, 1, 0, 0 ] ) ),
         bondOrderList: new Uint8Array( new Uint8Array( [ 2, 0 ] ).buffer ),
 
         // atoms
-        xCoordBig: new Uint8Array( new Int32Array( [ 50000, 1 ] ).buffer ),
-        xCoordSmall: new Uint8Array( new Int16Array( [ 2000 ] ).buffer ),
-        yCoordBig: new Uint8Array( new Int32Array( [ 60000, 1 ] ).buffer ),
-        yCoordSmall: new Uint8Array( new Int16Array( [ 3000 ] ).buffer ),
-        zCoordBig: new Uint8Array( new Int32Array( [ 70000, 1 ] ).buffer ),
-        zCoordSmall: new Uint8Array( new Int16Array( [ 4000 ] ).buffer ),
-        bFactorBig: new Uint8Array( new Int32Array( [ 9999, 0, 1, 0 ] ).buffer ),
-        bFactorSmall: new Uint8Array( new Int16Array( [] ).buffer ),
-        atomIdList: new Uint8Array( new Int32Array( [ 1, 2 ] ).buffer ),
+        xCoordBig: new Uint8Array( makeInt32Buffer( [ 50000, 1 ] ) ),
+        xCoordSmall: new Uint8Array( makeInt16Buffer( [ 2000 ] ) ),
+        yCoordBig: new Uint8Array( makeInt32Buffer( [ 60000, 1 ] ) ),
+        yCoordSmall: new Uint8Array( makeInt16Buffer( [ 3000 ] ) ),
+        zCoordBig: new Uint8Array( makeInt32Buffer( [ 70000, 1 ] ) ),
+        zCoordSmall: new Uint8Array( makeInt16Buffer( [ 4000 ] ) ),
+        bFactorBig: new Uint8Array( makeInt32Buffer( [ 9999, 0, 1, 0 ] ) ),
+        bFactorSmall: new Uint8Array( makeInt16Buffer( [] ) ),
+        atomIdList: new Uint8Array( makeInt32Buffer( [ 1, 2 ] ) ),
         altLocList: new Array( 65, 1, 66, 1 ),
-        occupancyList: new Uint8Array( new Int32Array( [ 60, 1, 40, 1 ] ).buffer ),
+        occupancyList: new Uint8Array( makeInt32Buffer( [ 60, 1, 40, 1 ] ) ),
 
         // groups
-        groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
-        groupTypeList: new Uint8Array( new Int32Array( [ 0 ] ).buffer ),
+        groupIdList: new Uint8Array( makeInt32Buffer( [ 100, 1 ] ) ),
+        groupTypeList: new Uint8Array( makeInt32Buffer( [ 0 ] ) ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
         insCodeList: new Array( 88, 1 ),
-        sequenceIdList: new Uint8Array( new Int32Array( [ 0, 1 ] ).buffer ),
+        sequenceIdList: new Uint8Array( makeInt32Buffer( [ 0, 1 ] ) ),
 
         // chains
         chainIdList: new Uint8Array( [ 0, 0, 68, 65 ] ),
@@ -210,16 +210,16 @@ function getFilledRequiredMmtfDict(){
         ],
 
         // atoms
-        xCoordBig: new Uint8Array( new Int32Array( [ 10000, 1 ] ).buffer ),
-        xCoordSmall: new Uint8Array( new Int16Array( [ 1000 ] ).buffer ),
-        yCoordBig: new Uint8Array( new Int32Array( [ 20000, 1 ] ).buffer ),
-        yCoordSmall: new Uint8Array( new Int16Array( [ 2000 ] ).buffer ),
-        zCoordBig: new Uint8Array( new Int32Array( [ 30000, 1 ] ).buffer ),
-        zCoordSmall: new Uint8Array( new Int16Array( [ 3000 ] ).buffer ),
+        xCoordBig: new Uint8Array( makeInt32Buffer( [ 10000, 1 ] ) ),
+        xCoordSmall: new Uint8Array( makeInt16Buffer( [ 1000 ] ) ),
+        yCoordBig: new Uint8Array( makeInt32Buffer( [ 20000, 1 ] ) ),
+        yCoordSmall: new Uint8Array( makeInt16Buffer( [ 2000 ] ) ),
+        zCoordBig: new Uint8Array( makeInt32Buffer( [ 30000, 1 ] ) ),
+        zCoordSmall: new Uint8Array( makeInt16Buffer( [ 3000 ] ) ),
 
         // groups
-        groupIdList: new Uint8Array( new Int32Array( [ 100, 1 ] ).buffer ),
-        groupTypeList: new Uint8Array( new Int32Array( [ 0 ] ).buffer ),
+        groupIdList: new Uint8Array( makeInt32Buffer( [ 100, 1 ] ) ),
+        groupTypeList: new Uint8Array( makeInt32Buffer( [ 0 ] ) ),
 
         // chains
         chainIdList: new Uint8Array( [ 0, 65, 0, 0 ] ),
