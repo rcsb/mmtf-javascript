@@ -189,3 +189,35 @@ QUnit.test( "decodeFloatSplitListDelta empty arrays", function( assert ) {
     assert.equal( decoded.length, deltasBig.length/2 + deltasSmall.length, "Passed!" );
     assert.deepEqual( decoded, expected, "Passed!" );
 });
+
+QUnit.test( "decodeFloatRunLength", function( assert ) {
+    var array = new Int32Array([
+        320, 3, 100, 2
+    ]);
+    var expected = new Float32Array([
+        3.20, 3.20, 3.20, 1.00, 1.00
+    ]);
+    var arrayUint8 = new Uint8Array( array.buffer );
+    var divisor = 100;
+    var decoded = decodeFloatRunLength(
+        arrayUint8, divisor, undefined, true
+    );
+    assert.equal( decoded.length, expected.length, "Passed!" );
+    assert.close( decoded[0], expected[0], 0.001, "Passed!" );
+    assert.close( decoded[1], expected[1], 0.001, "Passed!" );
+    assert.close( decoded[2], expected[2], 0.001, "Passed!" );
+    assert.close( decoded[3], expected[3], 0.001, "Passed!" );
+    assert.close( decoded[4], expected[4], 0.001, "Passed!" );
+});
+
+QUnit.test( "decodeFloatRunLength empty arrays", function( assert ) {
+    var array = new Int32Array([]);
+    var expected = new Float32Array([]);
+    var arrayUint8 = new Uint8Array( array.buffer );
+    var divisor = 100;
+    var decoded = decodeFloatRunLength(
+        arrayUint8, divisor, undefined, true
+    );
+    assert.equal( decoded.length, expected.length, "Passed!" );
+    assert.deepEqual( decoded, expected, "Passed!" );
+});
