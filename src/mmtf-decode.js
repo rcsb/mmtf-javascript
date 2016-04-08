@@ -78,15 +78,15 @@ function decodeMmtf( binOrDict, params ){
     // bond data
 
     // decode inter group bond atom indices, i.e. get int32 array
-    var inputBondAtomList = inputDict.bondAtomList;
-    if( inputBondAtomList && decodeField( "bondAtomList" ) ){
-        outputDict.bondAtomList = getInt32( inputBondAtomList );
+    var bondAtomListKey = "bondAtomList";
+    if( inputDict[ bondAtomListKey ] && decodeField( bondAtomListKey ) ){
+        outputDict[ bondAtomListKey ] = getInt32( inputDict[ bondAtomListKey ] );
     }
 
     // decode inter group bond orders, i.e. get uint8 array
-    var inputBondOrderList = inputDict.bondOrderList;
-    if( inputBondOrderList && decodeField( "bondOrderList" ) ){
-        outputDict.bondOrderList = getUint8View( inputBondOrderList );
+    var bondOrderListKey = "bondOrderList";
+    if( inputDict[ bondOrderListKey ] && decodeField( bondOrderListKey ) ){
+        outputDict[ bondOrderListKey ] = getUint8View( inputDict[ bondOrderListKey ] );
     }
 
     //////////////
@@ -104,32 +104,35 @@ function decodeMmtf( binOrDict, params ){
     );
 
     // split-list delta & integer decode b-factors
-    var inputBfactorBig = inputDict.bFactorBig;
-    var inputBfactorSmall = inputDict.bFactorSmall;
-    if( inputBfactorBig && inputBfactorSmall && decodeField( "bFactorList" ) ){
-        outputDict.bFactorList = decodeFloatSplitListDelta(
-            inputBfactorBig, inputBfactorSmall, 100
+    var bFactorListKey = "bFactorList";
+    var bFactorBigKey = "bFactorBig";
+    var bFactorSmallKey = "bFactorSmall";
+    if( inputDict[ bFactorBigKey ] && inputDict[ bFactorSmallKey ] && decodeField( bFactorListKey ) ){
+        outputDict[ bFactorListKey ] = decodeFloatSplitListDelta(
+            inputDict[ bFactorBigKey ], inputDict[ bFactorSmallKey ], 100
         );
     }
 
     // delta & run-length decode atom ids
-    var inputAtomIdList = inputDict.atomIdList;
-    if( inputAtomIdList && decodeField( "atomIdList" ) ){
-        outputDict.atomIdList = decodeDelta(
-            decodeRunLength( getInt32( inputAtomIdList ) )
+    var atomIdListKey = "atomIdList";
+    if( inputDict[ atomIdListKey ] && decodeField( atomIdListKey ) ){
+        outputDict[ atomIdListKey ] = decodeDelta(
+            decodeRunLength( getInt32( inputDict[ atomIdListKey ] ) )
         );
     }
 
     // run-length decode alternate labels
-    var inputAltLocList = inputDict.altLocList;
-    if( inputAltLocList && decodeField( "altLocList" ) ){
-        outputDict.altLocList = decodeRunLength( inputAltLocList, new Uint8Array( numAtoms ) );
+    var altLocListKey = "altLocList";
+    if( inputDict[ altLocListKey ] && decodeField( altLocListKey ) ){
+        outputDict[ altLocListKey ] = decodeRunLength(
+            inputDict[ altLocListKey ], new Uint8Array( numAtoms )
+        );
     }
 
     // run-length & integer decode occupancies
-    var inputOccupancyList = inputDict.occupancyList;
-    if( inputOccupancyList && decodeField( "occupancyList" ) ){
-        outputDict.occupancyList = decodeFloatRunLength( inputOccupancyList, 100 );
+    var occupancyListKey = "occupancyList";
+    if( inputDict[ occupancyListKey ] && decodeField( occupancyListKey ) ){
+        outputDict[ occupancyListKey ] = decodeFloatRunLength( inputDict[ occupancyListKey ], 100 );
     }
 
     ///////////////
@@ -144,22 +147,24 @@ function decodeMmtf( binOrDict, params ){
     outputDict.groupTypeList = getInt32( inputDict.groupTypeList );
 
     // decode secondary structure, i.e. get int8 view
-    var inputSecStructList = inputDict.secStructList;
-    if( inputSecStructList && decodeField( "secStructList" ) ){
-        outputDict.secStructList = getInt8View( inputSecStructList );
+    var secStructListKey = "secStructList";
+    if( inputDict[ secStructListKey ] && decodeField( secStructListKey ) ){
+        outputDict[ secStructListKey ] = getInt8View( inputDict[ secStructListKey ] );
     }
 
     // run-length decode insertion codes
-    var inputInsCodeList = inputDict.insCodeList;
-    if( inputInsCodeList && decodeField( "insCodeList" ) ){
-        outputDict.insCodeList = decodeRunLength( inputInsCodeList, new Uint8Array( numGroups ) );
+    var insCodeListKey = "insCodeList";
+    if( inputDict[ insCodeListKey ] && decodeField( insCodeListKey ) ){
+        outputDict[ insCodeListKey ] = decodeRunLength(
+            inputDict[ insCodeListKey ], new Uint8Array( numGroups )
+        );
     }
 
     // run-length & delta decode sequence ids
-    var inputSequenceIdList = inputDict.sequenceIdList;
-    if( inputSequenceIdList && decodeField( "sequenceIdList" ) ){
-        outputDict.sequenceIdList = decodeDelta(
-            decodeRunLength( getInt32( inputSequenceIdList ) )
+    var sequenceIdListKey = "sequenceIdList";
+    if( inputDict[ sequenceIdListKey ] && decodeField( sequenceIdListKey ) ){
+        outputDict[ sequenceIdListKey ] = decodeDelta(
+            decodeRunLength( getInt32( inputDict[ sequenceIdListKey ] ) )
         );
     }
 
@@ -170,9 +175,9 @@ function decodeMmtf( binOrDict, params ){
     outputDict.chainIdList = getUint8View( inputDict.chainIdList );
 
     // decode chain names, i.e. get int8 view
-    var inputChainNameList = inputDict.chainNameList;
-    if( inputChainNameList && decodeField( "chainNameList" ) ){
-        outputDict.chainNameList = getUint8View( inputChainNameList );
+    var chainNameListKey = "chainNameList";
+    if( inputDict[ chainNameListKey ] && decodeField( chainNameListKey ) ){
+        outputDict[ chainNameListKey ] = getUint8View( inputDict[ chainNameListKey ] );
     }
 
     return outputDict;
