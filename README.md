@@ -90,7 +90,7 @@ Fields in an `assembly` object:
 | transforms                | `Array`      | List of `transform` objects       |
 
 
-Fields in an `transform` object:
+Fields in a `transform` object:
 
 | Name                      | Type         | Description                       |
 |---------------------------|--------------|-----------------------------------|
