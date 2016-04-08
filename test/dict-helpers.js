@@ -12,6 +12,7 @@ function getEmptyFullMmtfDict(){
         structureId: "",
         title: "",
         depositionDate: "0000-00-00",
+        releaseDate: "0000-00-00",
         entityList: [],
 
         experimentalMethods: [],
@@ -121,6 +122,7 @@ function getFilledFullMmtfDict(){
         structureId: "1XYZ",
         title: "Full Test",
         depositionDate: "2012-10-20",
+        releaseDate: "2012-11-19",
         entityList: [
             {
                 chainIndexList: [ 1 ],

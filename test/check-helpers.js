@@ -133,7 +133,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
 
         // header
         "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
-        "depositionDate", "resolution", "rFree", "rWork", "entityList",
+        "depositionDate", "releaseDate", "resolution", "rFree", "rWork", "entityList",
         // counts
 
         // lists
@@ -188,7 +188,7 @@ function checkMmtfFields( decodedMmtf, assert ){
     var optTopLevelFields = [
         // header
         "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
-        "depositionDate", "resolution", "rFree", "rWork", "entityList",
+        "depositionDate", "releaseDate", "resolution", "rFree", "rWork", "entityList",
         // counts
 
         // lists
@@ -351,6 +351,16 @@ function checkCommonTypes( decodedDict, assert ){
         assert.ok(
             isDate( decodedDict.depositionDate ),
             "depositionDate must be formated as YYYY-MM-DD"
+        );
+    }
+    if( decodedDict.releaseDate !== undefined ){
+        assert.ok(
+            typeof decodedDict.releaseDate === 'string',
+            "releaseDate must be a string"
+        );
+        assert.ok(
+            isDate( decodedDict.releaseDate ),
+            "releaseDate must be formated as YYYY-MM-DD"
         );
     }
     if( decodedDict.structureId !== undefined ){

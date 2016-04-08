@@ -6,7 +6,7 @@ QUnit.module( "mmtf decoding" );
 
 QUnit.test( "empty full", function( assert ) {
     var dict = getEmptyFullMmtfDict();
-    assert.equal( Object.keys( dict ).length, 38, "Wrong number of fields in msgpack" );
+    assert.equal( Object.keys( dict ).length, 39, "Wrong number of fields in msgpack" );
     checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     checkMmtf( decodedMmtf, assert );
@@ -39,6 +39,7 @@ QUnit.test( "empty full", function( assert ) {
         structureId: "",
         rFree: 0,
         rWork: 0,
+        releaseDate: "0000-00-00",
         resolution: 0,
         secStructList: new Int8Array( 0 ),
         sequenceIdList:  new Int32Array( 0 ),
@@ -80,7 +81,7 @@ QUnit.test( "empty required", function( assert ) {
 
 QUnit.test( "filled full", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    assert.equal( Object.keys( dict ).length, 38, "Wrong number of fields in msgpack" );
+    assert.equal( Object.keys( dict ).length, 39, "Wrong number of fields in msgpack" );
     checkMsgpack( dict, assert, true );
     var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
     checkMmtf( decodedMmtf, assert );
@@ -108,6 +109,7 @@ QUnit.test( "filled full", function( assert ) {
         ],
         title: "Full Test",
         depositionDate: "2012-10-20",
+        releaseDate: "2012-11-19",
         entityList: [
             {
                 chainIndexList: [ 1 ],
