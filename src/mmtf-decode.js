@@ -7,8 +7,8 @@ import decodeMsgpack from "./msgpack-decode.js";
 
 import {
     getUint8View, getInt8View, getInt16, getInt32, getInt32View,
-    decodeFloat, decodeRunLength, decodeDelta, decodeSplitListDelta,
-    decodeFloatSplitList, decodeFloatRunLength
+    decodeRunLength, decodeDelta, decodeSplitListDelta,
+    decodeFloatSplitListDelta, decodeFloatRunLength
 } from "./mmtf-decode-helpers.js";
 
 /**
@@ -95,13 +95,13 @@ function decodeMmtf( binOrDict, params ){
     // atom data
 
     // split-list delta & integer decode x, y, z atom coords
-    outputDict.xCoordList = decodeFloatSplitList(
+    outputDict.xCoordList = decodeFloatSplitListDelta(
         inputDict.xCoordBig, inputDict.xCoordSmall, 1000, undefined, littleEndian
     );
-    outputDict.yCoordList = decodeFloatSplitList(
+    outputDict.yCoordList = decodeFloatSplitListDelta(
         inputDict.yCoordBig, inputDict.yCoordSmall, 1000, undefined, littleEndian
     );
-    outputDict.zCoordList = decodeFloatSplitList(
+    outputDict.zCoordList = decodeFloatSplitListDelta(
         inputDict.zCoordBig, inputDict.zCoordSmall, 1000, undefined, littleEndian
     );
 
@@ -109,7 +109,7 @@ function decodeMmtf( binOrDict, params ){
     var inputBfactorBig = inputDict.bFactorBig;
     var inputBfactorSmall = inputDict.bFactorSmall;
     if( inputBfactorBig && inputBfactorSmall && decodeField( "bFactorList" ) ){
-        outputDict.bFactorList = decodeFloatSplitList(
+        outputDict.bFactorList = decodeFloatSplitListDelta(
             inputBfactorBig, inputBfactorSmall, 100, undefined, littleEndian
         );
     }
