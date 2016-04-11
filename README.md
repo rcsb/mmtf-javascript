@@ -47,6 +47,8 @@ console.log( mmtfData.numAtoms );
 | numGroups                  | `Number`       | Number of groups (residues)                |          |
 | numChains                  | `Number`       | Number of chains                           |          |
 | numModels                  | `Number`       | Number of models                           |          |
+| chainsPerModel             | `Array`        | List of number of chains in each model     |          |
+| groupsPerChain             | `Array`        | List of number of groups in each chain     |          |
 | entityList                 | `Array`        | List of [`entity`](#entity) objects        |    Y     |
 | bioAssemblyList            | `Array`        | List of [`assembly`](#assembly) objects    |    Y     |
 | groupList                  | `Array`        | List of [`groupType`](#groupType) objects  |    Y     |
