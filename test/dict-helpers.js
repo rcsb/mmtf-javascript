@@ -106,7 +106,7 @@ function getFilledFullMmtfDict(){
         spaceGroup: "P1",
         bioAssemblyList: [
             {
-                transforms: [
+                transformList: [
                     {
                         chainIndexList: [ 0 ],
                         transformation: [

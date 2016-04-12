@@ -78,21 +78,20 @@ function checkGroupListFields( groupList, assert ){
 
 function checkBioAssemblyFields( bioAssemblyList, assert ){
     var reqAssemblyFields = [
-        "transforms"
+        "transformList"
     ];
-    var reqPartFields = [
+    var reqTransformFields = [
         "chainIndexList", "transformation"
     ];
     bioAssemblyList.forEach( function( assembly ){
         checkDictFields(
             assembly, reqAssemblyFields, [], "assembly", assert
         );
-        for( var partId in assembly.transforms ){
-            var part = assembly.transforms[ partId ];
+        assembly.transformList.forEach( function( transform ){
             checkDictFields(
-                part, reqPartFields, [], "part", assert
+                transform, reqTransformFields, [], "transform", assert
             );
-        }
+        } );
     } );
 }
 
@@ -315,6 +314,50 @@ function checkGroupListTypes( groupList, assert ){
     } );
 }
 
+function checkBioAssemblyListTypes( bioAssemblyList, assert ){
+    bioAssemblyList.forEach( function( assembly ){
+        assert.ok(
+            Array.isArray( assembly.transformList ),
+            "assembly.transformList must be an array"
+        );
+        assembly.transformList.forEach( function( transform ){
+            assert.ok(
+                Array.isArray( transform.chainIndexList ),
+                "transform.chainIndexList must be an array"
+            );
+            assert.ok(
+                Array.isArray( transform.transformation ),
+                "transform.transformation must be an array"
+            );
+            assert.ok(
+                transform.transformation.length === 16,
+                "transform.transformation must be of length 16"
+            );
+        } );
+    } );
+}
+
+function checkEntityListTypes( entityList, assert ){
+    entityList.forEach( function( entity ){
+        assert.ok(
+            Array.isArray( entity.chainIndexList ),
+            "entity.chainIndexList must be an array"
+        );
+        assert.ok(
+            typeof entity.description === 'string',
+            "entity.description must be a string"
+        );
+        assert.ok(
+            typeof entity.type === 'string',
+            "entity.type must be a string"
+        );
+        assert.ok(
+            typeof entity.sequence === 'string',
+            "entity.sequence must be a string"
+        );
+    } );
+}
+
 function checkCommonTypes( decodedDict, assert ){
     // meta
     assert.ok(
@@ -342,6 +385,20 @@ function checkCommonTypes( decodedDict, assert ){
         "groupList must be an array"
     );
     checkGroupListTypes( decodedDict.groupList, assert );
+    if( decodedDict.bioAssemblyList !== undefined ){
+        assert.ok(
+            Array.isArray( decodedDict.bioAssemblyList ),
+            "when given, bioAssemblyList must be an array"
+        );
+        checkBioAssemblyListTypes( decodedDict.bioAssemblyList, assert );
+    }
+    if( decodedDict.entityList !== undefined ){
+        assert.ok(
+            Array.isArray( decodedDict.entityList ),
+            "when given, entityList must be an array"
+        );
+        checkEntityListTypes( decodedDict.entityList, assert );
+    }
 
     // header
     if( decodedDict.title !== undefined ){
@@ -376,12 +433,6 @@ function checkCommonTypes( decodedDict, assert ){
             "structureId must be a string"
         );
     }
-    if( decodedDict.bioAssemblyList !== undefined ){
-        assert.ok(
-            Array.isArray( decodedDict.bioAssemblyList ),
-            "when given, bioAssemblyList must be an array"
-        );
-    }
     if( decodedDict.unitCell !== undefined ){
         assert.ok(
             Array.isArray( decodedDict.unitCell ),
@@ -394,13 +445,6 @@ function checkCommonTypes( decodedDict, assert ){
             "spaceGroup must be a string"
         );
     }
-    if( decodedDict.entityList !== undefined ){
-        assert.ok(
-            Array.isArray( decodedDict.entityList ),
-            "when given, entityList must be an array"
-        );
-    }
-
     if( decodedDict.experimentalMethods !== undefined ){
         assert.ok(
             Array.isArray( decodedDict.experimentalMethods ),

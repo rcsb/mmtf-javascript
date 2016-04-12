@@ -94,7 +94,7 @@ QUnit.test( "filled full", function( assert ) {
         spaceGroup: "P1",
         bioAssemblyList: [
             {
-                transforms: [
+                transformList: [
                     {
                         chainIndexList: [ 0 ],
                         transformation: [
