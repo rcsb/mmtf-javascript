@@ -6,7 +6,7 @@ QUnit.module( "mmtf iterator" );
 
 QUnit.test( "eachBond", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    var decodedMmtf = decodeMmtf( dict );
     var mmtfIterator = new MmtfIterator( decodedMmtf );
     var expected = [
         [ 0, 1, 2 ],
@@ -25,7 +25,7 @@ QUnit.test( "eachBond", function( assert ) {
 
 QUnit.test( "eachAtom", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    var decodedMmtf = decodeMmtf( dict );
     var mmtfIterator = new MmtfIterator( decodedMmtf );
     var expected = [
         [ "C", "C", 2, 50, 60, 70, 99.99, 1, "A", 0.6 ],
@@ -50,7 +50,7 @@ QUnit.test( "eachAtom", function( assert ) {
 
 QUnit.test( "eachGroup", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    var decodedMmtf = decodeMmtf( dict );
     var mmtfIterator = new MmtfIterator( decodedMmtf );
     var expected = [
         [ "GLY", "G", "L-PEPTIDE LINKING", 100, 0, -1, "X", 0, 0, 2 ]
@@ -74,7 +74,7 @@ QUnit.test( "eachGroup", function( assert ) {
 
 QUnit.test( "eachChain", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    var decodedMmtf = decodeMmtf( dict );
     var mmtfIterator = new MmtfIterator( decodedMmtf );
     var expected = [
         [ "DA","B", 0, 1 ]
@@ -92,7 +92,7 @@ QUnit.test( "eachChain", function( assert ) {
 
 QUnit.test( "eachModel", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict, { littleEndian: true } );
+    var decodedMmtf = decodeMmtf( dict );
     var mmtfIterator = new MmtfIterator( decodedMmtf );
     var expected = [
         [ 0, 1 ]

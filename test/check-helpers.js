@@ -23,11 +23,8 @@ function getRunLengthSize( runLengthEncodedArray ){
     return fullLength;
 }
 
-function getSplitListSize( bigArray, smallArray, littleEndian ){
-    return (
-    	( getInt32( bigArray, undefined, littleEndian ).length / 2 ) +
-    	getInt16( smallArray, undefined, littleEndian ).length
-	)
+function getSplitListSize( bigArray, smallArray ){
+    return ( getInt32( bigArray ).length / 2 ) + getInt16( smallArray ).length;
 }
 
 function isDate( str ){
@@ -744,7 +741,7 @@ function checkGroupListConsistency( groupList, assert ){
     } );
 }
 
-function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
+function checkMsgpackConsistency( decodedMsgpack, assert ){
     // check consistency of groupList entries
     checkGroupListConsistency( decodedMsgpack.groupList, assert );
 
@@ -754,25 +751,25 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
     }
 
     // atom data sizes
-    assert.equal( getSplitListSize( decodedMsgpack.xCoordBig, decodedMsgpack.xCoordSmall, littleEndian ), decodedMsgpack.numAtoms, "numAtoms, xCoord" );
-    assert.equal( getSplitListSize( decodedMsgpack.yCoordBig, decodedMsgpack.yCoordSmall, littleEndian ), decodedMsgpack.numAtoms, "numAtoms, yCoord" );
-    assert.equal( getSplitListSize( decodedMsgpack.zCoordBig, decodedMsgpack.zCoordSmall, littleEndian ), decodedMsgpack.numAtoms, "numAtoms, zCoord" );
+    assert.equal( getSplitListSize( decodedMsgpack.xCoordBig, decodedMsgpack.xCoordSmall ), decodedMsgpack.numAtoms, "numAtoms, xCoord" );
+    assert.equal( getSplitListSize( decodedMsgpack.yCoordBig, decodedMsgpack.yCoordSmall ), decodedMsgpack.numAtoms, "numAtoms, yCoord" );
+    assert.equal( getSplitListSize( decodedMsgpack.zCoordBig, decodedMsgpack.zCoordSmall ), decodedMsgpack.numAtoms, "numAtoms, zCoord" );
     if( decodedMsgpack.bFactorBig !== undefined ){
-        assert.equal( getSplitListSize( decodedMsgpack.bFactorBig, decodedMsgpack.bFactorSmall, littleEndian ), decodedMsgpack.numAtoms, "numAtoms, bFactor" );
+        assert.equal( getSplitListSize( decodedMsgpack.bFactorBig, decodedMsgpack.bFactorSmall ), decodedMsgpack.numAtoms, "numAtoms, bFactor" );
     }
     if( decodedMsgpack.atomIdList !== undefined ){
-        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.atomIdList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
+        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.atomIdList ) ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
     }
     if( decodedMsgpack.altLocList !== undefined ){
         assert.equal( getRunLengthSize( getInt32( decodedMsgpack.altLocList ) ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
     }
     if( decodedMsgpack.occupancyList !== undefined ){
-        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.occupancyList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
+        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.occupancyList ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
     }
 
     // group data sizes
     var numGroups = decodedMsgpack.groupTypeList.length / 4;
-    assert.equal( getRunLengthSize( getInt32( decodedMsgpack.groupIdList, undefined, littleEndian ) ), numGroups, "numGroups, groupIdList" );
+    assert.equal( getRunLengthSize( getInt32( decodedMsgpack.groupIdList ) ), numGroups, "numGroups, groupIdList" );
     if( decodedMsgpack.insCodeList !== undefined ){
         assert.equal( getRunLengthSize( getInt32( decodedMsgpack.insCodeList ) ), numGroups, "numgroups, insCodeList" );
     }
@@ -780,7 +777,7 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
         assert.equal( decodedMsgpack.secStructList.length, numGroups, "numGroups, secStructList" );
     }
     if( decodedMsgpack.sequenceIndexList !== undefined ){
-        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.sequenceIndexList, undefined, littleEndian ) ), numGroups, "numGroups, sequenceIndexList" );
+        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.sequenceIndexList ) ), numGroups, "numGroups, sequenceIndexList" );
     }
 
     // chain data sizes
@@ -914,10 +911,10 @@ function checkMmtfVocabulary( mmtfDict, assert ){
 //////////
 // check
 //
-function checkMsgpack( msgpackDict, assert, littleEndian ){
+function checkMsgpack( msgpackDict, assert ){
     checkMsgpackFields( msgpackDict, assert );
     checkMsgpackTypes( msgpackDict, assert );
-    checkMsgpackConsistency( msgpackDict, assert, littleEndian );
+    checkMsgpackConsistency( msgpackDict, assert );
     checkMsgpackVocabulary( msgpackDict, assert );
 }
 
