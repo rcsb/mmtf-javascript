@@ -90,7 +90,7 @@ Fields in an `assembly` object:
 
 | Name                      | Type         | Description                       |
 |---------------------------|--------------|-----------------------------------|
-| transforms                | `Array`      | List of `transform` objects       |
+| transformList             | `Array`      | List of `transform` objects       |
 
 
 Fields in a `transform` object:
@@ -103,7 +103,7 @@ Fields in a `transform` object:
 
 #### groupType
 
-Fields of a `groupType` entry:
+Fields of a `groupType` object:
 
 | Name                      | Type         | Description                       |
 |---------------------------|--------------|-----------------------------------|
