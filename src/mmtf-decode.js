@@ -126,7 +126,7 @@ function decodeMmtf( binOrDict, params ){
     var altLocListKey = "altLocList";
     if( inputDict[ altLocListKey ] && decodeField( altLocListKey ) ){
         outputDict[ altLocListKey ] = decodeRunLength(
-            inputDict[ altLocListKey ], new Uint8Array( numAtoms )
+            getInt32( inputDict[ altLocListKey ] ), new Uint8Array( numAtoms )
         );
     }
 
@@ -157,7 +157,7 @@ function decodeMmtf( binOrDict, params ){
     var insCodeListKey = "insCodeList";
     if( inputDict[ insCodeListKey ] && decodeField( insCodeListKey ) ){
         outputDict[ insCodeListKey ] = decodeRunLength(
-            inputDict[ insCodeListKey ], new Uint8Array( numGroups )
+            getInt32( inputDict[ insCodeListKey ] ), new Uint8Array( numGroups )
         );
     }
 

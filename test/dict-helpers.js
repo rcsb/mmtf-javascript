@@ -41,14 +41,14 @@ function getEmptyFullMmtfDict(){
         bFactorBig: new Uint8Array( 0 ),
         bFactorSmall: new Uint8Array( 0 ),
         atomIdList: new Uint8Array( 0 ),
-        altLocList: [],
+        altLocList: new Uint8Array( 0 ),
         occupancyList: new Uint8Array( 0 ),
 
         // groups
         groupIdList: new Uint8Array( 0 ),
         groupTypeList: new Uint8Array( 0 ),
         secStructList: new Uint8Array( 0 ),
-        insCodeList: [],
+        insCodeList: new Uint8Array( 0 ),
         sequenceIndexList: new Uint8Array( 0 ),
 
         // chains
@@ -169,14 +169,14 @@ function getFilledFullMmtfDict(){
         bFactorBig: new Uint8Array( makeInt32Buffer( [ 9999, 0, 1, 0 ] ) ),
         bFactorSmall: new Uint8Array( makeInt16Buffer( [] ) ),
         atomIdList: new Uint8Array( makeInt32Buffer( [ 1, 2 ] ) ),
-        altLocList: new Array( 65, 1, 66, 1 ),
+        altLocList: new Uint8Array( makeInt32Buffer( [ 65, 1, 66, 1 ] ) ),
         occupancyList: new Uint8Array( makeInt32Buffer( [ 60, 1, 40, 1 ] ) ),
 
         // groups
         groupIdList: new Uint8Array( makeInt32Buffer( [ 100, 1 ] ) ),
         groupTypeList: new Uint8Array( makeInt32Buffer( [ 0 ] ) ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
-        insCodeList: new Array( 88, 1 ),
+        insCodeList: new Uint8Array( makeInt32Buffer( [ 88, 1 ] ) ),
         sequenceIndexList: new Uint8Array( makeInt32Buffer( [ 0, 1 ] ) ),
 
         // chains

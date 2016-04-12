@@ -564,7 +564,7 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
     }
     if( decodedMsgpack.altLocList !== undefined ){
         assert.ok(
-            Array.isArray( decodedMsgpack.altLocList ),
+            decodedMsgpack.altLocList instanceof Uint8Array,
             "when given, altLocList must be an array"
         );
     }
@@ -584,7 +584,7 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
     }
     if( decodedMsgpack.insCodeList !== undefined ){
         assert.ok(
-            Array.isArray( decodedMsgpack.insCodeList ),
+            decodedMsgpack.insCodeList instanceof Uint8Array,
             "when given, insCodeList must be an array"
         );
     }
@@ -764,7 +764,7 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
         assert.equal( getRunLengthSize( getInt32( decodedMsgpack.atomIdList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
     }
     if( decodedMsgpack.altLocList !== undefined ){
-        assert.equal( getRunLengthSize( decodedMsgpack.altLocList ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
+        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.altLocList ) ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
     }
     if( decodedMsgpack.occupancyList !== undefined ){
         assert.equal( getRunLengthSize( getInt32( decodedMsgpack.occupancyList, undefined, littleEndian ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
@@ -774,7 +774,7 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
     var numGroups = decodedMsgpack.groupTypeList.length / 4;
     assert.equal( getRunLengthSize( getInt32( decodedMsgpack.groupIdList, undefined, littleEndian ) ), numGroups, "numGroups, groupIdList" );
     if( decodedMsgpack.insCodeList !== undefined ){
-        assert.equal( getRunLengthSize( decodedMsgpack.insCodeList ), numGroups, "numgroups, insCodeList" );
+        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.insCodeList ) ), numGroups, "numgroups, insCodeList" );
     }
     if( decodedMsgpack.secStructList !== undefined ){
         assert.equal( decodedMsgpack.secStructList.length, numGroups, "numGroups, secStructList" );
