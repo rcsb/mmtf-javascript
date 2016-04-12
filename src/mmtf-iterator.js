@@ -101,7 +101,7 @@ function MmtfIterator( mmtfData ){
      *  - @param {Integer} arg4 - group type
      *  - @param {Integer|null} arg5 - secondary structure code
      *  - @param {Char|null} arg6 - insertion code
-     *  - @param {Integer|null} arg7 - sequence id
+     *  - @param {Integer|null} arg7 - sequence index
      *  - @param {Integer} arg8 - pointer to data of the group's first atom
      *  - @param {Integer} arg9 - number of atoms in the group
      */
@@ -118,7 +118,7 @@ function MmtfIterator( mmtfData ){
                 d.groupTypeList[ i ],
                 d.secStructList ? d.secStructList[ i ] : null,
                 d.insCodeList ? fromCharCode( [ d.insCodeList[ i ] ] ) : null,
-                d.sequenceIdList ? d.sequenceIdList[ i ] : null,
+                d.sequenceIndexList ? d.sequenceIndexList[ i ] : null,
                 atomOffset,
                 groupAtomCount
             );

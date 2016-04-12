@@ -42,7 +42,7 @@ QUnit.test( "empty full", function( assert ) {
         releaseDate: "0000-00-00",
         resolution: 0,
         secStructList: new Int8Array( 0 ),
-        sequenceIdList:  new Int32Array( 0 ),
+        sequenceIndexList:  new Int32Array( 0 ),
         spaceGroup: "",
         title: "",
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
@@ -155,7 +155,7 @@ QUnit.test( "filled full", function( assert ) {
         groupTypeList: new Int32Array( [ 0 ] ),
         secStructList: new Int8Array( [ -1 ] ),
         insCodeList: new Uint8Array( [ 88 ] ),
-        sequenceIdList: new Int32Array( [ 0 ] ),
+        sequenceIndexList: new Int32Array( [ 0 ] ),
 
         chainIdList: new Uint8Array( [ 0, 0, 68, 65 ] ),
         chainNameList: new Uint8Array( [  0, 0, 0, 66 ] ),

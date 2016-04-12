@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>decodeMmtf example</title>
+    <title>MmtfIterator example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
@@ -23,15 +23,15 @@
                 mmtfIterator.eachGroup(
                     function(
                         groupName, singleLetterCode, chemCompType, groupId, groupType,
-                        secStruct, insCode, sequenceId, atomOffset, atomCount
+                        secStruct, insCode, sequenceIndex, atomOffset, atomCount
                     ){
                         // console.log(
                         //     groupName, singleLetterCode, chemCompType, groupId, groupType,
-                        //     secStruct, insCode, sequenceId, atomOffset, atomCount
+                        //     secStruct, insCode, sequenceIndex, atomOffset, atomCount
                         // );
                         document.getElementById( "json" ).innerText += [
                             groupName, singleLetterCode, chemCompType, groupId, groupType,
-                            secStruct, insCode, sequenceId, atomOffset, atomCount
+                            secStruct, insCode, sequenceIndex, atomOffset, atomCount
                         ].join( ", " );
                     }
                 );

@@ -193,7 +193,7 @@ Arguments passed to `callback`:
 | groupType                 | `Integer`      | Group type                                     |
 | secStruct                 | `Integer|null` | Secondary structure code                       |
 | insCode                   | `Char|null`    | Insertion code                                 |
-| sequenceId                | `Integer|null` | Sequence ID                                    |
+| sequenceIndex             | `Integer|null` | Sequence index                                 |
 | atomOffset                | `Integer`      | Pointer to data of the group's first atom      |
 | atomCount                 | `Integer`      | Number of atoms in the group                   |
 

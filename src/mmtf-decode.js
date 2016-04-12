@@ -161,11 +161,11 @@ function decodeMmtf( binOrDict, params ){
         );
     }
 
-    // run-length & delta decode sequence ids
-    var sequenceIdListKey = "sequenceIdList";
-    if( inputDict[ sequenceIdListKey ] && decodeField( sequenceIdListKey ) ){
-        outputDict[ sequenceIdListKey ] = decodeDelta(
-            decodeRunLength( getInt32( inputDict[ sequenceIdListKey ] ) )
+    // run-length & delta decode sequence indices
+    var sequenceIndexListKey = "sequenceIndexList";
+    if( inputDict[ sequenceIndexListKey ] && decodeField( sequenceIndexListKey ) ){
+        outputDict[ sequenceIndexListKey ] = decodeDelta(
+            decodeRunLength( getInt32( inputDict[ sequenceIndexListKey ] ) )
         );
     }
 

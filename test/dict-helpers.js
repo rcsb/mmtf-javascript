@@ -49,7 +49,7 @@ function getEmptyFullMmtfDict(){
         groupTypeList: new Uint8Array( 0 ),
         secStructList: new Uint8Array( 0 ),
         insCodeList: [],
-        sequenceIdList: new Uint8Array( 0 ),
+        sequenceIndexList: new Uint8Array( 0 ),
 
         // chains
         chainIdList: new Uint8Array( 0 ),
@@ -176,7 +176,7 @@ function getFilledFullMmtfDict(){
         groupTypeList: new Uint8Array( makeInt32Buffer( [ 0 ] ) ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
         insCodeList: new Array( 88, 1 ),
-        sequenceIdList: new Uint8Array( makeInt32Buffer( [ 0, 1 ] ) ),
+        sequenceIndexList: new Uint8Array( makeInt32Buffer( [ 0, 1 ] ) ),
 
         // chains
         chainIdList: new Uint8Array( [ 0, 0, 68, 65 ] ),

@@ -143,7 +143,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // atoms
         "bFactorBig", "bFactorSmall", "atomIdList", "altLocList", "occupancyList",
         // groups
-        "secStructList", "insCodeList", "sequenceIdList",
+        "secStructList", "insCodeList", "sequenceIndexList",
         // chains
         "chainNameList", "chainSeqList"
         // models
@@ -198,7 +198,7 @@ function checkMmtfFields( decodedMmtf, assert ){
         // atoms
         "bFactorList", "atomIdList", "altLocList", "occupancyList",
         // groups
-        "secStructList", "insCodeList", "sequenceIdList",
+        "secStructList", "insCodeList", "sequenceIndexList",
         // chains
         "chainNameList", "chainSeqList"
         // models
@@ -537,10 +537,10 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
             "when given, insCodeList must be an array"
         );
     }
-    if( decodedMsgpack.sequenceIdList !== undefined ){
+    if( decodedMsgpack.sequenceIndexList !== undefined ){
         assert.ok(
-            decodedMsgpack.sequenceIdList instanceof Uint8Array,
-            "when given, sequenceIdList must be a Uint8Array instance"
+            decodedMsgpack.sequenceIndexList instanceof Uint8Array,
+            "when given, sequenceIndexList must be a Uint8Array instance"
         );
     }
 
@@ -643,10 +643,10 @@ function checkMmtfTypes( decodedMmtf, assert ){
             "when given, insCodeList must be an Uint8Array instance"
         );
     }
-    if( decodedMmtf.sequenceIdList !== undefined ){
+    if( decodedMmtf.sequenceIndexList !== undefined ){
         assert.ok(
-            decodedMmtf.sequenceIdList instanceof Int32Array,
-            "when given, sequenceIdList must be a Int32Array instance"
+            decodedMmtf.sequenceIndexList instanceof Int32Array,
+            "when given, sequenceIndexList must be a Int32Array instance"
         );
     }
 
@@ -724,8 +724,8 @@ function checkMsgpackConsistency( decodedMsgpack, assert, littleEndian ){
     if( decodedMsgpack.secStructList !== undefined ){
         assert.equal( decodedMsgpack.secStructList.length, numGroups, "numGroups, secStructList" );
     }
-    if( decodedMsgpack.sequenceIdList !== undefined ){
-        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.sequenceIdList, undefined, littleEndian ) ), numGroups, "numGroups, sequenceIdList" );
+    if( decodedMsgpack.sequenceIndexList !== undefined ){
+        assert.equal( getRunLengthSize( getInt32( decodedMsgpack.sequenceIndexList, undefined, littleEndian ) ), numGroups, "numGroups, sequenceIndexList" );
     }
 
     // chain data sizes
@@ -768,8 +768,8 @@ function checkMmtfConsistency( decodedMmtf, assert ){
     if( decodedMmtf.insCodeList !== undefined ){
         assert.equal( decodedMmtf.insCodeList.length, decodedMmtf.numGroups, "numGroups, insCodeList" );
     }
-    if( decodedMmtf.sequenceIdList !== undefined ){
-        assert.equal( decodedMmtf.sequenceIdList.length, decodedMmtf.numGroups, "numGroups, sequenceIdList" );
+    if( decodedMmtf.sequenceIndexList !== undefined ){
+        assert.equal( decodedMmtf.sequenceIndexList.length, decodedMmtf.numGroups, "numGroups, sequenceIndexList" );
     }
 
     assert.equal( decodedMmtf.chainIdList.length, decodedMmtf.numChains * 4, "numChains, chainIdList" );
