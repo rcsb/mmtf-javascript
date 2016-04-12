@@ -107,10 +107,11 @@ Fields of a `groupType` entry:
 
 | Name                      | Type         | Description                       |
 |---------------------------|--------------|-----------------------------------|
-| atomCharges               | `Array`      | List of atom charges              |
-| atomInfo                  | `Array`      | List of atom names and elements   |
-| bondIndices               | `Array`      | List of bonded atom indices       |
-| bondOrders                | `Array`      | List of bond orders               |
+| atomChargeList            | `Array`      | List of atom formal charges       |
+| elementList               | `Array`      | List of elements                  |
+| atomNameList              | `Array`      | List of atom names                |
+| bondAtomList              | `Array`      | List of bonded atom indices       |
+| bondOrderList             | `Array`      | List of bond orders               |
 | groupName                 | `String`     | The name of the group             |
 | singleLetterCode          | `String`     | The single letter code            |
 | chemCompType              | `String`     | The chemical component type       |

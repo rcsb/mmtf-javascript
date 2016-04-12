@@ -65,7 +65,8 @@ function checkDictFields( dict, reqFields, optFields, label, assert ){
 
 function checkGroupListFields( groupList, assert ){
     var reqGroupTypeFields = [
-        "atomCharges", "atomInfo", "bondIndices", "bondOrders",
+        "atomChargeList", "elementList", "atomNameList",
+        "bondAtomList", "bondOrderList",
         "groupName", "singleLetterCode", "chemCompType"
     ];
     groupList.forEach( function( groupType ){
@@ -230,59 +231,65 @@ function checkGroupListTypes( groupList, assert ){
     var regexpSingleLetter = /^[A-Z]{1,1}$/;
     groupList.forEach( function( groupType ){
         assert.ok(
-            Array.isArray( groupType.atomCharges ),
-            "groupType.atomCharges must be an array"
+            Array.isArray( groupType.atomChargeList ),
+            "groupType.atomChargeList must be an array"
         );
-        for( var i = 0, il = groupType.atomCharges.length; i < il; ++i ){
+        for( var i = 0, il = groupType.atomChargeList.length; i < il; ++i ){
             assert.ok(
-                Number.isInteger( groupType.atomCharges[ i ] ),
-                "groupType.atomInfo atomnames must be integers"
+                Number.isInteger( groupType.atomChargeList[ i ] ),
+                "groupType.atomChargeList atom charges must be integers"
             );
         }
         assert.ok(
-            Array.isArray( groupType.atomInfo ),
-            "groupType.atomInfo must be an array"
+            Array.isArray( groupType.elementList ),
+            "groupType.elementList must be an array"
         );
-        for( var i = 0, il = groupType.atomInfo.length; i < il; i += 2 ){
+        for( var i = 0, il = groupType.elementList.length; i < il; ++i ){
             assert.ok(
-                typeof groupType.atomInfo[ i ] === 'string',
-                "groupType.atomInfo elements must be strings"
+                typeof groupType.elementList[ i ] === 'string',
+                "groupType.elementList elements must be strings"
             );
             assert.ok(
-                regexpElement.test( groupType.atomInfo[ i ] ),
-                "groupType.atomInfo elements must match /^[A-Z]{1,1}[a-z]{0,2}|$/"
-            );
-            assert.ok(
-                typeof groupType.atomInfo[ i + 1 ] === 'string',
-                "groupType.atomInfo atomnames must be strings"
-            );
-            assert.ok(
-                regexpAtomname.test( groupType.atomInfo[ i + 1 ] ),
-                "groupType.atomInfo atomnames must match /^.{0,5}$/"
+                regexpElement.test( groupType.elementList[ i ] ),
+                "groupType.elementList elements must match /^[A-Z]{1,1}[a-z]{0,2}|$/"
             );
         }
         assert.ok(
-            Array.isArray( groupType.bondIndices ),
-            "groupType.bondIndices must be an array"
+            Array.isArray( groupType.atomNameList ),
+            "groupType.atomNameList must be an array"
         );
-        for( var i = 0, il = groupType.bondIndices.length; i < il; ++i ){
+        for( var i = 0, il = groupType.atomNameList.length; i < il; ++i ){
             assert.ok(
-                Number.isInteger( groupType.bondIndices[ i ] ),
-                "groupType.bondIndices must be integers"
+                typeof groupType.atomNameList[ i ] === 'string',
+                "groupType.atomNameList atomnames must be strings"
+            );
+            assert.ok(
+                regexpAtomname.test( groupType.atomNameList[ i ] ),
+                "groupType.atomNameList atomnames must match /^.{0,5}$/"
             );
         }
         assert.ok(
-            Array.isArray( groupType.bondOrders ),
-            "groupType.bondOrders must be an array"
+            Array.isArray( groupType.bondAtomList ),
+            "groupType.bondAtomList must be an array"
         );
-        for( var i = 0, il = groupType.bondOrders.length; i < il; ++i ){
+        for( var i = 0, il = groupType.bondAtomList.length; i < il; ++i ){
             assert.ok(
-                Number.isInteger( groupType.bondOrders[ i ] ),
-                "groupType.bondOrders must be integers"
+                Number.isInteger( groupType.bondAtomList[ i ] ),
+                "groupType.bondAtomList must be integers"
+            );
+        }
+        assert.ok(
+            Array.isArray( groupType.bondOrderList ),
+            "groupType.bondOrderList must be an array"
+        );
+        for( var i = 0, il = groupType.bondOrderList.length; i < il; ++i ){
+            assert.ok(
+                Number.isInteger( groupType.bondOrderList[ i ] ),
+                "groupType.bondOrderList must be integers"
             );
             assert.ok(
-                groupType.bondOrders[ i ] >= 1 && groupType.bondOrders[ i ] <= 3,
-                "groupType.bondOrders must be between 1 and 3"
+                groupType.bondOrderList[ i ] >= 1 && groupType.bondOrderList[ i ] <= 3,
+                "groupType.bondOrderList must be between 1 and 3"
             );
         }
         assert.ok(
@@ -669,7 +676,7 @@ function checkMmtfTypes( decodedMmtf, assert ){
 //
 function checkGroupListConsistency( groupList, assert ){
     var groupTypeFields = [
-        "atomCharges", "atomInfo", "bondIndices", "bondOrders"
+        "atomChargeList", "elementList", "atomNameList", "bondAtomList", "bondOrderList"
     ];
     groupList.forEach( function( groupType ){
         groupTypeFields.forEach( function( name ){
@@ -679,12 +686,16 @@ function checkGroupListConsistency( groupList, assert ){
             );
         } );
         assert.ok(
-            groupType.atomCharges.length * 2 === groupType.atomInfo.length,
-            "atomInfo.length must equal atomCharges.length"
+            groupType.atomChargeList.length === groupType.atomNameList.length,
+            "atomChargeList.length must equal atomNameList.length"
         );
         assert.ok(
-            groupType.bondOrders.length * 2 === groupType.bondIndices.length,
-            "atomInfo.length must equal bondOrders.length"
+            groupType.atomChargeList.length === groupType.elementList.length,
+            "atomChargeList.length must equal elementList.length"
+        );
+        assert.ok(
+            groupType.bondOrderList.length * 2 === groupType.bondAtomList.length,
+            "bondOrderList.length * 2 must equal bondAtomList.length"
         );
     } );
 }

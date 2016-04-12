@@ -34,14 +34,14 @@ function MmtfIterator( mmtfData ){
         var atomOffset = 0;
         for( i = 0, il = d.numGroups; i < il; ++i ){
             var groupData = d.groupList[ d.groupTypeList[ i ] ];
-            for( var j = 0, jl = groupData.bondOrders.length; j < jl; ++j ){
+            for( var j = 0, jl = groupData.bondOrderList.length; j < jl; ++j ){
                 callback(
-                    atomOffset + groupData.bondIndices[ j * 2 ],
-                    atomOffset + groupData.bondIndices[ j * 2 + 1 ],
-                    groupData.bondOrders[ j ]
+                    atomOffset + groupData.bondAtomList[ j * 2 ],
+                    atomOffset + groupData.bondAtomList[ j * 2 + 1 ],
+                    groupData.bondOrderList[ j ]
                 );
             }
-            atomOffset += groupData.atomInfo.length / 2;
+            atomOffset += groupData.atomNameList.length;
         }
         // inter group bonds
         if( d.bondAtomList ){
@@ -73,11 +73,11 @@ function MmtfIterator( mmtfData ){
         var atomOffset = 0;
         for( var i = 0, il = d.numGroups; i < il; ++i ){
             var groupData = d.groupList[ d.groupTypeList[ i ] ];
-            for( var j = 0, jl = groupData.atomInfo.length / 2; j < jl; ++j ){
+            for( var j = 0, jl = groupData.atomNameList.length; j < jl; ++j ){
                 callback(
-                    groupData.atomInfo[ j * 2 ].toUpperCase(),
-                    groupData.atomInfo[ j * 2 + 1 ],
-                    groupData.atomCharges[ j ],
+                    groupData.elementList[ j ],
+                    groupData.atomNameList[ j ],
+                    groupData.atomChargeList[ j ],
                     d.xCoordList[ atomOffset ],
                     d.yCoordList[ atomOffset ],
                     d.zCoordList[ atomOffset ],
@@ -108,8 +108,8 @@ function MmtfIterator( mmtfData ){
     function eachGroup( callback ){
         var atomOffset = 0;
         for( var i = 0, il = d.numGroups; i < il; ++i ){
-            var groupData = {}; // d.groupList[ d.groupTypeList[ i ] ];
-            var groupAtomCount = groupData.atomInfo.length / 2;
+            var groupData = d.groupList[ d.groupTypeList[ i ] ];
+            var groupAtomCount = groupData.atomNameList.length;
             callback(
                 groupData.groupName,
                 groupData.singleLetterCode,

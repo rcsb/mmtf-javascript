@@ -131,10 +131,11 @@ QUnit.test( "filled full", function( assert ) {
         numModels: 1,
         groupList: [
             {
-                atomCharges: [ 2, 1 ],
-                atomInfo: [ "C", "C", "N", "N" ],
-                bondIndices: [ 0, 1 ],
-                bondOrders: [ 2 ],
+                atomChargeList: [ 2, 1 ],
+                elementList: [ "C", "N" ],
+                atomNameList: [ "C", "N" ],
+                bondAtomList: [ 0, 1 ],
+                bondOrderList: [ 2 ],
                 chemCompType: "L-PEPTIDE LINKING",
                 singleLetterCode: "G",
                 groupName: "GLY"
@@ -181,10 +182,11 @@ QUnit.test( "filled required", function( assert ) {
         numModels: 1,
         groupList: [
             {
-                atomCharges: [ 1, 0 ],
-                atomInfo: [ "C", "C", "N", "N" ],
-                bondIndices: [ 0, 1 ],
-                bondOrders: [ 2 ],
+                atomChargeList: [ 1, 0 ],
+                elementList: [ "C", "N" ],
+                atomNameList: [ "C", "N" ],
+                bondAtomList: [ 0, 1 ],
+                bondOrderList: [ 2 ],
                 chemCompType: "L-PEPTIDE LINKING",
                 singleLetterCode: "G",
                 groupName: "GLY"

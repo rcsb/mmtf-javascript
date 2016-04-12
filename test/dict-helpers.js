@@ -144,10 +144,11 @@ function getFilledFullMmtfDict(){
         // lists
         groupList: [
             {
-                atomCharges: [ 2, 1 ],
-                atomInfo: [ "C", "C", "N", "N" ],
-                bondIndices: [ 0, 1 ],
-                bondOrders: [ 2 ],
+                atomChargeList: [ 2, 1 ],
+                elementList: [ "C", "N" ],
+                atomNameList: [ "C", "N" ],
+                bondAtomList: [ 0, 1 ],
+                bondOrderList: [ 2 ],
                 chemCompType: "L-PEPTIDE LINKING",
                 singleLetterCode: "G",
                 groupName: "GLY"
@@ -201,10 +202,11 @@ function getFilledRequiredMmtfDict(){
         // lists
         groupList: [
             {
-                atomCharges: [ 1, 0 ],
-                atomInfo: [ "C", "C", "N", "N" ],
-                bondIndices: [ 0, 1 ],
-                bondOrders: [ 2 ],
+                atomChargeList: [ 1, 0 ],
+                elementList: [ "C", "N" ],
+                atomNameList: [ "C", "N" ],
+                bondAtomList: [ 0, 1 ],
+                bondOrderList: [ 2 ],
                 chemCompType: "L-PEPTIDE LINKING",
                 singleLetterCode: "G",
                 groupName: "GLY"
