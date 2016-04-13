@@ -11,7 +11,6 @@ JavaScript decoder for MMTF files. For a description of the format see the [MMTF
 * [Iterator](#Iterator)
 
 
-
 ## Decoder
 
 The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode.js)) is `decodeMmtf` which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns the decoded `mmtf` data as an object with the following properties.
@@ -117,9 +116,82 @@ Fields of a `groupType` object:
 | chemCompType              | `String`     | The chemical component type       |
 
 
+### Traversal
+
+Runnable example in [mmtf-traversal.html](examples/mmtf-traversal.html).
+
+```JavaScript
+// bin is Uint8Array containing the mmtf msgpack
+// decode the binary response data
+var mmtfData = decodeMmtf( bin );
+// loop over all models
+var modelIndex = 0;
+var chainIndex = 0;
+var groupIndex = 0;
+var atomIndex = 0;
+mmtfData.chainsPerModel.forEach( function( modelChainCount ){
+    console.log( "modelIndex", modelIndex );
+    for( var i = 0; i < modelChainCount; ++i ){
+        console.log( "chainIndex", chainIndex );
+        var chainId = fromCharCode(
+            mmtfData.chainIdList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
+        );
+        console.log( "chainId", chainId );
+        if( mmtfData.chainNameList ){
+            var chainName = fromCharCode(
+                mmtfData.chainNameList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
+            );
+            console.log( "chainName", chainName );
+        }
+        var chainGroupCount = mmtfData.groupsPerChain[ chainIndex ];
+        for( var j = 0; j < chainGroupCount; ++j ){
+            console.log( "groupIndex", groupIndex );
+            console.log( "groupId", mmtfData.groupIdList[ groupIndex ] );
+            console.log( "groupType", mmtfData.groupTypeList[ groupIndex ] );
+            var groupType = mmtfData.groupList[ mmtfData.groupTypeList[ groupIndex ] ];
+            console.log( "groupName", groupType.groupName );
+            if( mmtfData.secStructList ){
+                console.log( "secStruct", mmtfData.secStructList[ groupIndex ] );
+            }
+            if( mmtfData.insCodeList ){
+                console.log( "insCode", mmtfData.insCodeList[ groupIndex ] );
+            }
+            if( mmtfData.sequenceIndexList ){
+                console.log( "sequenceIndex", mmtfData.sequenceIndexList[ groupIndex ] );
+            }
+            var groupAtomCount = groupType.atomNameList.length;
+            for( var k = 0; k < groupAtomCount; ++k ){
+                console.log( "atomIndex", atomIndex );
+                console.log( "atomId", mmtfData.atomIdList[ atomIndex ] );
+                console.log( "element", groupType.elementList[ k ] );
+                console.log( "atomName", groupType.atomNameList[ k ] );
+                console.log( "formalCharge", groupType.atomChargeList[ k ] );
+                console.log( "xCoord", mmtfData.xCoordList[ atomIndex ] );
+                console.log( "yCoord", mmtfData.yCoordList[ atomIndex ] );
+                console.log( "zCoord", mmtfData.zCoordList[ atomIndex ] );
+                if( mmtfData.bFactorList ){
+                    console.log( "bFactor", mmtfData.bFactorList[ atomIndex ] );
+                }
+                if( mmtfData.altLocList ){
+                    console.log( "altLoc", mmtfData.altLocList[ atomIndex ] );
+                }
+                if( mmtfData.occupancyList ){
+                    console.log( "occupancy", mmtfData.occupancyList[ atomIndex ] );
+                }
+                atomIndex += 1;
+            }
+            groupIndex += 1;
+        }
+        chainIndex += 1;
+    }
+    modelIndex += 1;
+} );
+```
+
+
 ## Iterator
 
-Helper class to loop over the structural data in the decoded `mmtf` data. Available in file [mmtf-iterator.js](dist/mmtf-iterator.js).
+Helper class to loop over the structural data in the decoded `mmtf` data. Available in file [mmtf-iterator.js](dist/mmtf-iterator.js). Runnable example in [mmtf-iterator.html](examples/mmtf-iterator.html).
 
 
 ### Example
