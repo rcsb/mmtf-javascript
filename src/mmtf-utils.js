@@ -1,5 +1,5 @@
 /**
- * @file msgpack-decode-helpers
+ * @file mmtf-utils
  * @author Alexander Rose <alexander.rose@weirdbyte.de>
  */
 

@@ -9,7 +9,7 @@ import {
     getUint8View, getInt8View, getInt32,
     decodeRunLength, decodeDelta,
     decodeFloatSplitListDelta, decodeFloatRunLength
-} from "./mmtf-decode-helpers.js";
+} from "./mmtf-utils.js";
 
 /**
  * Decode MMTF fields

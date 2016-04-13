@@ -156,28 +156,28 @@ function getFilledFullMmtfDict(){
         ],
 
         // bonds
-        bondAtomList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 0, 1, 0, 0 ] ) ),
+        bondAtomList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0, 1, 0, 0 ] ) ),
         bondOrderList: new Uint8Array( new Uint8Array( [ 2, 0 ] ).buffer ),
 
         // atoms
-        xCoordBig: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 50000, 1 ] ) ),
-        xCoordSmall: new Uint8Array( decodeMmtfHelpers.makeInt16Buffer( [ 2000 ] ) ),
-        yCoordBig: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 60000, 1 ] ) ),
-        yCoordSmall: new Uint8Array( decodeMmtfHelpers.makeInt16Buffer( [ 3000 ] ) ),
-        zCoordBig: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 70000, 1 ] ) ),
-        zCoordSmall: new Uint8Array( decodeMmtfHelpers.makeInt16Buffer( [ 4000 ] ) ),
-        bFactorBig: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 9999, 0, 1, 0 ] ) ),
-        bFactorSmall: new Uint8Array( decodeMmtfHelpers.makeInt16Buffer( [] ) ),
-        atomIdList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 1, 2 ] ) ),
-        altLocList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 65, 1, 66, 1 ] ) ),
-        occupancyList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 60, 1, 40, 1 ] ) ),
+        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 50000, 1 ] ) ),
+        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 2000 ] ) ),
+        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 60000, 1 ] ) ),
+        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 3000 ] ) ),
+        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 70000, 1 ] ) ),
+        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 4000 ] ) ),
+        bFactorBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 9999, 0, 1, 0 ] ) ),
+        bFactorSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [] ) ),
+        atomIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 1, 2 ] ) ),
+        altLocList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 65, 1, 66, 1 ] ) ),
+        occupancyList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 60, 1, 40, 1 ] ) ),
 
         // groups
-        groupIdList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 100, 1 ] ) ),
-        groupTypeList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 0 ] ) ),
+        groupIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100, 1 ] ) ),
+        groupTypeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0 ] ) ),
         secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
-        insCodeList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 88, 1 ] ) ),
-        sequenceIndexList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 0, 1 ] ) ),
+        insCodeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 88, 1 ] ) ),
+        sequenceIndexList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0, 1 ] ) ),
 
         // chains
         chainIdList: new Uint8Array( [ 0, 0, 68, 65 ] ),
@@ -214,16 +214,16 @@ function getFilledRequiredMmtfDict(){
         ],
 
         // atoms
-        xCoordBig: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 10000, 1 ] ) ),
-        xCoordSmall: new Uint8Array( decodeMmtfHelpers.makeInt16Buffer( [ 1000 ] ) ),
-        yCoordBig: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 20000, 1 ] ) ),
-        yCoordSmall: new Uint8Array( decodeMmtfHelpers.makeInt16Buffer( [ 2000 ] ) ),
-        zCoordBig: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 30000, 1 ] ) ),
-        zCoordSmall: new Uint8Array( decodeMmtfHelpers.makeInt16Buffer( [ 3000 ] ) ),
+        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 10000, 1 ] ) ),
+        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 1000 ] ) ),
+        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 20000, 1 ] ) ),
+        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 2000 ] ) ),
+        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 30000, 1 ] ) ),
+        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 3000 ] ) ),
 
         // groups
-        groupIdList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 100, 1 ] ) ),
-        groupTypeList: new Uint8Array( decodeMmtfHelpers.makeInt32Buffer( [ 0 ] ) ),
+        groupIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100, 1 ] ) ),
+        groupTypeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0 ] ) ),
 
         // chains
         chainIdList: new Uint8Array( [ 0, 65, 0, 0 ] ),

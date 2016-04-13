@@ -32,11 +32,11 @@ gulp.task('build-msgpack-decode', function(){
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('build-mmtf-decode-helpers', function(){
-  return gulp.src('./src/mmtf-decode-helpers.js', {read: false})
+gulp.task('build-mmtf-utils', function(){
+  return gulp.src('./src/mmtf-utils.js', {read: false})
     .pipe(rollup({
       format: 'iife',
-      moduleName: 'decodeMmtfHelpers'
+      moduleName: 'MmtfUtils'
     }))
     .pipe(gulp.dest('build'));
 });
@@ -59,8 +59,17 @@ gulp.task('build-mmtf-iterator', function(){
     .pipe(gulp.dest('build'));
 });
 
+gulp.task('build-mmtf', function(){
+  return gulp.src('./src/mmtf.js', {read: false})
+    .pipe(rollup({
+      format: 'iife',
+      moduleName: 'MMTF'
+    }))
+    .pipe(gulp.dest('build'));
+});
+
 gulp.task('build', [
-  'build-msgpack-decode', 'build-mmtf-decode-helpers',
+  'build-msgpack-decode', 'build-mmtf-utils',
   'build-mmtf-decode', 'build-mmtf-iterator'
 ]);
 

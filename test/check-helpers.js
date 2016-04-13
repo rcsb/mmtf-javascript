@@ -25,8 +25,8 @@ function getRunLengthSize( runLengthEncodedArray ){
 
 function getSplitListSize( bigArray, smallArray ){
     return (
-        ( decodeMmtfHelpers.getInt32( bigArray ).length / 2 ) +
-        decodeMmtfHelpers.getInt16( smallArray ).length
+        ( MmtfUtils.getInt32( bigArray ).length / 2 ) +
+        MmtfUtils.getInt16( smallArray ).length
     );
 }
 
@@ -761,26 +761,26 @@ function checkMsgpackConsistency( decodedMsgpack, assert ){
         assert.equal( getSplitListSize( decodedMsgpack.bFactorBig, decodedMsgpack.bFactorSmall ), decodedMsgpack.numAtoms, "numAtoms, bFactor" );
     }
     if( decodedMsgpack.atomIdList !== undefined ){
-        assert.equal( getRunLengthSize( decodeMmtfHelpers.getInt32( decodedMsgpack.atomIdList ) ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
+        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.atomIdList ) ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
     }
     if( decodedMsgpack.altLocList !== undefined ){
-        assert.equal( getRunLengthSize( decodeMmtfHelpers.getInt32( decodedMsgpack.altLocList ) ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
+        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.altLocList ) ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
     }
     if( decodedMsgpack.occupancyList !== undefined ){
-        assert.equal( getRunLengthSize( decodeMmtfHelpers.getInt32( decodedMsgpack.occupancyList ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
+        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.occupancyList ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
     }
 
     // group data sizes
     var numGroups = decodedMsgpack.groupTypeList.length / 4;
-    assert.equal( getRunLengthSize( decodeMmtfHelpers.getInt32( decodedMsgpack.groupIdList ) ), numGroups, "numGroups, groupIdList" );
+    assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.groupIdList ) ), numGroups, "numGroups, groupIdList" );
     if( decodedMsgpack.insCodeList !== undefined ){
-        assert.equal( getRunLengthSize( decodeMmtfHelpers.getInt32( decodedMsgpack.insCodeList ) ), numGroups, "numgroups, insCodeList" );
+        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.insCodeList ) ), numGroups, "numgroups, insCodeList" );
     }
     if( decodedMsgpack.secStructList !== undefined ){
         assert.equal( decodedMsgpack.secStructList.length, numGroups, "numGroups, secStructList" );
     }
     if( decodedMsgpack.sequenceIndexList !== undefined ){
-        assert.equal( getRunLengthSize( decodeMmtfHelpers.getInt32( decodedMsgpack.sequenceIndexList ) ), numGroups, "numGroups, sequenceIndexList" );
+        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.sequenceIndexList ) ), numGroups, "numGroups, sequenceIndexList" );
     }
 
     // chain data sizes
