@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <script src="../dist/mmtf-decode.js"></script>
+    <script src="../dist/mmtf.js"></script>
     <script>
         function print( text ){
             document.getElementById( "msg" ).innerHTML = text;
@@ -27,7 +27,7 @@
                 if( this.status === 200 || this.status === 304 || this.status === 0 ){
                     var t1 = performance.now();
                     try{
-                        var d = decodeMmtf( this.response );
+                        var d = MMTF.decode( this.response );
                     }catch( e ){
                         print( "Error decoding " + name + "." );
                         throw e;

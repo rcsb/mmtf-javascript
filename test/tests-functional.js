@@ -37,24 +37,13 @@ var testEntries = [
 
 testEntries.forEach( function( name ){
 
-    QUnit.test( "decode msgpack " + name, function( assert ) {
+    QUnit.test( "decode " + name, function( assert ) {
         var done = assert.async();
         function onload(){
             var decodedMsgpack = decodeMsgpack( new Uint8Array( this.response ) );
             assert.equal( decodedMsgpack.structureId, name.toUpperCase(), "Wrong PDB ID" );
             checkMsgpack( decodedMsgpack, assert );
-            done();
-        }
-        function onerror(){
-            done();
-        }
-        loadFile( "../data/" + name + ".mmtf", onload, onerror );
-    } );
-
-    QUnit.test( "decode mmtf " + name, function( assert ) {
-        var done = assert.async();
-        function onload(){
-            var decodedMmtf = decodeMmtf( this.response );
+            var decodedMmtf = decodeMmtf( decodedMsgpack );
             assert.equal( decodedMmtf.structureId, name.toUpperCase(), "Wrong PDB ID" );
             checkMmtf( decodedMmtf, assert );
             done();

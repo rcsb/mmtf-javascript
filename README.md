@@ -13,14 +13,14 @@ JavaScript decoder for MMTF files. For a description of the format see the [MMTF
 
 ## Decoder
 
-The only exposed function of the library file ([mmtf-decode.js](dist/mmtf-decode.js)) is `decodeMmtf` which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns the decoded `mmtf` data as an object with the following properties.
+The decoder is exposed as `MMTF.decode` in the library file ([mmtf.js](dist/mmtf.js)) which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns the decoded `mmtf` data as an object with the following properties.
 
 
 ### Example
 
 ```JavaScript
 // bin is Uint8Array containing the mmtf msgpack
-var mmtfData = decodeMmtf( bin );
+var mmtfData = MMTF.decode( bin );
 console.log( mmtfData.numAtoms );
 ```
 
@@ -122,7 +122,7 @@ Runnable example in [mmtf-traversal.html](examples/mmtf-traversal.html).
 
 ```JavaScript
 // bin is an Uint8Array containing the mmtf msgpack
-var mmtfData = decodeMmtf( bin );
+var mmtfData = MMTF.decode( bin );
 // setup index counters
 var modelIndex = 0;
 var chainIndex = 0;
@@ -191,15 +191,15 @@ mmtfData.chainsPerModel.forEach( function( modelChainCount ){
 
 ## Iterator
 
-Helper class to loop over the structural data in the decoded `mmtf` data. Available in file [mmtf-iterator.js](dist/mmtf-iterator.js). Runnable example in [mmtf-iterator.html](examples/mmtf-iterator.html).
+Helper class to loop over the structural data in the decoded `mmtf` data. Available as `MMTF.Iterator` from [mmtf.js](dist/mmtf.js). Runnable example in [mmtf-iterator.html](examples/mmtf-iterator.html).
 
 
 ### Example
 
 ```JavaScript
 // bin is Uint8Array containing the mmtf msgpack
-var mmtfData = decodeMmtf( bin );
-var mmtfIterator = new MmtfIterator( mmtfData );
+var mmtfData = MMTF.decode( bin );
+var mmtfIterator = new MMTF.Iterator( mmtfData );
 mmtfIterator.eachAtom(
     function(
         element, atomName, formalCharge,

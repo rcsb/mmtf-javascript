@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
 <body>
-    <script src="../dist/mmtf-decode.js"></script>
-    <script src="../dist/mmtf-iterator.js"></script>
+    <script src="../dist/mmtf.js"></script>
     <script>
 
         document.addEventListener( "DOMContentLoaded", function(){
@@ -16,9 +15,9 @@
             var xhr = new XMLHttpRequest();
             xhr.addEventListener( "load", function onload(){
                 // decode the binary response data
-                var mmtfData = decodeMmtf( this.response );
+                var mmtfData = MMTF.decode( this.response );
                 // create mmtfIterator instance
-                var mmtfIterator = new MmtfIterator( mmtfData );
+                var mmtfIterator = new MMTF.Iterator( mmtfData );
                 // loop over all groups and display the data in #text
                 var groupIndex = 0;
                 mmtfIterator.eachGroup(
@@ -43,7 +42,7 @@
     </script>
 
     <div>
-        <h3>Load MMTF file and decode. Use an MmtfIterator instance loop over each group and print its data.</h3>
+        <h3>Load MMTF file and decode. Use an MMTF.Iterator instance loop over each group and print its data.</h3>
         <pre id="text"></pre>
     </div>
 </body>

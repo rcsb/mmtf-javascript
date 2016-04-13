@@ -69,11 +69,12 @@ gulp.task('build-mmtf', function(){
 });
 
 gulp.task('build', [
+  'build-mmtf',
   'build-msgpack-decode', 'build-mmtf-utils',
   'build-mmtf-decode', 'build-mmtf-iterator'
 ]);
 
-gulp.task('compress', ['build-mmtf-decode', 'build-mmtf-iterator'], function(){
+gulp.task('compress', ['build'], function(){
   return gulp.src(['./build/*.js'])
     .pipe(uglify())
     .pipe(gulp.dest('dist'));

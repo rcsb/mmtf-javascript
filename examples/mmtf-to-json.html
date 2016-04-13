@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
 <body>
-    <script src="../dist/mmtf-decode.js"></script>
+    <script src="../dist/mmtf.js"></script>
     <script>
 
         /**
@@ -33,7 +33,7 @@
             var xhr = new XMLHttpRequest();
             xhr.addEventListener( "load", function onload(){
                 // decode the binary response data
-                var mmtfData = decodeMmtf( this.response );
+                var mmtfData = MMTF.decode( this.response );
                 // convert the mmtf data to JSON and show in the #json element
                 document.getElementById( "json" ).innerText = JSON.stringify( mmtfData, replacer, '\t' );
             }, true );
