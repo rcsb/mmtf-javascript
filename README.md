@@ -1,9 +1,10 @@
 
-[![Build Status](https://travis-ci.org/rcsb/mmtf-javascript.svg?branch=master)](https://travis-ci.org/rcsb/mmtf-javascript) [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/rcsb/mmtf-javascript/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/rcsb/mmtf-javascript.svg?branch=master)](https://travis-ci.org/rcsb/mmtf-javascript) [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/rcsb/mmtf-javascript/blob/master/LICENSE) ![Version](http://img.shields.io/badge/version-0.1.1alpha1-blue.svg?style=flat)
 
 
 JavaScript decoder for MMTF files. For a description of the format see the [MMTF specification](https://github.com/rcsb/mmtf/blob/master/spec.md). The minified library is available for [download](dist/mmtf-decode.js).
 
+This is the development version. The latest release is [0.1.0](https://github.com/rcsb/mmtf-javascript/releases/tag/0.1.0).
 
 ## Table of contents
 
