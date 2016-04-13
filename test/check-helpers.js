@@ -78,7 +78,7 @@ function checkBioAssemblyFields( bioAssemblyList, assert ){
         "transformList"
     ];
     var reqTransformFields = [
-        "chainIndexList", "transformation"
+        "chainIndexList", "matrix"
     ];
     bioAssemblyList.forEach( function( assembly ){
         checkDictFields(
@@ -323,12 +323,12 @@ function checkBioAssemblyListTypes( bioAssemblyList, assert ){
                 "transform.chainIndexList must be an array"
             );
             assert.ok(
-                Array.isArray( transform.transformation ),
-                "transform.transformation must be an array"
+                Array.isArray( transform.matrix ),
+                "transform.matrix must be an array"
             );
             assert.ok(
-                transform.transformation.length === 16,
-                "transform.transformation must be of length 16"
+                transform.matrix.length === 16,
+                "transform.matrix must be of length 16"
             );
         } );
     } );

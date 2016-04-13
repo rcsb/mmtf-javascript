@@ -97,7 +97,7 @@ QUnit.test( "filled full", function( assert ) {
                 transformList: [
                     {
                         chainIndexList: [ 0 ],
-                        transformation: [
+                        matrix: [
                             1, 0, 0, 0,
                             0, 1, 0, 0,
                             0, 0, 1, 0,

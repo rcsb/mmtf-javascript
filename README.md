@@ -98,7 +98,7 @@ Fields in a `transform` object:
 | Name                      | Type         | Description                       |
 |---------------------------|--------------|-----------------------------------|
 | chainIndexList            | `Array`      | Pointers into chain data fields   |
-| transformation            | `Array`      | 4x4 transformation matrix         |
+| matrix                    | `Array`      | 4x4 transformation matrix         |
 
 
 #### groupType
