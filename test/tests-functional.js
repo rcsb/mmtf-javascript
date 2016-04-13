@@ -16,72 +16,53 @@ function loadFile( url, onload, onerror ){
 //
 QUnit.module( "functional tests" );
 
-// curl http://mmtf.rcsb.org/testdata/4cup.mmtf.gz -o data/4cup.mmtf.gz && gzip -df data/4cup.mmtf.gz
+// curl http://mmtf.rcsb.org/testdata/3zyb.mmtf.gz -o data/3zyb.mmtf.gz && gzip -df data/3zyb.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/4cup.mmtf.gz -o data/4cup.mmtf.gz && gzip -df data/4cup.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/1o2f.mmtf.gz -o data/1o2f.mmtf.gz && gzip -df data/1o2f.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/1bna.mmtf.gz -o data/1bna.mmtf.gz && gzip -df data/1bna.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/4y60.mmtf.gz -o data/4y60.mmtf.gz && gzip -df data/4y60.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/1skm.mmtf.gz -o data/1skm.mmtf.gz && gzip -df data/1skm.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/1lpv.mmtf.gz -o data/1lpv.mmtf.gz && gzip -df data/1lpv.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/1msh.mmtf.gz -o data/1msh.mmtf.gz && gzip -df data/1msh.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/1r9v.mmtf.gz -o data/1r9v.mmtf.gz && gzip -df data/1r9v.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/5emg.mmtf.gz -o data/5emg.mmtf.gz && gzip -df data/5emg.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/4ck4.mmtf.gz -o data/4ck4.mmtf.gz && gzip -df data/4ck4.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/4v5a.mmtf.gz -o data/4v5a.mmtf.gz && gzip -df data/4v5a.mmtf.gz;
+// curl http://mmtf.rcsb.org/testdata/5esw.mmtf.gz -o data/5esw.mmtf.gz && gzip -df data/5esw.mmtf.gz;
 
-QUnit.test( "decode mmtf 4cup full", function( assert ) {
-    var done = assert.async();
-    function onload(){
-        var decodedMmtf = decodeMmtf( this.response );
+var testEntries = [
+    "3zyb", "4cup", "1o2f", "1bna", "4y60", "1skm", "1lpv", "1msh", "1r9v",
+    "5emg", "4ck4", "4v5a", "5esw"
+];
 
-        assert.equal( decodedMmtf.structureId, "4CUP", "Wrong PDB ID" );
-        assert.equal( decodedMmtf.depositionDate, "2014-03-21", "Wrong deposition date" );
-        assert.equal( decodedMmtf.spaceGroup, "C 2 2 21", "Wrong spacegroup" );
-        assert.close( decodedMmtf.unitCell[ 0 ], 80.370, 0.001, "Wrong unitcell a length" );
-        assert.close( decodedMmtf.unitCell[ 1 ], 96.120, 0.001, "Wrong unitcell b length" );
-        assert.close( decodedMmtf.unitCell[ 2 ], 57.669, 0.001, "Wrong unitcell c length" );
-        assert.close( decodedMmtf.unitCell[ 3 ], 90.000, 0.001, "Wrong unitcell alpha angle" );
-        assert.close( decodedMmtf.unitCell[ 4 ], 90.000, 0.001, "Wrong unitcell beta angle" );
-        assert.close( decodedMmtf.unitCell[ 5 ], 90.000, 0.001, "Wrong unitcell gamma angle" );
-        assert.equal( decodedMmtf.title, "Crystal structure of human BAZ2B in complex with fragment-1 N09421", "Wrong title" );
+testEntries.forEach( function( name ){
 
-        assert.equal( decodedMmtf.numBonds, 978,  "Wrong number of bonds" );
-        assert.equal( decodedMmtf.numAtoms, 1107,  "Wrong number of atoms" );
-        assert.equal( decodedMmtf.numGroups, 265,  "Wrong number of groups" );
-        assert.equal( decodedMmtf.numChains, 6,  "Wrong number of chains" );
-        assert.equal( decodedMmtf.numModels, 1,  "Wrong number of models" );
+    QUnit.test( "decode msgpack " + name, function( assert ) {
+        var done = assert.async();
+        function onload(){
+            var decodedMsgpack = decodeMsgpack( new Uint8Array( this.response ) );
+            assert.equal( decodedMsgpack.structureId, name.toUpperCase(), "Wrong PDB ID" );
+            checkMsgpack( decodedMsgpack, assert );
+            done();
+        }
+        function onerror(){
+            done();
+        }
+        loadFile( "../data/" + name + ".mmtf", onload, onerror );
+    } );
 
-        assert.equal( decodedMmtf.groupList.length, 29, "Passed!" );
+    QUnit.test( "decode mmtf " + name, function( assert ) {
+        var done = assert.async();
+        function onload(){
+            var decodedMmtf = decodeMmtf( this.response );
+            assert.equal( decodedMmtf.structureId, name.toUpperCase(), "Wrong PDB ID" );
+            checkMmtf( decodedMmtf, assert );
+            done();
+        }
+        function onerror(){
+            done();
+        }
+        loadFile( "../data/" + name + ".mmtf", onload, onerror );
+    } );
 
-        checkMmtf( decodedMmtf, assert );
-
-        done();
-    }
-    function onerror(){
-        done();
-    }
-    loadFile( "../data/4cup.mmtf", onload, onerror );
-});
-
-QUnit.test( "decode msgpack 4cup full", function( assert ) {
-    var done = assert.async();
-    function onload(){
-        var decodedMsgpack = decodeMsgpack( new Uint8Array( this.response ) );
-        console.log(decodedMsgpack)
-        assert.equal( decodedMsgpack.structureId, "4CUP", "Wrong PDB ID" );
-        assert.equal( decodedMsgpack.depositionDate, "2014-03-21", "Wrong deposition date" );
-        assert.equal( decodedMsgpack.spaceGroup, "C 2 2 21", "Wrong spacegroup" );
-        assert.close( decodedMsgpack.unitCell[ 0 ], 80.370, 0.001, "Wrong unitcell a length" );
-        assert.close( decodedMsgpack.unitCell[ 1 ], 96.120, 0.001, "Wrong unitcell b length" );
-        assert.close( decodedMsgpack.unitCell[ 2 ], 57.669, 0.001, "Wrong unitcell c length" );
-        assert.close( decodedMsgpack.unitCell[ 3 ], 90.000, 0.001, "Wrong unitcell alpha angle" );
-        assert.close( decodedMsgpack.unitCell[ 4 ], 90.000, 0.001, "Wrong unitcell beta angle" );
-        assert.close( decodedMsgpack.unitCell[ 5 ], 90.000, 0.001, "Wrong unitcell gamma angle" );
-        assert.equal( decodedMsgpack.title, "Crystal structure of human BAZ2B in complex with fragment-1 N09421", "Wrong title" );
-
-        assert.equal( decodedMsgpack.numBonds, 978, "Wrong number of bonds" );
-        assert.equal( decodedMsgpack.numAtoms, 1107, "Wrong number of atoms" );
-        assert.equal( decodedMsgpack.groupTypeList.length / 4, 265, "Wrong number of groups" );
-        assert.equal( decodedMsgpack.groupsPerChain.length, 6, "Wrong number of chains" );
-        assert.equal( decodedMsgpack.chainsPerModel.length, 1, "Wrong number of models" );
-
-        assert.equal( decodedMsgpack.groupList.length, 29, "Wrong number of groupList entries" );
-
-        checkMsgpack( decodedMsgpack, assert );
-
-        done();
-    }
-    function onerror(){
-        done();
-    }
-    loadFile( "../data/4cup.mmtf", onload, onerror );
-});
+} );
