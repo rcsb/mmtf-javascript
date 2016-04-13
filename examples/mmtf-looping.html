@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>mmtf looping example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+    <script src="../dist/mmtf-decode.js"></script>
+    <script>
+
+        /**
+         * Converts an array of ASCII codes trimming '\0' bytes
+         * @param  {Array} charCodeArray - array of ASCII char codes
+         * @return {String} '\0' trimmed string
+         */
+        function fromCharCode( charCodeArray ){
+            return String.fromCharCode.apply( null, charCodeArray ).replace(/\0/g, '');
+        }
+
+        document.addEventListener( "DOMContentLoaded", function(){
+            // printing helpers
+            var lines = [];
+            function print( name, value, level ){
+                var indent = "";
+                if( level ){
+                    for( var i = 0; i < level; ++i ){
+                        indent += "    ";
+                    }
+                }
+                lines.push( indent + name + ": " + value );
+            }
+            function newline(){
+                lines.push( "" );
+            }
+            function flush(){
+                document.getElementById( "text" ).innerHTML = lines.join( "\n" );
+            }
+            // request mmtf file as binary data (arraybuffer)
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener( "load", function onload(){
+                // decode the binary response data
+                var mmtfData = decodeMmtf( this.response );
+                // loop over all models
+                var modelIndex = 0;
+                var chainIndex = 0;
+                var groupIndex = 0;
+                var atomIndex = 0;
+                mmtfData.chainsPerModel.forEach( function( modelChainCount ){
+                    print( "modelIndex", modelIndex, 0 );
+                    for( var i = 0; i < modelChainCount; ++i ){
+                        newline();
+                        print( "chainIndex", chainIndex, 1 );
+                        var chainId = fromCharCode(
+                            mmtfData.chainIdList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
+                        );
+                        print( "chainId", chainId, 1 );
+                        if( mmtfData.chainNameList ){
+                            var chainName = fromCharCode(
+                                mmtfData.chainNameList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
+                            );
+                            print( "chainName", chainName, 1 );
+                        }
+                        var chainGroupCount = mmtfData.groupsPerChain[ chainIndex ];
+                        for( var j = 0; j < chainGroupCount; ++j ){
+                            newline();
+                            print( "groupIndex", groupIndex, 2 );
+                            print( "groupId", mmtfData.groupIdList[ groupIndex ], 2 );
+                            print( "groupType", mmtfData.groupTypeList[ groupIndex ], 2 );
+                            var groupType = mmtfData.groupList[ mmtfData.groupTypeList[ groupIndex ] ];
+                            print( "groupName", groupType.groupName, 2 );
+                            if( mmtfData.secStructList ){
+                                print( "secStruct", mmtfData.secStructList[ groupIndex ], 2 );
+                            }
+                            if( mmtfData.insCodeList ){
+                                print( "insCode", mmtfData.insCodeList[ groupIndex ], 2 );
+                            }
+                            if( mmtfData.sequenceIndexList ){
+                                print( "sequenceIndex", mmtfData.sequenceIndexList[ groupIndex ], 2 );
+                            }
+                            var groupAtomCount = groupType.atomNameList.length;
+                            for( var k = 0; k < groupAtomCount; ++k ){
+                                newline();
+                                print( "atomIndex", atomIndex, 3 );
+                                print( "atomId", mmtfData.atomIdList[ atomIndex ], 3 );
+                                print( "element", groupType.elementList[ k ], 3 );
+                                print( "atomName", groupType.atomNameList[ k ], 3 );
+                                print( "formalCharge", groupType.atomChargeList[ k ], 3 );
+                                print( "xCoord", mmtfData.xCoordList[ atomIndex ], 3 );
+                                print( "yCoord", mmtfData.yCoordList[ atomIndex ], 3 );
+                                print( "zCoord", mmtfData.zCoordList[ atomIndex ], 3 );
+                                if( mmtfData.bFactorList ){
+                                    print( "bFactor", mmtfData.bFactorList[ atomIndex ], 3 );
+                                }
+                                if( mmtfData.altLocList ){
+                                    print( "altLoc", mmtfData.altLocList[ atomIndex ], 3 );
+                                }
+                                if( mmtfData.occupancyList ){
+                                    print( "occupancy", mmtfData.occupancyList[ atomIndex ], 3 );
+                                }
+                                atomIndex += 1;
+                            }
+                            groupIndex += 1;
+                        }
+                        chainIndex += 1;
+                    }
+                    modelIndex += 1;
+                } );
+                flush();
+            }, true );
+            xhr.responseType = "arraybuffer";
+            xhr.open( "GET", "../data/4cup.mmtf" );
+            xhr.send();
+        } );
+
+    </script>
+
+    <div>
+        <h3>Load MMTF file and decode. Loop over each model, chain, group, atom and print their data.</h3>
+        <pre id="text"></pre>
+    </div>
+</body>
+</html>
