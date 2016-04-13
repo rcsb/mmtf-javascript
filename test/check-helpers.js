@@ -911,16 +911,33 @@ function checkMmtfVocabulary( mmtfDict, assert ){
 //////////
 // check
 //
+function checkList( list, dict, assert ){
+    list.forEach( function( check ){
+        try{
+            check( dict, assert );
+        }catch( error ){
+            assert.pushResult( {
+                result: false,
+                actual: error,
+                expected: "",
+                message: "exception in " + check.name
+            } );
+        }
+    } );
+}
+
 function checkMsgpack( msgpackDict, assert ){
-    checkMsgpackFields( msgpackDict, assert );
-    checkMsgpackTypes( msgpackDict, assert );
-    checkMsgpackConsistency( msgpackDict, assert );
-    checkMsgpackVocabulary( msgpackDict, assert );
+    var list = [
+        checkMsgpackFields, checkMsgpackTypes,
+        checkMsgpackConsistency, checkMsgpackVocabulary
+    ];
+    checkList( list, msgpackDict, assert );
 }
 
 function checkMmtf( mmtfDict, assert ){
-    checkMmtfFields( mmtfDict, assert );
-    checkMmtfTypes( mmtfDict, assert );
-    checkMmtfConsistency( mmtfDict, assert );
-    checkMmtfVocabulary( mmtfDict, assert );
+    var list = [
+        checkMmtfFields, checkMmtfTypes,
+        checkMmtfConsistency, checkMmtfVocabulary
+    ];
+    checkList( list, mmtfDict, assert );
 }
