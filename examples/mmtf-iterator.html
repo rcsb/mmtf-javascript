@@ -20,24 +20,22 @@
                 // create mmtfIterator instance
                 var mmtfIterator = new MmtfIterator( mmtfData );
                 // loop over all groups and display the data in #text
+                var groupIndex = 0;
                 mmtfIterator.eachGroup(
                     function(
                         groupName, singleLetterCode, chemCompType, groupId, groupType,
                         secStruct, insCode, sequenceIndex, atomOffset, atomCount
                     ){
-                        // console.log(
-                        //     groupName, singleLetterCode, chemCompType, groupId, groupType,
-                        //     secStruct, insCode, sequenceIndex, atomOffset, atomCount
-                        // );
-                        document.getElementById( "json" ).innerText += [
-                            groupName, singleLetterCode, chemCompType, groupId, groupType,
+                        document.getElementById( "text" ).innerText += [
+                            groupIndex, groupName, singleLetterCode, chemCompType, groupId, groupType,
                             secStruct, insCode, sequenceIndex, atomOffset, atomCount
-                        ].join( ", " );
+                        ].join( ", " ) + "\n";
+                        groupIndex += 1;
                     }
                 );
             }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", "../data/1crn.mmtf" );
+            xhr.open( "GET", "../data/4cup.mmtf" );
             xhr.send();
 
         } );

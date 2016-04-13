@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>decodeMmtf example</title>
+    <title>mmtf to json example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
@@ -38,7 +38,7 @@
                 document.getElementById( "json" ).innerText = JSON.stringify( mmtfData, replacer, '\t' );
             }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", "../data/1crn.mmtf" );
+            xhr.open( "GET", "../data/4cup.mmtf" );
             xhr.send();
 
         } );
