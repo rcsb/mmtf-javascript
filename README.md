@@ -121,14 +121,14 @@ Fields of a `groupType` object:
 Runnable example in [mmtf-traversal.html](examples/mmtf-traversal.html).
 
 ```JavaScript
-// bin is Uint8Array containing the mmtf msgpack
-// decode the binary response data
+// bin is an Uint8Array containing the mmtf msgpack
 var mmtfData = decodeMmtf( bin );
-// loop over all models
+// setup index counters
 var modelIndex = 0;
 var chainIndex = 0;
 var groupIndex = 0;
 var atomIndex = 0;
+// loop over all models
 mmtfData.chainsPerModel.forEach( function( modelChainCount ){
     console.log( "modelIndex", modelIndex );
     for( var i = 0; i < modelChainCount; ++i ){
