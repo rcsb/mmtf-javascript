@@ -18,7 +18,7 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-gulp.task('test', ['build-cjs'], function() {
+gulp.task('test', ['build'], function() {
   return gulp.src('./test/unittests.html')
     .pipe(qunit());
 });
