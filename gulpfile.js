@@ -23,7 +23,25 @@ gulp.task('test', ['build-cjs'], function() {
     .pipe(qunit());
 });
 
-gulp.task('build-decode', function(){
+gulp.task('build-msgpack-decode', function(){
+  return gulp.src(['./src/msgpack-decode.js'], {read: false})
+    .pipe(rollup({
+      format: 'iife',
+      moduleName: 'decodeMsgpack'
+    }))
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('build-mmtf-decode-helpers', function(){
+  return gulp.src('./src/mmtf-decode-helpers.js', {read: false})
+    .pipe(rollup({
+      format: 'iife',
+      moduleName: 'decodeMmtfHelpers'
+    }))
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('build-mmtf-decode', function(){
   return gulp.src(['./src/mmtf-decode.js'], {read: false})
     .pipe(rollup({
       format: 'iife',
@@ -32,7 +50,7 @@ gulp.task('build-decode', function(){
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('build-iterator', function(){
+gulp.task('build-mmtf-iterator', function(){
   return gulp.src('./src/mmtf-iterator.js', {read: false})
     .pipe(rollup({
       format: 'iife',
@@ -41,13 +59,12 @@ gulp.task('build-iterator', function(){
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('build-cjs', function(){
-  return gulp.src('./src/*', {read: false})
-    .pipe(rollup({ format: 'cjs' }))
-    .pipe(gulp.dest('build/cjs'));
-});
+gulp.task('build', [
+  'build-msgpack-decode', 'build-mmtf-decode-helpers',
+  'build-mmtf-decode', 'build-mmtf-iterator'
+]);
 
-gulp.task('compress', ['build-decode', 'build-iterator'], function(){
+gulp.task('compress', ['build-mmtf-decode', 'build-mmtf-iterator'], function(){
   return gulp.src(['./build/*.js'])
     .pipe(uglify())
     .pipe(gulp.dest('dist'));

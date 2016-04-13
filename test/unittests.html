@@ -15,18 +15,16 @@
     <script src="qunit.js"></script>
     <script src="qunit-assert-close.js"></script>
 
-    <script src="blanket.min.js"></script>
-
     <script>
-        module = { exports: {} };
-        exports = {};
         QUnit.dump.maxDepth = 10;
     </script>
 
-    <script src="../build/cjs/msgpack-decode.js" data-cover></script>
-    <script src="../build/cjs/mmtf-decode-helpers.js" data-cover></script>
-    <script src="../build/cjs/mmtf-decode.js" data-cover></script>
-    <script src="../build/cjs/mmtf-iterator.js" data-cover></script>
+    <script src="blanket.min.js"></script>
+
+    <script src="../build/msgpack-decode.js" data-cover></script>
+    <script src="../build/mmtf-decode-helpers.js" data-cover></script>
+    <script src="../build/mmtf-decode.js" data-cover></script>
+    <script src="../build/mmtf-iterator.js" data-cover></script>
 
     <script src="check-helpers.js"></script>
     <script src="dict-helpers.js"></script>
