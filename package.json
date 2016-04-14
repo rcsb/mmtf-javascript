@@ -1,6 +1,6 @@
 {
   "name": "mmtf-javascript",
-  "version": "0.1.0dev",
+  "version": "0.1.1dev",
   "description": "JavaScript library for working with MMTF files",
   "main": "dist/mmtf-decode.js",
   "scripts": {
