@@ -15,13 +15,11 @@
     <script src="qunit.js"></script>
     <script src="qunit-assert-close.js"></script>
 
-    <script src="blanket.min.js"></script>
-
     <script>
-        module = { exports: {} };
-        exports = {};
         QUnit.dump.maxDepth = 10;
     </script>
+
+    <script src="blanket.min.js"></script>
 
     <script src="../build/msgpack-decode.js" data-cover></script>
     <script src="../build/mmtf-utils.js" data-cover></script>
