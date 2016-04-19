@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file, following t
 ### Changed
 - decoupled serialization from decoding, no more msgpack deserialization in `decodeMmtf`
 - renamed mmtf-decode-helpers to mmtf-utils
+- switched to UMD format for distribution files
 
 
 ## v0.1.0 - 2016-04-13
