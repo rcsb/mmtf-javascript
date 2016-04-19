@@ -26,7 +26,7 @@ gulp.task('test', ['build'], function() {
 gulp.task('build-msgpack-decode', function(){
   return gulp.src(['./src/msgpack-decode.js'], {read: false})
     .pipe(rollup({
-      format: 'iife',
+      format: 'umd',
       moduleName: 'decodeMsgpack'
     }))
     .pipe(gulp.dest('build'));
@@ -35,7 +35,7 @@ gulp.task('build-msgpack-decode', function(){
 gulp.task('build-mmtf-utils', function(){
   return gulp.src('./src/mmtf-utils.js', {read: false})
     .pipe(rollup({
-      format: 'iife',
+      format: 'umd',
       moduleName: 'MmtfUtils'
     }))
     .pipe(gulp.dest('build'));
@@ -44,7 +44,7 @@ gulp.task('build-mmtf-utils', function(){
 gulp.task('build-mmtf-decode', function(){
   return gulp.src(['./src/mmtf-decode.js'], {read: false})
     .pipe(rollup({
-      format: 'iife',
+      format: 'umd',
       moduleName: 'decodeMmtf'
     }))
     .pipe(gulp.dest('build'));
@@ -53,7 +53,7 @@ gulp.task('build-mmtf-decode', function(){
 gulp.task('build-mmtf-iterator', function(){
   return gulp.src('./src/mmtf-iterator.js', {read: false})
     .pipe(rollup({
-      format: 'iife',
+      format: 'umd',
       moduleName: 'MmtfIterator'
     }))
     .pipe(gulp.dest('build'));
@@ -62,7 +62,7 @@ gulp.task('build-mmtf-iterator', function(){
 gulp.task('build-mmtf', function(){
   return gulp.src('./src/mmtf.js', {read: false})
     .pipe(rollup({
-      format: 'iife',
+      format: 'umd',
       moduleName: 'MMTF'
     }))
     .pipe(gulp.dest('build'));
