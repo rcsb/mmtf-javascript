@@ -1,102 +1,35 @@
 
-var _decodeMsgpack = require("../dist/msgpack-decode");
-var _decodeMmtf = require("../dist/mmtf-decode");
-
 var fs = require('fs');
 var request = require('request');
 var http = require('http');
-var zlib = require('zlib');
 var now = require("performance-now");
 var Promise = require('promise');
-var flatten = require('flatten');
 var csvWriter = require('csv-write-stream');
 var ArgumentParser = require('argparse').ArgumentParser;
 
+var Queue = require('./lib/queue');
+var io = require('./lib/io');
+var mmtf = require('./lib/mmtf');
+
 //
 
-function readFile (file) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile( file, function(err, data){
-            if (err) {
-                reject("error reading: '" + err + "'");
-            }else{
-                resolve(data);
-            }
-        });
-    });
-}
-
-function loadUrl (url, params) {
-    var p = Object.assign({}, params);
-    var pool = p.pool;
-    var timeout = p.timeout===undefined ? 5000 : p.timeout;
-    return new Promise(function (resolve, reject) {
-        var options = {
-            url: url,
-            pool: pool,
-            timeout: timeout
-        }
-        var req = request.get(options);
-
-        req.on('error', function(err) {
-            reject("error requesting '" + err + "'");
-        });
-
-        req.on('response', function(response) {
-            if(response.statusCode!==200){
-                reject("error response 'status code " + response.statusCode + "'");
-            }else{
-                var chunks = [];
-                response.on('data', function(chunk) {
-                    chunks.push(chunk);
-                });
-                response.on('end', function() {
-                    var buffer = Buffer.concat(chunks);
-                    zlib.gunzip(buffer, function(err, decoded) {
-                        if (err) {
-                            reject("error unzipping '" + err + "'");
-                        }else{
-                            var data = new Uint8Array(decoded);
-                            if(data.length===0){
-                                reject("error data 'zero bytes'");
-                            }else{
-                                resolve(data);
-                            }
-                        }
-                    });
-                });
-            }
-        });
-    });
-}
-
-function decodeMsgpack (data) {
-    return new Promise(function (resolve, reject) {
-        try{
-            resolve(_decodeMsgpack(data));
-        }catch(err){
-            reject("msgpack decoding error: '" + err + "'");
-        }
-    });
-}
-
-function decodeMmtf (data) {
-    return new Promise(function (resolve, reject) {
-        try{
-            resolve(_decodeMmtf(data));
-        }catch(err){
-            reject("mmtf decoding error: '" + err + "'");
-        }
-    });
-}
-
-function getSummary (data) {
+function getSummary (data, params) {
     var t0 = now();
-    return decodeMsgpack(data).then(function(decodedMsgpack){
+    var p = Object.assign({}, params);
+    return mmtf.decodeMsgpack(data).then(function(decodedMsgpack){
         var t1 = now();
-        return decodeMmtf(decodedMsgpack).then(function(decodedMmtf){
+        return mmtf.decodeMmtf(decodedMsgpack).then(function(decodedMmtf){
             var t2 = now();
             var md = decodedMmtf;
+            if(p.storeMmtf){
+                io.writeBinary(md.structureId + ".mmtf", data);
+            }
+            if(p.storeJson){
+                io.writeMmtfJson(md.structureId + ".json", decodedMmtf);
+            }
+            if(p.storeJsonEncoded){
+                io.writeEncodedMmtfJson(md.structureId + ".encoded.json", decodedMsgpack)
+            }
             return {
                 decodeMsgpackMs: t1-t0,
                 decodeMmtfMs: t2-t1,
@@ -110,11 +43,11 @@ function getSummary (data) {
     });
 }
 
-function getFileSummary (file) {
+function getFileSummary (file, params) {
     var t0 = now();
-    return readFile(file).then(function(data){
+    return io.readFile(file).then(function(data){
         var t1 = now();
-        return getSummary(data).then(function(summary){
+        return getSummary(data, params).then(function(summary){
             summary.readFileMs = t1-t0;
             return summary;
         });
@@ -123,9 +56,9 @@ function getFileSummary (file) {
 
 function getUrlSummary (url, params) {
     var t0 = now();
-    return loadUrl(url, params).then(function(data){
+    return io.loadUrl(url, params).then(function(data){
         var t1 = now();
-        return getSummary(data).then(function(summary){
+        return getSummary(data, params).then(function(summary){
             summary.loadUrlMs = t1-t0;
             return summary;
         });
@@ -133,7 +66,7 @@ function getUrlSummary (url, params) {
 }
 
 function getPdbidSummary(pdbid, params){
-    var url = "http://mmtf.rcsb.org/full/" + pdbid;
+    var url = mmtf.FULL_URL + pdbid;
     return getUrlSummary(url, params);
 }
 
@@ -189,47 +122,6 @@ function loadPdbidList(){
             }
         });
     });
-}
-
-function Queue( fn, argList ){
-    var queue = [];
-    var pending = false;
-
-    if( argList ){
-        for( var i = 0, il = argList.length; i < il; ++i ){
-            queue.push( argList[ i ] );
-        }
-        next();
-    }
-
-    function run( arg ){
-        fn( arg, next );
-    }
-
-    function next(){
-        var arg = queue.shift();
-        if( arg !== undefined ){
-            pending = true;
-            setTimeout( function(){ run( arg ); }, 0 );
-        }else{
-            pending = false;
-        }
-    }
-
-    // API
-
-    this.push = function( arg ){
-        queue.push( arg );
-        if( !pending ) next();
-    }
-
-    this.kill = function( arg ){
-        queue.length = 0;
-    };
-
-    this.length = function(){
-        return queue.length;
-    };
 }
 
 function getListSummary( list, promiseFn, params ){
@@ -308,9 +200,9 @@ function getPdbidListSummary( pdbidList, params ){
 //
 
 var parser = new ArgumentParser({
-    version: '0.0.1',
+    version: '0.0.2',
     addHelp:true,
-    description: 'Get MMTF files, decode them and report back staistics.'
+    description: 'Get MMTF files, decode them and report back statistics. Optionally store them.'
 });
 parser.addArgument( '--file', {
     help: 'file path'
@@ -345,6 +237,18 @@ parser.addArgument( '--printSummary', {
     help: 'print summary on finish',
     action: "storeTrue"
 });
+parser.addArgument( '--storeMmtf', {
+    help: 'store as binary "$structureId.mmtf"',
+    action: "storeTrue"
+});
+parser.addArgument( '--storeJson', {
+    help: 'store as decoded "$structureId.json"',
+    action: "storeTrue"
+});
+parser.addArgument( '--storeJsonEncoded', {
+    help: 'store as encoded "$structureId.encoded.json"',
+    action: "storeTrue"
+});
 parser.addArgument( '--summaryPath', {
     help: 'path and name for the summary file (default: summary.txt)',
     defaultValue: 'summary.txt'
@@ -366,11 +270,11 @@ function printSummary (summary) {
 }
 
 if (args.file!==null) {
-    getFileSummary(args.file).then(printSummary);
+    getFileSummary(args.file, args).then(printSummary);
 }
 
 if (args.url!==null) {
-    getUrlSummary(args.url).then(printSummary);
+    getUrlSummary(args.url, args).then(printSummary);
 }
 
 if (args.pdbid!==null) {
