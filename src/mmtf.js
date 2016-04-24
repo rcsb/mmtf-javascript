@@ -5,7 +5,7 @@
 
 import decodeMsgpack from "./msgpack-decode.js";
 import decodeMmtf from "./mmtf-decode.js";
-import MmtfIterator from "./mmtf-iterator.js";
+import traverseMmtf from "./mmtf-traverse.js";
 
 /**
  * Decode MMTF fields
@@ -32,8 +32,8 @@ function decode( binOrDict, params ){
     return decodeMmtf( inputDict, params );
 }
 
-var Iterator = MmtfIterator;
+var traverse = traverseMmtf;
 
 export {
-    decode, Iterator
+    decode, traverse
 };

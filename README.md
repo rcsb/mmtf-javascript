@@ -5,17 +5,17 @@
 [![Changelog](https://img.shields.io/badge/changelog--lightgrey.svg?style=flat)](https://github.com/rcsb/mmtf-javascript/blob/master/CHANGELOG.md)
 
 
-JavaScript decoder for MMTF files. For a description of the format see the [MMTF specification](https://github.com/rcsb/mmtf/blob/master/spec.md). The minified library is available for [download](dist/mmtf-decode.js).
+JavaScript decoder for MMTF files. For a description of the format see the [MMTF specification](https://github.com/rcsb/mmtf/blob/master/spec.md). The minified library is available for [download](dist/mmtf.js).
 
 This is the development version. The latest release is [0.1.0](https://github.com/rcsb/mmtf-javascript/releases/tag/0.1.0).
 
 ## Table of contents
 
-* [Decoder](#decoder)
-* [Iterator](#Iterator)
+* [Decoding](#decoding)
+* [Traversal](#traversal)
 
 
-## Decoder
+## Decoding
 
 The decoder is exposed as `MMTF.decode` in the library file ([mmtf.js](dist/mmtf.js)) which accepts an `Uint8Array` containing the `mmtf` `msgpack` and returns the decoded `mmtf` data as an object with the following properties.
 
@@ -120,113 +120,30 @@ Fields of a `groupType` object:
 | chemCompType              | `String`     | The chemical component type       |
 
 
-### Traversal
+## Traversal
 
-Runnable example in [mmtf-traversal.html](examples/mmtf-traversal.html).
-
-```JavaScript
-// bin is an Uint8Array containing the mmtf msgpack
-var mmtfData = MMTF.decode( bin );
-// setup index counters
-var modelIndex = 0;
-var chainIndex = 0;
-var groupIndex = 0;
-var atomIndex = 0;
-// loop over all models
-mmtfData.chainsPerModel.forEach( function( modelChainCount ){
-    console.log( "modelIndex", modelIndex );
-    for( var i = 0; i < modelChainCount; ++i ){
-        console.log( "chainIndex", chainIndex );
-        var chainId = fromCharCode(
-            mmtfData.chainIdList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
-        );
-        console.log( "chainId", chainId );
-        if( mmtfData.chainNameList ){
-            var chainName = fromCharCode(
-                mmtfData.chainNameList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
-            );
-            console.log( "chainName", chainName );
-        }
-        var chainGroupCount = mmtfData.groupsPerChain[ chainIndex ];
-        for( var j = 0; j < chainGroupCount; ++j ){
-            console.log( "groupIndex", groupIndex );
-            console.log( "groupId", mmtfData.groupIdList[ groupIndex ] );
-            console.log( "groupType", mmtfData.groupTypeList[ groupIndex ] );
-            var groupType = mmtfData.groupList[ mmtfData.groupTypeList[ groupIndex ] ];
-            console.log( "groupName", groupType.groupName );
-            if( mmtfData.secStructList ){
-                console.log( "secStruct", mmtfData.secStructList[ groupIndex ] );
-            }
-            if( mmtfData.insCodeList ){
-                console.log( "insCode", mmtfData.insCodeList[ groupIndex ] );
-            }
-            if( mmtfData.sequenceIndexList ){
-                console.log( "sequenceIndex", mmtfData.sequenceIndexList[ groupIndex ] );
-            }
-            var groupAtomCount = groupType.atomNameList.length;
-            for( var k = 0; k < groupAtomCount; ++k ){
-                console.log( "atomIndex", atomIndex );
-                console.log( "atomId", mmtfData.atomIdList[ atomIndex ] );
-                console.log( "element", groupType.elementList[ k ] );
-                console.log( "atomName", groupType.atomNameList[ k ] );
-                console.log( "formalCharge", groupType.atomChargeList[ k ] );
-                console.log( "xCoord", mmtfData.xCoordList[ atomIndex ] );
-                console.log( "yCoord", mmtfData.yCoordList[ atomIndex ] );
-                console.log( "zCoord", mmtfData.zCoordList[ atomIndex ] );
-                if( mmtfData.bFactorList ){
-                    console.log( "bFactor", mmtfData.bFactorList[ atomIndex ] );
-                }
-                if( mmtfData.altLocList ){
-                    console.log( "altLoc", mmtfData.altLocList[ atomIndex ] );
-                }
-                if( mmtfData.occupancyList ){
-                    console.log( "occupancy", mmtfData.occupancyList[ atomIndex ] );
-                }
-                atomIndex += 1;
-            }
-            groupIndex += 1;
-        }
-        chainIndex += 1;
-    }
-    modelIndex += 1;
-} );
-```
-
-
-## Iterator
-
-Helper class to loop over the structural data in the decoded `mmtf` data. Available as `MMTF.Iterator` from [mmtf.js](dist/mmtf.js). Runnable example in [mmtf-iterator.html](examples/mmtf-iterator.html).
+Helper function to loop over the structural data in the decoded `mmtf` data. Available as `MMTF.traverse` from [mmtf.js](dist/mmtf.js). Runnable example in [mmtf-traversal.html](examples/mmtf-traversal.html).
 
 
 ### Example
 
 ```JavaScript
-// bin is Uint8Array containing the mmtf msgpack
+// bin is an Uint8Array containing the mmtf msgpack
 var mmtfData = MMTF.decode( bin );
-var mmtfIterator = new MMTF.Iterator( mmtfData );
-mmtfIterator.eachAtom(
-    function(
-        element, atomName, formalCharge,
-        xCoord, yCoord, zCoord, bFactor,
-        atomId, altLoc, occupancy
-    ){
-        console.log(
-            element, atomName, formalCharge,
-            xCoord, yCoord, zCoord, bFactor,
-            atomId, altLoc, occupancy
-        );
-    }
-)
+var callbackDict = {
+    onModel: function( modelData ){ console.log( modelData ) },
+    onChain: function( chainData ){ console.log( chainData ) },
+    onGroup: function( groupData ){ console.log( groupData ) },
+    onAtom: function( atomData ){ console.log( atomData ) },
+    onBond: function( bondData ){ console.log( bondData ) }
+};
+MMTF.traverse( mmtfData, callbackDict );
 ```
 
 
-### Methods
+### Objects
 
-#### eachBond
-
-*Signature*: `eachBond( callback )`
-
-Arguments passed to `callback`:
+#### bondData
 
 | Name                      | Type           | Description                                    |
 |---------------------------|----------------|------------------------------------------------|
@@ -235,17 +152,13 @@ Arguments passed to `callback`:
 | bondOrder                 | `Integer|null` | Order of the bond                              |
 
 
-#### eachAtom
-
-*Signature*: `eachAtom( callback )`
-
-Arguments passed to `callback`:
+#### atomData
 
 | Name                      | Type           | Description                                    |
 |---------------------------|----------------|------------------------------------------------|
 | element                   | `String`       | Element                                        |
 | atomName                  | `String`       | Atom name                                      |
-| formalCharge              | `Integer`      | Formal charge                                  |
+| atomCharge                | `Integer`      | Formal charge                                  |
 | xCoord                    | `Float`        | X coordinate                                   |
 | yCoord                    | `Float`        | Y coordinate                                   |
 | zCoord                    | `Float`        | Z coordinate                                   |
@@ -253,13 +166,13 @@ Arguments passed to `callback`:
 | atomId                    | `Integer|null` | Atom ID                                        |
 | altLoc                    | `Char|null`    | Alternate location label                       |
 | occupancy                 | `Float|null`   | Occupancy                                      |
+| atomIndex                 | `Integer`      | Index of the atom                              |
+| groupIndex                | `Integer`      | Index of the group                             |
+| chainIndex                | `Integer`      | Index of the chain                             |
+| modelIndex                | `Integer`      | Index of the model                             |
 
 
-#### eachGroup
-
-*Signature*: `eachGroup( callback )`
-
-Arguments passed to `callback`:
+#### groupData
 
 | Name                      | Type           | Description                                    |
 |---------------------------|----------------|------------------------------------------------|
@@ -271,31 +184,26 @@ Arguments passed to `callback`:
 | secStruct                 | `Integer|null` | Secondary structure code                       |
 | insCode                   | `Char|null`    | Insertion code                                 |
 | sequenceIndex             | `Integer|null` | Sequence index                                 |
-| atomOffset                | `Integer`      | Pointer to data of the group's first atom      |
 | atomCount                 | `Integer`      | Number of atoms in the group                   |
+| groupIndex                | `Integer`      | Index of the group                             |
+| chainIndex                | `Integer`      | Index of the chain                             |
+| modelIndex                | `Integer`      | Index of the model                             |
 
 
-#### eachChain
-
-*Signature*: `eachChain( callback )`
-
-Arguments passed to `callback`:
+#### chainData
 
 | Name                      | Type           | Description                                    |
 |---------------------------|----------------|------------------------------------------------|
 | chainId                   | `String`       | Chain ID                                       |
 | chainName                 | `String|null`  | Chain name                                     |
-| groupOffset               | `Integer`      | Pointer to data of the chain's first group     |
 | groupCount                | `Integer`      | Number of groups in the chain                  |
+| chainIndex                | `Integer`      | Index of the chain                             |
+| modelIndex                | `Integer`      | Index of the model                             |
 
 
-#### eachModel
-
-*Signature*: `eachModel( callback )`
-
-Arguments passed to `callback`:
+#### modelData
 
 | Name                      | Type           | Description                                    |
 |---------------------------|----------------|------------------------------------------------|
-| chainOffset               | `Integer`      | Pointer to data of the models's first chain    |
+| modelIndex                | `Integer`      | Index of the model                             |
 | chainCount                | `Integer`      | Number of chains in the model                  |
