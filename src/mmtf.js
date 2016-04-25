@@ -7,6 +7,8 @@ import decodeMsgpack from "./msgpack-decode.js";
 import decodeMmtf from "./mmtf-decode.js";
 import traverseMmtf from "./mmtf-traverse.js";
 
+var version = "v0.1.1dev";
+
 /**
  * Decode MMTF fields
  * @param  {Uint8Array|ArrayBuffer|Object} binOrDict - binary MessagePack or encoded MMTF data

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file, following t
 - MMTF namespace
 - MMTF.decode convenience function that includes msgpack deserialization
 - MMTF.traverse function to loop over the structure hierarchy
+- MMTF.version
 
 ### Changed
 - decoupled serialization from decoding, no more msgpack deserialization in `decodeMmtf`
