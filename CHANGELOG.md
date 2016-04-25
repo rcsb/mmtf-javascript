@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file, following t
 
 ### Removed
 - MmtfIterator, use traversal function instead
+- removed old examples
 
 
 ## v0.1.0 - 2016-04-13
