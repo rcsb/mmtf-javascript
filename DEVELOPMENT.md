@@ -10,4 +10,6 @@ Change the version number in:
 - CHANGELOG.md
 - src/mmtf.js
 
+Make sure the distribution files are up-to-date.
+
 Push to github. Make a release on github, tag the commit and copy the relevant info from the changelog file.
