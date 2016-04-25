@@ -21,7 +21,7 @@ QUnit.test( "onBond", function( assert ) {
     traverseMmtf( decodedMmtf, { onBond: onBond } );
 });
 
-QUnit.test( "eachAtom", function( assert ) {
+QUnit.test( "onAtom", function( assert ) {
     var dict = getFilledFullMmtfDict();
     var decodedMmtf = decodeMmtf( dict );
     var expected = [
@@ -66,7 +66,7 @@ QUnit.test( "eachAtom", function( assert ) {
     traverseMmtf( decodedMmtf, { onAtom: onAtom } );
 });
 
-QUnit.test( "eachGroup", function( assert ) {
+QUnit.test( "onGroup", function( assert ) {
     var dict = getFilledFullMmtfDict();
     var decodedMmtf = decodeMmtf( dict );
     var expected = [
@@ -93,7 +93,7 @@ QUnit.test( "eachGroup", function( assert ) {
     traverseMmtf( decodedMmtf, { onGroup: onGroup } );
 });
 
-QUnit.test( "eachChain", function( assert ) {
+QUnit.test( "onChain", function( assert ) {
     var dict = getFilledFullMmtfDict();
     var decodedMmtf = decodeMmtf( dict );
     var expected = [
@@ -113,7 +113,7 @@ QUnit.test( "eachChain", function( assert ) {
     traverseMmtf( decodedMmtf, { onChain: onChain } );
 });
 
-QUnit.test( "eachModel", function( assert ) {
+QUnit.test( "onModel", function( assert ) {
     var dict = getFilledFullMmtfDict();
     var decodedMmtf = decodeMmtf( dict );
     var expected = [
