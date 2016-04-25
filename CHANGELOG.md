@@ -2,11 +2,12 @@
 All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased]
+## [v0.2.0] - 2016-04-25
 ### Added
 - MMTF namespace
 - MMTF.decode convenience function that includes msgpack deserialization
 - MMTF.traverse function to loop over the structure hierarchy
+- script/report.js for basic reporting on a large number of structures
 - MMTF.version
 
 ### Changed
@@ -24,4 +25,4 @@ All notable changes to this project will be documented in this file, following t
 - Initial release
 
 
-[Unreleased]: https://github.com/rcsb/mmtf-javascript/compare/v0.1.0...HEAD
+[v0.2.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.1.0...v0.2.0

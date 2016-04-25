@@ -7,7 +7,7 @@ import decodeMsgpack from "./msgpack-decode.js";
 import decodeMmtf from "./mmtf-decode.js";
 import traverseMmtf from "./mmtf-traverse.js";
 
-var version = "v0.1.1dev";
+var version = "v0.2.0";
 
 /**
  * Decode MMTF fields
