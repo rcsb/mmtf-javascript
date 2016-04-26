@@ -18,7 +18,7 @@ import traverseMmtf from "./mmtf-traverse.js";
  * @static
  * @type {String}
  */
-var version = "v0.2.2dev";
+var version = "v0.2.2";
 
 /**
  * Decode MMTF fields
