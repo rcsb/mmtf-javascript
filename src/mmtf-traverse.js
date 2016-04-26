@@ -95,7 +95,7 @@ function fromCharCode( charCodeArray ){
  */
 function traverseMmtf( mmtfData, eventCallbacks ){
 
-    // setup cllbacks
+    // setup callbacks
     var onModel = eventCallbacks.onModel;
     var onChain = eventCallbacks.onChain;
     var onGroup = eventCallbacks.onGroup;
@@ -119,14 +119,20 @@ function traverseMmtf( mmtfData, eventCallbacks ){
     var bondAtomList = mmtfData.bondAtomList;
     var bondOrderList = mmtfData.bondOrderList;
 
+    // setup event stop flags
+    var stopModelEvent = false;
+    var stopChainEvent = false;
+    var stopGroupEvent = false;
+    var stopAtomEvent = false;
+
     // hoisted loop variables
     var i, j, k, kl;
 
     // loop over all models
     mmtfData.chainsPerModel.forEach( function( modelChainCount ){
 
-        if( onModel ){
-            onModel({
+        if( onModel && !stopModelEvent ){
+            stopModelEvent = false === onModel({
                 chainCount: modelChainCount,
                 modelIndex: modelIndex
             });
@@ -135,7 +141,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
         for( i = 0; i < modelChainCount; ++i ){
 
             var chainGroupCount = mmtfData.groupsPerChain[ chainIndex ];
-            if( onChain ){
+            if( onChain && !stopChainEvent && !stopModelEvent ){
                 var chainId = fromCharCode(
                     mmtfData.chainIdList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
                 );
@@ -145,7 +151,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                         chainNameList.subarray( chainIndex * 4, chainIndex * 4 + 4 )
                     );
                 }
-                onChain({
+                stopChainEvent = false === onChain({
                     groupCount: chainGroupCount,
                     chainIndex: chainIndex,
                     modelIndex: modelIndex,
@@ -158,7 +164,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
 
                 var groupData = mmtfData.groupList[ mmtfData.groupTypeList[ groupIndex ] ];
                 var groupAtomCount = groupData.atomNameList.length;
-                if( onGroup ){
+                if( onGroup && !stopGroupEvent && !stopChainEvent && !stopModelEvent ){
                     var secStruct = null;
                     if( secStructList ){
                         secStruct = secStructList[ groupIndex ];
@@ -171,7 +177,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                     if( sequenceIndexList ){
                         sequenceIndex = sequenceIndexList[ groupIndex ];
                     }
-                    onGroup({
+                    stopGroupEvent = false === onGroup({
                         atomCount: groupAtomCount,
                         groupIndex: groupIndex,
                         chainIndex: chainIndex,
@@ -189,7 +195,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
 
                 for( k = 0; k < groupAtomCount; ++k ){
 
-                    if( onAtom ){
+                    if( onAtom && !stopAtomEvent && !stopGroupEvent && !stopChainEvent && !stopModelEvent ){
                         var bFactor = null;
                         if( bFactorList ){
                             bFactor = bFactorList[ atomIndex ];
@@ -202,7 +208,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                         if( occupancyList ){
                             occupancy = occupancyList[ atomIndex ];
                         }
-                        onAtom({
+                        stopAtomEvent = false === onAtom({
                             atomIndex: atomIndex,
                             groupIndex: groupIndex,
                             chainIndex: chainIndex,
@@ -223,7 +229,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                     atomIndex += 1;
                 }
 
-                if( onBond ){
+                if( onBond && !stopGroupEvent && !stopChainEvent && !stopModelEvent ){
                     // intra group bonds
                     var bondAtomList = groupData.bondAtomList;
                     for( k = 0, kl = groupData.bondOrderList.length; k < kl; ++k ){
@@ -235,12 +241,15 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                     }
                 }
 
+                stopAtomEvent = false;
                 groupIndex += 1;
             }
 
+            stopGroupEvent = false;
             chainIndex += 1;
         }
 
+        stopChainEvent = false;
         modelIndex += 1;
     } );
 

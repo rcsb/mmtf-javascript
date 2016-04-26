@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file, following t
 ## [Unreleased]
 ### Added
 - traverse atoms before group-bonds in `MMTF.traverse`
+- WIP: short circuit structure traversal by return false from event callbacks
 
 
 ## [v0.2.2] - 2016-04-26
