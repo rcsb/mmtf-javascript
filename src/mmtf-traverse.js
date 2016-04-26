@@ -59,14 +59,14 @@ function fromCharCode( charCodeArray ){
  *     - @param {Integer} bondData.atomIndex2
  *     - @param {Integer} bondData.bondOrder
  */
-function traverseMmtf( mmtfData, callbackDict ){
+function traverseMmtf( mmtfData, eventCallbacks ){
 
-    // setup callback functions
-    var onModel = callbackDict.onModel;
-    var onChain = callbackDict.onChain;
-    var onGroup = callbackDict.onGroup;
-    var onAtom = callbackDict.onAtom;
-    var onBond = callbackDict.onBond;
+    // setup cllbacks
+    var onModel = eventCallbacks.onModel;
+    var onChain = eventCallbacks.onChain;
+    var onGroup = eventCallbacks.onGroup;
+    var onAtom = eventCallbacks.onAtom;
+    var onBond = eventCallbacks.onBond;
 
     // setup index counters
     var modelIndex = 0;

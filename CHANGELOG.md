@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [Unreleased]
+### Changed
+- renamed second MMTF.traverse argument from `callbackDict` to `eventCallbacks`
+
+
 ## [v0.2.1] - 2016-04-25
 ### Changed
 - fixed MMTF.version not included in distribution files
@@ -30,5 +35,6 @@ All notable changes to this project will be documented in this file, following t
 - Initial release
 
 
+[Unreleased]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.1...HEAD
 [v0.2.1]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.1.0...v0.2.0
