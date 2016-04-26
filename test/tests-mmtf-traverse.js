@@ -129,3 +129,66 @@ QUnit.test( "onModel", function( assert ) {
     };
     traverseMmtf( decodedMmtf, { onModel: onModel } );
 });
+
+QUnit.test( "traverse atoms before group-bonds", function( assert ) {
+    var dict = getFilledFullMmtfDict();
+    var decodedMmtf = decodeMmtf( dict );
+    var expected = [
+        {
+            "altLoc": "A",
+            "atomCharge": 2,
+            "atomId": 1,
+            "atomIndex": 0,
+            "atomName": "C",
+            "bFactor": 99.98999786376953,
+            "chainIndex": 0,
+            "element": "C",
+            "groupIndex": 0,
+            "modelIndex": 0,
+            "occupancy": 0.6000000238418579,
+            "xCoord": 50,
+            "yCoord": 60,
+            "zCoord": 70
+        },
+        {
+            "altLoc": "B",
+            "atomCharge": 1,
+            "atomId": 2,
+            "atomIndex": 1,
+            "atomName": "N",
+            "bFactor": 100,
+            "chainIndex": 0,
+            "element": "N",
+            "groupIndex": 0,
+            "modelIndex": 0,
+            "occupancy": 0.4000000059604645,
+            "xCoord": 52,
+            "yCoord": 63,
+            "zCoord": 74
+        },
+        {
+            "atomIndex1": 0,
+            "atomIndex2": 1,
+            "bondOrder": 2
+        },
+        {
+            "atomIndex1": 0,
+            "atomIndex2": 1,
+            "bondOrder": 2
+        },
+        {
+            "atomIndex1": 0,
+            "atomIndex2": 0,
+            "bondOrder": 0
+        }
+    ];
+    var traversed = [];
+    var onAtom = function( atomData ){
+        traversed.push( atomData );
+    };
+    var onBond = function( bondData ){
+        traversed.push( bondData );
+    };
+    traverseMmtf( decodedMmtf, { onAtom: onAtom, onBond: onBond } );
+    assert.deepEqual( traversed, expected, "traversed data differs" );
+});

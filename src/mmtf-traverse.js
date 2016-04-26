@@ -187,18 +187,6 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                     });
                 }
 
-                if( onBond ){
-                    // intra group bonds
-                    var bondAtomList = groupData.bondAtomList;
-                    for( k = 0, kl = groupData.bondOrderList.length; k < kl; ++k ){
-                        onBond({
-                            atomIndex1: atomIndex + bondAtomList[ k * 2 ],
-                            atomIndex2: atomIndex + bondAtomList[ k * 2 + 1 ],
-                            bondOrder: groupData.bondOrderList[ k ]
-                        });
-                    }
-                }
-
                 for( k = 0; k < groupAtomCount; ++k ){
 
                     if( onAtom ){
@@ -233,6 +221,18 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                     }
 
                     atomIndex += 1;
+                }
+
+                if( onBond ){
+                    // intra group bonds
+                    var bondAtomList = groupData.bondAtomList;
+                    for( k = 0, kl = groupData.bondOrderList.length; k < kl; ++k ){
+                        onBond({
+                            atomIndex1: atomIndex - groupAtomCount + bondAtomList[ k * 2 ],
+                            atomIndex2: atomIndex - groupAtomCount + bondAtomList[ k * 2 + 1 ],
+                            bondOrder: groupData.bondOrderList[ k ]
+                        });
+                    }
                 }
 
                 groupIndex += 1;
