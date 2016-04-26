@@ -7,6 +7,29 @@ var sourcemaps = require('gulp-sourcemaps');
 var qunit = require('gulp-qunit');
 var uglify = require('gulp-uglify');
 var del = require('del');
+var jsdoc = require("gulp-jsdoc3");
+
+gulp.task('doc', function() {
+  var config = {
+    "templates": {
+      "cleverLinks": false,
+      "monospaceLinks": false,
+      "default": {
+        "outputSourceFiles": true
+      },
+      "path": "ink-bootstrap",
+      "theme": "spacelab",
+      "navType": "vertical",
+      "linenums": true,
+      "dateFormat": "MMMM Do YYYY, h:mm:ss a"
+    },
+    "opts": {
+      "destination": "./docs/api/"
+    }
+  }
+  return gulp.src(['./docs/api-overview.md', './src/*.js'], {read: false})
+    .pipe(jsdoc(config));
+});
 
 gulp.task('clean', function() {
   del(['dist', 'build']);

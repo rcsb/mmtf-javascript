@@ -1,10 +1,17 @@
 /**
  * @file mmtf-traverse
+ * @private
  * @author Alexander Rose <alexander.rose@weirdbyte.de>
  */
 
 /**
+ * mmtf traverse module.
+ * @module MmtfTraverse
+ */
+
+/**
  * Converts an array of ASCII codes trimming '\0' bytes
+ * @private
  * @param  {Array} charCodeArray - array of ASCII char codes
  * @return {String} '\0' trimmed string
  */
@@ -12,52 +19,79 @@ function fromCharCode( charCodeArray ){
     return String.fromCharCode.apply( null, charCodeArray ).replace(/\0/g, '');
 }
 
+
+/**
+ * @callback module:MmtfTraverse.onModel
+ * @param {Object} modelData
+ * @param {Integer} modelData.chainCount
+ * @param {Integer} modelData.modelIndex
+ */
+
+/**
+ * @callback module:MmtfTraverse.onChain
+ * @param {Object} chainData
+ * @param {Integer} chainData.groupCount
+ * @param {Integer} chainData.chainIndex
+ * @param {Integer} chainData.modelIndex
+ * @param {String} chainData.chainId
+ * @param {?String} chainData.chainName
+ */
+
+/**
+ * @callback module:MmtfTraverse.onGroup
+ * @param {Object} groupData
+ * @param {Integer} groupData.atomCount
+ * @param {Integer} groupData.groupIndex
+ * @param {Integer} groupData.chainIndex
+ * @param {Integer} groupData.modelIndex
+ * @param {Integer} groupData.groupId
+ * @param {Integer} groupData.groupType
+ * @param {String} groupData.groupName
+ * @param {Char} groupData.singleLetterCode
+ * @param {String} groupData.chemCompType
+ * @param {?Integer} groupData.secStruct
+ * @param {?Char} groupData.insCode
+ * @param {?Integer} groupData.sequenceIndex
+ */
+
+/**
+ * @callback module:MmtfTraverse.onAtom
+ * @param {Object} atomData
+ * @param {Integer} atomData.atomIndex
+ * @param {Integer} atomData.groupIndex
+ * @param {Integer} atomData.chainIndex
+ * @param {Integer} atomData.modelIndex
+ * @param {Integer} atomData.atomId
+ * @param {String} atomData.element
+ * @param {String} atomData.atomName
+ * @param {Integer} atomData.atomCharge
+ * @param {Float} atomData.xCoord
+ * @param {Float} atomData.yCoord
+ * @param {Float} atomData.zCoord
+ * @param {?Float} atomData.bFactor
+ * @param {?Char} atomData.altLoc
+ * @param {?Float} atomData.occupancy
+ */
+
+/**
+ * @callback module:MmtfTraverse.onBond
+ * @param {Object} bondData
+ * @param {Integer} bondData.atomIndex1
+ * @param {Integer} bondData.atomIndex2
+ * @param {Integer} bondData.bondOrder
+ */
+
+
 /**
  * Traverse the MMTF structure data.
- * @class
- * @param {Object} mmtfData - decoded mmtf data
- * @param {Object} callbackDict - callback functions
- *  - @param {Function} callbackDict.onModel(modelData) - called for each model
- *     - @param {Integer} modelData.chainCount
- *     - @param {Integer} modelData.modelIndex
- *  - @param {Function} callbackDict.onChain(chainData) - called for each chain
- *     - @param {Integer} chainData.groupCount
- *     - @param {Integer} chainData.chainIndex
- *     - @param {Integer} chainData.modelIndex
- *     - @param {String} chainData.chainId
- *     - @param {String|null} chainData.chainName
- *  - @param {Function} callbackDict.onGroup(groupData) - called for each group
- *     - @param {Integer} groupData.atomCount
- *     - @param {Integer} groupData.groupIndex
- *     - @param {Integer} groupData.chainIndex
- *     - @param {Integer} groupData.modelIndex
- *     - @param {Integer} groupData.groupId
- *     - @param {Integer} groupData.groupType
- *     - @param {String} groupData.groupName
- *     - @param {Char} groupData.singleLetterCode
- *     - @param {String} groupData.chemCompType
- *     - @param {Integer|null} groupData.secStruct
- *     - @param {Char|null} groupData.insCode
- *     - @param {Integer|null} groupData.sequenceIndex
- *  - @param {Function} callbackDict.onAtom(atomData) - called for each atom
- *     - @param {Integer} atomData.atomIndex
- *     - @param {Integer} atomData.groupIndex
- *     - @param {Integer} atomData.chainIndex
- *     - @param {Integer} atomData.modelIndex
- *     - @param {Integer} atomData.atomId
- *     - @param {String} atomData.element
- *     - @param {String} atomData.atomName
- *     - @param {Integer} atomData.atomCharge
- *     - @param {Float} atomData.xCoord
- *     - @param {Float} atomData.yCoord
- *     - @param {Float} atomData.zCoord
- *     - @param {Float|null} atomData.bFactor
- *     - @param {Char|null} atomData.altLoc
- *     - @param {Float|null} atomData.occupancy
- *  - @param {Function} callbackDict.onBond(bondData) - called for each bond
- *     - @param {Integer} bondData.atomIndex1
- *     - @param {Integer} bondData.atomIndex2
- *     - @param {Integer} bondData.bondOrder
+ * @static
+ * @param {module:MmtfDecode.MmtfData} mmtfData - decoded mmtf data
+ * @param {Object} eventCallbacks
+ * @param {module:MmtfTraverse.onModel} eventCallbacks.onModel - called for each model
+ * @param {module:MmtfTraverse.onChain} eventCallbacks.onChain - called for each chain
+ * @param {module:MmtfTraverse.onGroup} eventCallbacks.onGroup - called for each group
+ * @param {module:MmtfTraverse.onAtom} eventCallbacks.onAtom - called for each atom
+ * @param {module:MmtfTraverse.onBond} eventCallbacks.onBond - called for each bond
  */
 function traverseMmtf( mmtfData, eventCallbacks ){
 

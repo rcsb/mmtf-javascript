@@ -1,10 +1,17 @@
 /**
  * @file msgpack-decode
+ * @private
  * @author Alexander Rose <alexander.rose@weirdbyte.de>
  */
 
 /**
+ * msgpack decode module.
+ * @module MsgpackDecode
+ */
+
+/**
  * decode binary encoded MessagePack v5 (http://msgpack.org/) data
+ * @static
  * @param  {Uint8Array} buffer - binary encoded MessagePack data
  * @return {Object|Array|String|Number|Boolean|null} decoded Messagepack data
  */

@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file, following t
 
 
 ## [Unreleased]
+### Added
+- jsdoc api documentation
+
 ### Changed
 - renamed second MMTF.traverse argument from `callbackDict` to `eventCallbacks`
 

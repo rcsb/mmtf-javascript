@@ -1,10 +1,17 @@
 /**
  * @file mmtf-utils
+ * @private
  * @author Alexander Rose <alexander.rose@weirdbyte.de>
  */
 
 /**
+ * mmtf utils module.
+ * @module MmtfUtils
+ */
+
+/**
  * get an Uint8Array view on the input array memory
+ * @static
  * @param  {TypedArray} dataArray - input array
  * @return {Uint8Array} new view on the input array memory
  */
@@ -16,6 +23,7 @@ function getUint8View( dataArray ){
 
 /**
  * get an Int8Array view on the input array memory
+ * @static
  * @param  {TypedArray} dataArray - input array
  * @return {Int8Array} new view on the input array memory
  */
@@ -27,6 +35,7 @@ function getInt8View( dataArray ){
 
 /**
  * get an Int16Array copy of the the input array data
+ * @static
  * @param  {TypedArray} view - input data in big endian format
  * @param  {Int16Array} [dataArray] - pre-allocated output array
  * @return {Int16Array} copy of the input array data
@@ -44,6 +53,7 @@ function getInt16( view, dataArray ){
 
 /**
  * make big endian buffer of an int16 array
+ * @static
  * @param  {Array|TypedArray} array - array of int16 values
  * @return {ArrayBuffer} big endian buffer
  */
@@ -59,6 +69,7 @@ function makeInt16Buffer( array ){
 
 /**
  * get an Int32Array copy of the the input array data
+ * @static
  * @param  {TypedArray} view - input data in big endian format
  * @param  {Int32Array} [dataArray] - pre-allocated output array
  * @return {Int32Array} copy of the input array data
@@ -79,6 +90,7 @@ function getInt32( view, dataArray ){
 
 /**
  * get an Int32Array view on the input array memory
+ * @static
  * @param  {TypedArray} dataArray - input array
  * @return {Int32Array} new view on the input array memory
  */
@@ -90,6 +102,7 @@ function getInt32View( dataArray ){
 
 /**
  * make big endian buffer of an int32 array
+ * @static
  * @param  {Array|TypedArray} array - array of int32 values
  * @return {ArrayBuffer} big endian buffer
  */
@@ -109,6 +122,7 @@ function makeInt32Buffer( array ){
  *     intArray: [ 12, 34, 543, 687, 2, 0, 4689 ]
  *     divisor: 100
  *     return: [ 0.12, 0.34, 5.43, 6.87, 0.02, 0.00, 46.89 ]
+ * @static
  * @param  {TypedArray|Array} intArray - input array containing integers
  * @param  {Number} divisor - number to devide the integers to obtain floats
  * @param  {Float32Array} [dataArray] - pre-allocated output array
@@ -130,6 +144,7 @@ function decodeIntegerToFloat( intArray, divisor, dataArray ){
  * example:
  *     array: [ 0, 2, 3, 5 ]  // pairs of values and length of a run
  *     return: [ 0, 0, 3, 3, 3, 3, 3 ]
+ * @static
  * @param  {TypedArray|Array} array - run-length encoded input array
  * @param  {TypedArray|Array} [dataArray] - pre-allocated output array
  * @return {TypedArray|Array} decoded array
@@ -163,6 +178,7 @@ function decodeRunLength( array, dataArray ){
  * example:
  *     dataArray: [ 0, 2, 1, 2, 1, 1, -4, -2, 9 ]
  *     return: [ 0, 2, 3, 5, 6, 7, 3, 1, 10 ]
+ * @static
  * @param  {TypedArray|Array} dataArray - delta encoded input array
  * @return {TypedArray|Array} decoded array
  */
@@ -180,6 +196,7 @@ function decodeDelta( dataArray ){
  *     bigArray: [ 200, 3, 100, 2 ]
  *     smallArray: [ 0, 2, -1, -3, 5 ]
  *     return: [ 200, 200, 202, 201, 301, 298, 303 ]
+ * @static
  * @param  {Uint8Array} bigArray - int32 array as bytes in big endian format,
  *                                 pairs of large delta values and number of following
  *                                 small delta values to be read from smallArray
@@ -218,6 +235,7 @@ function decodeSplitListDelta( bigArray, smallArray, dataArray ){
  *     smallArray: [ 0, 2, -1, -3, 5 ]
  *     divisor: 100
  *     return: [ 1.00, 1.00, 1.02, 1.01, -0.99, -1.02, -0.97 ]
+ * @static
  * @param  {Uint8Array} bigArray - int32 array as bytes in big endian format,
  *                                 pairs of large delta values and number of following
  *                                 small delta values to be read from smallArray
@@ -244,6 +262,7 @@ function decodeFloatSplitListDelta( bigArray, smallArray, divisor, dataArray ){
  *     array: [ 320, 3, 100, 2 ]
  *     divisor: 100
  *     return: [ 3.20, 3.20, 3.20, 1.00, 1.00 ]
+ * @static
  * @param  {Uint8Array} array - run-length encoded int32 array as bytes in big endian format
  * @param  {Integer} divisor - number to devide the integers to obtain floats
  * @param  {Float32Array} dataArray - pre-allocated output array
