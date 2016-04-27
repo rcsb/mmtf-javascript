@@ -79,6 +79,8 @@ export {
      * @param {module:MmtfTraverse.onGroup} [eventCallbacks.onGroup] - called for each group
      * @param {module:MmtfTraverse.onAtom} [eventCallbacks.onAtom] - called for each atom
      * @param {module:MmtfTraverse.onBond} [eventCallbacks.onBond] - called for each bond
+     * @param {Object} [params] - traversal parameters
+     * @param {Boolean} [params.firstModelOnly] - traverse only the first model
      */
     traverseMmtf as traverse,
     version

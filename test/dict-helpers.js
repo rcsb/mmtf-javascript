@@ -233,3 +233,48 @@ function getFilledRequiredMmtfDict(){
         chainsPerModel: [ 1 ],
     };
 }
+
+function getMultiModelMmtfDict(){
+    return {
+        // meta
+        mmtfVersion: "0.1",
+        mmtfProducer: "unittest",
+
+        // counts
+        numBonds: 2,
+        numAtoms: 4,
+
+        // lists
+        groupList: [
+            {
+                atomChargeList: [ 1, 0 ],
+                elementList: [ "C", "N" ],
+                atomNameList: [ "C", "N" ],
+                bondAtomList: [ 0, 1 ],
+                bondOrderList: [ 2 ],
+                chemCompType: "L-PEPTIDE LINKING",
+                singleLetterCode: "G",
+                groupName: "GLY"
+            }
+        ],
+
+        // atoms
+        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 10000, 1, 40000, 1 ] ) ),
+        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 1000, 1000 ] ) ),
+        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 20000, 1, 50000, 1 ] ) ),
+        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 2000, 2000 ] ) ),
+        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 30000, 1, 60000, 1 ] ) ),
+        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 3000, 3000 ] ) ),
+
+        // groups
+        groupIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100, 1, 1, 1 ] ) ),
+        groupTypeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0, 0 ] ) ),
+
+        // chains
+        chainIdList: new Uint8Array( [ 65, 0, 0, 0, 66, 0, 0, 0 ] ),
+        groupsPerChain: [ 1, 1 ],
+
+        // models
+        chainsPerModel: [ 1, 1 ],
+    };
+}

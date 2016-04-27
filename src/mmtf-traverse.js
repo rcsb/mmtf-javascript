@@ -92,8 +92,14 @@ function fromCharCode( charCodeArray ){
  * @param {module:MmtfTraverse.onGroup} [eventCallbacks.onGroup] - called for each group
  * @param {module:MmtfTraverse.onAtom} [eventCallbacks.onAtom] - called for each atom
  * @param {module:MmtfTraverse.onBond} [eventCallbacks.onBond] - called for each bond
+ * @param {Object} [params] - traversal parameters
+ * @param {Boolean} [params.firstModelOnly] - traverse only the first model
  */
-function traverseMmtf( mmtfData, eventCallbacks ){
+function traverseMmtf( mmtfData, eventCallbacks, params ){
+
+    params = params || {};
+
+    var firstModelOnly = params.firstModelOnly;
 
     // setup callbacks
     var onModel = eventCallbacks.onModel;
@@ -121,10 +127,14 @@ function traverseMmtf( mmtfData, eventCallbacks ){
     var bondOrderList = mmtfData.bondOrderList;
 
     // hoisted loop variables
-    var i, j, k, kl;
+    var o, ol, i, j, k, kl;
 
     // loop over all models
-    mmtfData.chainsPerModel.forEach( function( modelChainCount ){
+    for( o = 0, ol = mmtfData.chainsPerModel.length; o < ol; ++o ){
+
+        if( firstModelOnly && modelIndex > 0 ) break;
+
+        var modelChainCount = mmtfData.chainsPerModel[ modelIndex ];
 
         if( onModel ){
             onModel({
@@ -247,7 +257,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
         }
 
         modelIndex += 1;
-    } );
+    }
 
     if( onBond ){
         // inter group bonds

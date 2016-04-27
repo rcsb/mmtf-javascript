@@ -285,3 +285,97 @@ QUnit.test( "traverse atoms before group-bonds", function( assert ) {
     traverseMmtf( decodedMmtf, { onAtom: onAtom, onBond: onBond } );
     assert.deepEqual( traversed, expected, "traversed data differs" );
 });
+
+QUnit.test( "traverse firstModelOnly", function( assert ) {
+    var dict = getMultiModelMmtfDict();
+    var decodedMmtf = decodeMmtf( dict );
+    var expected = [
+        {
+            "chainCount": 1,
+            "modelIndex": 0
+        },
+        {
+            "chainId": "A",
+            "chainIndex": 0,
+            "chainName": null,
+            "groupCount": 1,
+            "modelIndex": 0
+        },
+        {
+            "atomCount": 2,
+            "chainIndex": 0,
+            "chemCompType": "L-PEPTIDE LINKING",
+            "groupId": 100,
+            "groupIndex": 0,
+            "groupName": "GLY",
+            "groupType": 0,
+            "insCode": null,
+            "modelIndex": 0,
+            "secStruct": null,
+            "sequenceIndex": null,
+            "singleLetterCode": "G"
+        },
+        {
+            "altLoc": null,
+            "atomCharge": 1,
+            "atomId": null,
+            "atomIndex": 0,
+            "atomName": "C",
+            "bFactor": null,
+            "chainIndex": 0,
+            "element": "C",
+            "groupIndex": 0,
+            "modelIndex": 0,
+            "occupancy": null,
+            "xCoord": 10,
+            "yCoord": 20,
+            "zCoord": 30
+        },
+        {
+            "altLoc": null,
+            "atomCharge": 0,
+            "atomId": null,
+            "atomIndex": 1,
+            "atomName": "N",
+            "bFactor": null,
+            "chainIndex": 0,
+            "element": "N",
+            "groupIndex": 0,
+            "modelIndex": 0,
+            "occupancy": null,
+            "xCoord": 11,
+            "yCoord": 22,
+            "zCoord": 33
+        },
+        {
+            "atomIndex1": 0,
+            "atomIndex2": 1,
+            "bondOrder": 2
+        }
+    ];
+    var traversed = [];
+    var onModel = function( modelData ){
+        traversed.push( modelData );
+    };
+    var onChain = function( chainData ){
+        traversed.push( chainData );
+    };
+    var onGroup = function( groupData ){
+        traversed.push( groupData );
+    };
+    var onAtom = function( atomData ){
+        traversed.push( atomData );
+    };
+    var onBond = function( bondData ){
+        traversed.push( bondData );
+    };
+    traverseMmtf( decodedMmtf, {
+        onModel: onModel,
+        onChain: onChain,
+        onGroup: onGroup,
+        onAtom: onAtom,
+        onBond: onBond
+    }, { firstModelOnly: true } );
+    assert.equal( decodedMmtf.numModels, 2, "numModels differs" );
+    assert.deepEqual( traversed, expected, "traversed data differs" );
+});
