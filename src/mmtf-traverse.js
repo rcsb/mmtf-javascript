@@ -262,8 +262,6 @@ function traverseMmtf( mmtfData, eventCallbacks, params ){
         modelFirstAtomIndex = modelLastAtomIndex + 1;
         modelLastAtomIndex = atomIndex - 1;  // subtract one as it already has been incremented
 
-        console.log( modelFirstAtomIndex, modelLastAtomIndex )
-
         if( onBond ){
             // inter group bonds
             if( bondAtomList ){
