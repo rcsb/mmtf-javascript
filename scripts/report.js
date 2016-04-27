@@ -1,4 +1,6 @@
 
+require('es6-object-assign').polyfill();
+
 var fs = require('fs');
 var request = require('request');
 var http = require('http');

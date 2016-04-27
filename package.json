@@ -41,6 +41,7 @@
   "dependencies": {
     "argparse": "^1.0.7",
     "csv-write-stream": "^1.0.0",
+    "es6-object-assign": "^1.0.1",
     "performance-now": "^0.2.0",
     "promise": "^7.1.1",
     "request": "^2.72.0"
