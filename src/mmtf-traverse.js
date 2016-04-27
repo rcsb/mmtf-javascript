@@ -23,64 +23,65 @@ function fromCharCode( charCodeArray ){
 /**
  * @callback module:MmtfTraverse.onModel
  * @param {Object} modelData
- * @param {Integer} modelData.chainCount
- * @param {Integer} modelData.modelIndex
+ * @param {Integer} modelData.chainCount - number of chains in the model
+ * @param {Integer} modelData.modelIndex - index of the model
  */
 
 /**
  * @callback module:MmtfTraverse.onChain
  * @param {Object} chainData
- * @param {Integer} chainData.groupCount
- * @param {Integer} chainData.chainIndex
- * @param {Integer} chainData.modelIndex
- * @param {String} chainData.chainId
- * @param {?String} chainData.chainName
+ * @param {Integer} chainData.groupCount - number of groups in the chain
+ * @param {Integer} chainData.chainIndex - index of the chain
+ * @param {Integer} chainData.modelIndex - index of the parent model
+ * @param {String} chainData.chainId - chain id
+ * @param {?String} chainData.chainName - additional chain name
  */
 
 /**
  * @callback module:MmtfTraverse.onGroup
  * @param {Object} groupData
- * @param {Integer} groupData.atomCount
- * @param {Integer} groupData.groupIndex
- * @param {Integer} groupData.chainIndex
- * @param {Integer} groupData.modelIndex
- * @param {Integer} groupData.groupId
- * @param {Integer} groupData.groupType
- * @param {String} groupData.groupName
- * @param {Char} groupData.singleLetterCode
- * @param {String} groupData.chemCompType
- * @param {?Integer} groupData.secStruct - encoding
+ * @param {Integer} groupData.atomCount - number of atoms in the group
+ * @param {Integer} groupData.groupIndex - index of the group
+ * @param {Integer} groupData.chainIndex - index of the parent chain
+ * @param {Integer} groupData.modelIndex - index of the parent model
+ * @param {Integer} groupData.groupId - group id (residue number)
+ * @param {Integer} groupData.groupType - index to an entry in {@link module:MmtfDecode.MmtfData}#groupList
+ * @param {String} groupData.groupName - name of the group, 0 to 5 characters
+ * @param {Char} groupData.singleLetterCode - IUPAC single letter code, otherwise 'X', 1 character
+ * @param {String} groupData.chemCompType - chemical component type from the mmCIF dictionary
+ * @param {?Integer} groupData.secStruct - sencoded secondary structure |
  *    0: pi helix, 1: bend, 2: alpha helix, 3: extended,
  *    4: 3-10 helix, 5: bridge, 6: turn, 7: coil, -1: undefined
- * @param {?Char} groupData.insCode
- * @param {?Integer} groupData.sequenceIndex
+ * @param {?Char} groupData.insCode - insertion code
+ * @param {?Integer} groupData.sequenceIndex - index to the `sequence` property of
+ *    the corresponding entity, -1 when the entity has no sequence
  */
 
 /**
  * @callback module:MmtfTraverse.onAtom
  * @param {Object} atomData
- * @param {Integer} atomData.atomIndex
- * @param {Integer} atomData.groupIndex
- * @param {Integer} atomData.chainIndex
- * @param {Integer} atomData.modelIndex
- * @param {Integer} atomData.atomId
- * @param {String} atomData.element
- * @param {String} atomData.atomName
- * @param {Integer} atomData.atomCharge
- * @param {Float} atomData.xCoord
- * @param {Float} atomData.yCoord
- * @param {Float} atomData.zCoord
- * @param {?Float} atomData.bFactor
- * @param {?Char} atomData.altLoc
- * @param {?Float} atomData.occupancy
+ * @param {Integer} atomData.atomIndex - index of the atom
+ * @param {Integer} atomData.groupIndex - index of the parent group
+ * @param {Integer} atomData.chainIndex - index of the parent chain
+ * @param {Integer} atomData.modelIndex - index of the parent model
+ * @param {?Integer} atomData.atomId - atom id
+ * @param {String} atomData.element - IUPAC element name, 0 to 3 characters
+ * @param {String} atomData.atomName - name of the atom, 0 to 5 characters
+ * @param {Integer} atomData.atomCharge - formal charge of the atom
+ * @param {Float} atomData.xCoord - x coordinate in Å
+ * @param {Float} atomData.yCoord - y coordinate in Å
+ * @param {Float} atomData.zCoord - z coordinate in Å
+ * @param {?Float} atomData.bFactor - B-factor in in Å^2
+ * @param {?Char} atomData.altLoc - alternate location identifier
+ * @param {?Float} atomData.occupancy - occupancy of the atom
  */
 
 /**
  * @callback module:MmtfTraverse.onBond
  * @param {Object} bondData
- * @param {Integer} bondData.atomIndex1
- * @param {Integer} bondData.atomIndex2
- * @param {Integer} bondData.bondOrder
+ * @param {Integer} bondData.atomIndex1 - index of the first atom
+ * @param {Integer} bondData.atomIndex2 - index of the secound atom
+ * @param {Integer} bondData.bondOrder - bond order, allowed values are 1 to 3
  */
 
 
