@@ -74,11 +74,11 @@ export {
      *
      * @param {module:MmtfDecode.MmtfData} mmtfData - decoded mmtf data
      * @param {Object} eventCallbacks
-     * @param {module:MmtfTraverse.onModel} eventCallbacks.onModel - called for each model
-     * @param {module:MmtfTraverse.onChain} eventCallbacks.onChain - called for each chain
-     * @param {module:MmtfTraverse.onGroup} eventCallbacks.onGroup - called for each group
-     * @param {module:MmtfTraverse.onAtom} eventCallbacks.onAtom - called for each atom
-     * @param {module:MmtfTraverse.onBond} eventCallbacks.onBond - called for each bond
+     * @param {module:MmtfTraverse.onModel} [eventCallbacks.onModel] - called for each model
+     * @param {module:MmtfTraverse.onChain} [eventCallbacks.onChain] - called for each chain
+     * @param {module:MmtfTraverse.onGroup} [eventCallbacks.onGroup] - called for each group
+     * @param {module:MmtfTraverse.onAtom} [eventCallbacks.onAtom] - called for each atom
+     * @param {module:MmtfTraverse.onBond} [eventCallbacks.onBond] - called for each bond
      */
     traverseMmtf as traverse,
     version
