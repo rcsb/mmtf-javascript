@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file, following t
 - traverse inter-group bonds in order of models in MMTF.traverse
 - fix chainIds & chainNames to be left-alignment in test data
 - fixed MMTF.traverse not handling atomIdList being optional
+- allow multiple values for --file and --url args in report.js script
 
 
 ## [v0.2.2] - 2016-04-26

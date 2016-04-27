@@ -187,8 +187,22 @@ function getListSummary( list, promiseFn, params ){
     });
 }
 
-function getPdbidListSummary( pdbidList, params ){
+function getFileListSummary( fileList, params ){
     var t0 = now();
+    var p = Object.assign({}, params);
+    return getListSummary(fileList, getFileSummary, p);
+}
+
+function getUrlListSummary( urlList, params ){
+    var p = Object.assign({}, params);
+    var pool = new http.Agent();
+    pool.maxSockets = 5;
+    pool.maxFreeSockets = 5;
+    p.pool = pool;
+    return getListSummary(urlList, getUrlSummary, p);
+}
+
+function getPdbidListSummary( pdbidList, params ){
     var p = Object.assign({}, params);
     var pool = new http.Agent();
     pool.maxSockets = 5;
@@ -205,10 +219,12 @@ var parser = new ArgumentParser({
     description: 'Get MMTF files, decode them and report back statistics. Optionally store them.'
 });
 parser.addArgument( '--file', {
-    help: 'file path'
+    help: 'file path',
+    nargs: "*"
 });
 parser.addArgument( '--url', {
-    help: 'url'
+    help: 'url',
+    nargs: "*"
 });
 parser.addArgument('--pdbid', {
     help: 'list of pdb ids',
@@ -270,11 +286,11 @@ function printSummary (summary) {
 }
 
 if (args.file!==null) {
-    getFileSummary(args.file, args).then(printSummary);
+    getFileListSummary(args.file, args).then(printSummary);
 }
 
 if (args.url!==null) {
-    getUrlSummary(args.url, args).then(printSummary);
+    getUrlListSummary(args.url, args).then(printSummary);
 }
 
 if (args.pdbid!==null) {
