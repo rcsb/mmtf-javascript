@@ -113,6 +113,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
     var secStructList = mmtfData.secStructList;
     var insCodeList = mmtfData.insCodeList;
     var sequenceIndexList = mmtfData.sequenceIndexList;
+    var atomIdList = mmtfData.atomIdList;
     var bFactorList = mmtfData.bFactorList;
     var altLocList = mmtfData.altLocList;
     var occupancyList = mmtfData.occupancyList;
@@ -190,6 +191,10 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                 for( k = 0; k < groupAtomCount; ++k ){
 
                     if( onAtom ){
+                        var atomId = null;
+                        if( atomIdList ){
+                            atomId = atomIdList[ atomIndex ];
+                        }
                         var bFactor = null;
                         if( bFactorList ){
                             bFactor = bFactorList[ atomIndex ];
@@ -207,7 +212,7 @@ function traverseMmtf( mmtfData, eventCallbacks ){
                             groupIndex: groupIndex,
                             chainIndex: chainIndex,
                             modelIndex: modelIndex,
-                            atomId: mmtfData.atomIdList[ atomIndex ],
+                            atomId: atomId,
                             element: groupData.elementList[ k ],
                             atomName: groupData.atomNameList[ k ],
                             atomCharge: groupData.atomChargeList[ k ],
