@@ -49,7 +49,9 @@ function fromCharCode( charCodeArray ){
  * @param {String} groupData.groupName
  * @param {Char} groupData.singleLetterCode
  * @param {String} groupData.chemCompType
- * @param {?Integer} groupData.secStruct
+ * @param {?Integer} groupData.secStruct - encoding
+ *    0: pi helix, 1: bend, 2: alpha helix, 3: extended,
+ *    4: 3-10 helix, 5: bridge, 6: turn, 7: coil, -1: undefined
  * @param {?Char} groupData.insCode
  * @param {?Integer} groupData.sequenceIndex
  */

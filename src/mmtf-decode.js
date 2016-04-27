@@ -107,7 +107,9 @@ import {
  * @property {Float32Array} [occupancyList] - List of occupancies
  * @property {Int32Array} groupIdList - List of group ids
  * @property {Int32Array} groupTypeList - List of group types
- * @property {Int8Array} [secStructList] - List of secondary structure codes
+ * @property {Int8Array} [secStructList] - List of secondary structure codes, encoding
+ *    0: pi helix, 1: bend, 2: alpha helix, 3: extended,
+ *    4: 3-10 helix, 5: bridge, 6: turn, 7: coil, -1: undefined
  * @property {Uint8Array} [insCodeList] - List of insertion codes
  * @property {Int32Array} [seuenceIdList] - List of sequence ids
  * @property {Uint8Array} chainIdList - List of chain ids
