@@ -241,7 +241,7 @@ function getMultiModelMmtfDict(){
         mmtfProducer: "unittest",
 
         // counts
-        numBonds: 2,
+        numBonds: 4,
         numAtoms: 4,
 
         // lists
@@ -257,6 +257,10 @@ function getMultiModelMmtfDict(){
                 groupName: "GLY"
             }
         ],
+
+        // bonds
+        bondAtomList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 1, 0, 3, 2 ] ) ),
+        bondOrderList: new Uint8Array( new Uint8Array( [ 1, 1 ] ).buffer ),
 
         // atoms
         xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 10000, 1, 40000, 1 ] ) ),

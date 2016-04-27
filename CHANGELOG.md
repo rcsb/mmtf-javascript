@@ -4,11 +4,12 @@ All notable changes to this project will be documented in this file, following t
 
 ## [Unreleased]
 ### Added
-- traverse atoms before group-bonds in `MMTF.traverse`
 - check left-alignment of chainIds & chainNames
 - param argument for MMTF.traverse to traverse only the first model
 
 ### Changed
+- traverse atoms before group-bonds in MMTF.traverse
+- traverse inter-group bonds in order of models in MMTF.traverse
 - fix chainIds & chainNames to be left-alignment in test data
 - fixed MMTF.traverse not handling atomIdList being optional
 

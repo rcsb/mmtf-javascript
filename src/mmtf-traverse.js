@@ -114,6 +114,9 @@ function traverseMmtf( mmtfData, eventCallbacks, params ){
     var groupIndex = 0;
     var atomIndex = 0;
 
+    var modelFirstAtomIndex = 0;
+    var modelLastAtomIndex = -1;
+
     // setup optional fields
     var chainNameList = mmtfData.chainNameList;
     var secStructList = mmtfData.secStructList;
@@ -256,20 +259,31 @@ function traverseMmtf( mmtfData, eventCallbacks, params ){
             chainIndex += 1;
         }
 
-        modelIndex += 1;
-    }
+        modelFirstAtomIndex = modelLastAtomIndex + 1;
+        modelLastAtomIndex = atomIndex - 1;  // subtract one as it already has been incremented
 
-    if( onBond ){
-        // inter group bonds
-        if( bondAtomList ){
-            for( k = 0, kl = bondAtomList.length; k < kl; k += 2 ){
-                onBond({
-                    atomIndex1: bondAtomList[ k ],
-                    atomIndex2: bondAtomList[ k + 1 ],
-                    bondOrder: bondOrderList ? bondOrderList[ k / 2 ] : null
-                });
+        console.log( modelFirstAtomIndex, modelLastAtomIndex )
+
+        if( onBond ){
+            // inter group bonds
+            if( bondAtomList ){
+                for( k = 0, kl = bondAtomList.length; k < kl; k += 2 ){
+                    var atomIndex1 = bondAtomList[ k ];
+                    var atomIndex2 = bondAtomList[ k + 1 ];
+                    if( ( atomIndex1 >= modelFirstAtomIndex && atomIndex1 <= modelLastAtomIndex ) ||
+                        ( atomIndex2 >= modelFirstAtomIndex && atomIndex2 <= modelLastAtomIndex )
+                    ){
+                        onBond({
+                            atomIndex1: atomIndex1,
+                            atomIndex2: atomIndex2,
+                            bondOrder: bondOrderList ? bondOrderList[ k / 2 ] : null
+                        });
+                    }
+                }
             }
         }
+
+        modelIndex += 1;
     }
 
 }

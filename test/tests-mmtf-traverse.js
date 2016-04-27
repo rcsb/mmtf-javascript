@@ -286,6 +286,54 @@ QUnit.test( "traverse atoms before group-bonds", function( assert ) {
     assert.deepEqual( traversed, expected, "traversed data differs" );
 });
 
+QUnit.test( "traverse inter-group bonds in order of models", function( assert ) {
+    var dict = getMultiModelMmtfDict();
+    var decodedMmtf = decodeMmtf( dict );
+    var expected = [
+        {
+            "chainCount": 1,
+            "modelIndex": 0
+        },
+        {
+            "atomIndex1": 0,
+            "atomIndex2": 1,
+            "bondOrder": 2
+        },
+        {
+            "atomIndex1": 1,
+            "atomIndex2": 0,
+            "bondOrder": 1
+        },
+        {
+            "chainCount": 1,
+            "modelIndex": 1
+        },
+        {
+            "atomIndex1": 2,
+            "atomIndex2": 3,
+            "bondOrder": 2
+        },
+        {
+            "atomIndex1": 3,
+            "atomIndex2": 2,
+            "bondOrder": 1
+        }
+    ];
+    var traversed = [];
+    var onModel = function( modelData ){
+        traversed.push( modelData );
+    };
+    var onBond = function( bondData ){
+        traversed.push( bondData );
+    };
+    traverseMmtf( decodedMmtf, {
+        onModel: onModel,
+        onBond: onBond
+    } );
+    assert.equal( decodedMmtf.numModels, 2, "numModels differs" );
+    assert.deepEqual( traversed, expected, "traversed data differs" );
+});
+
 QUnit.test( "traverse firstModelOnly", function( assert ) {
     var dict = getMultiModelMmtfDict();
     var decodedMmtf = decodeMmtf( dict );
@@ -351,6 +399,11 @@ QUnit.test( "traverse firstModelOnly", function( assert ) {
             "atomIndex1": 0,
             "atomIndex2": 1,
             "bondOrder": 2
+        },
+        {
+            "atomIndex1": 1,
+            "atomIndex2": 0,
+            "bondOrder": 1
         }
     ];
     var traversed = [];
