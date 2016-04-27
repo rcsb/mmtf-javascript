@@ -225,11 +225,11 @@ function traverseMmtf( mmtfData, eventCallbacks ){
 
                 if( onBond ){
                     // intra group bonds
-                    var bondAtomList = groupData.bondAtomList;
+                    var groupBondAtomList = groupData.bondAtomList;
                     for( k = 0, kl = groupData.bondOrderList.length; k < kl; ++k ){
                         onBond({
-                            atomIndex1: atomIndex - groupAtomCount + bondAtomList[ k * 2 ],
-                            atomIndex2: atomIndex - groupAtomCount + bondAtomList[ k * 2 + 1 ],
+                            atomIndex1: atomIndex - groupAtomCount + groupBondAtomList[ k * 2 ],
+                            atomIndex2: atomIndex - groupAtomCount + groupBondAtomList[ k * 2 + 1 ],
                             bondOrder: groupData.bondOrderList[ k ]
                         });
                     }
