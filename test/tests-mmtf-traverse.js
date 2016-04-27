@@ -192,33 +192,3 @@ QUnit.test( "traverse atoms before group-bonds", function( assert ) {
     traverseMmtf( decodedMmtf, { onAtom: onAtom, onBond: onBond } );
     assert.deepEqual( traversed, expected, "traversed data differs" );
 });
-
-QUnit.test( "stop onAtom", function( assert ) {
-    var dict = getFilledFullMmtfDict();
-    var decodedMmtf = decodeMmtf( dict );
-    var expected = [
-        {
-            atomIndex: 0,
-            groupIndex: 0,
-            chainIndex: 0,
-            modelIndex: 0,
-            element: "C",
-            atomName: "C",
-            atomCharge: 2,
-            xCoord: 50,
-            yCoord: 60,
-            zCoord: 70,
-            bFactor: 99.98999786376953,
-            atomId: 1,
-            altLoc: "A",
-            occupancy: 0.6000000238418579
-        }
-    ];
-    var i = 0;
-    var onAtom = function( atomData ){
-        assert.deepEqual( atomData, expected[ i ], "atomData differs" );
-        i += 1;
-        return false;
-    };
-    traverseMmtf( decodedMmtf, { onAtom: onAtom } );
-});

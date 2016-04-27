@@ -5,7 +5,6 @@ All notable changes to this project will be documented in this file, following t
 ## [Unreleased]
 ### Added
 - traverse atoms before group-bonds in `MMTF.traverse`
-- WIP: short circuit structure traversal by return false from event callbacks
 - check left-alignment of chainIds & chainNames
 
 ### Changed
