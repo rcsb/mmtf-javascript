@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file, following t
 
 ### Changed
 - fix chainIds & chainNames to be left-alignment in test data
+- fixed MMTF.traverse not handling atomIdList being optional
 
 
 ## [v0.2.2] - 2016-04-26
