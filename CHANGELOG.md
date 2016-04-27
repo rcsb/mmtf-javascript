@@ -11,9 +11,11 @@ All notable changes to this project will be documented in this file, following t
 ## [v0.2.2] - 2016-04-26
 ### Added
 - jsdoc api documentation
+- check left-alignment of chainIds & chainNames
 
 ### Changed
 - renamed second MMTF.traverse argument from `callbackDict` to `eventCallbacks`
+- fix chainIds & chainNames to be left-alignment in test data
 
 
 ## [v0.2.1] - 2016-04-25

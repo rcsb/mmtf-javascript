@@ -706,11 +706,33 @@ function checkMmtfTypes( decodedMmtf, assert ){
         decodedMmtf.chainIdList instanceof Uint8Array,
         "chainIdList must be an Uint8Array instance"
     );
+    for( var i = 0, il = decodedMmtf.chainIdList.length; i < il; i+=4 ){
+        var zeroByte = false;
+        for( var j = 0; j < 4; ++j ){
+            var charCode = decodedMmtf.chainIdList[ i + j ];
+            if( zeroByte && charCode !== 0 ){
+                assert.ok( false, "chainIdList entries must be left aligned" );
+            }else if( charCode === 0 ){
+                zeroByte = true;
+            }
+        }
+    }
     if( decodedMmtf.chainNameList !== undefined ){
         assert.ok(
             decodedMmtf.chainNameList instanceof Uint8Array,
             "when given, chainNameList must be an Uint8Array instance"
         );
+        for( var i = 0, il = decodedMmtf.chainNameList.length; i < il; i+=4 ){
+            var zeroByte = false;
+            for( var j = 0; j < 4; ++j ){
+                var charCode = decodedMmtf.chainNameList[ i + j ];
+                if( zeroByte && charCode !== 0 ){
+                    assert.ok( false, "chainNameList entries must be left aligned" );
+                }else if( charCode === 0 ){
+                    zeroByte = true;
+                }
+            }
+        }
     }
 }
 

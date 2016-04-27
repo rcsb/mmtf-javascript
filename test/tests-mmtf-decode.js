@@ -158,8 +158,8 @@ QUnit.test( "filled full", function( assert ) {
         insCodeList: new Uint8Array( [ 88 ] ),
         sequenceIndexList: new Int32Array( [ 0 ] ),
 
-        chainIdList: new Uint8Array( [ 0, 0, 68, 65 ] ),
-        chainNameList: new Uint8Array( [  0, 0, 0, 66 ] ),
+        chainIdList: new Uint8Array( [ 68, 65, 0, 0 ] ),
+        chainNameList: new Uint8Array( [  66, 0, 0, 0 ] ),
         groupsPerChain: [ 1 ],
 
         chainsPerModel: [ 1 ],
@@ -197,7 +197,7 @@ QUnit.test( "filled required", function( assert ) {
         zCoordList: new Float32Array( [ 30, 33 ] ),
         groupIdList: new Int32Array( [ 100 ] ),
         groupTypeList: new Int32Array( [ 0 ] ),
-        chainIdList: new Uint8Array( [ 0, 65, 0, 0 ] ),
+        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
         groupsPerChain: [ 1 ],
 
         chainsPerModel: [ 1 ],
