@@ -87,7 +87,8 @@
                 flush();
             }, true );
             xhr.responseType = "arraybuffer";
-            xhr.open( "GET", "../data/4cup.mmtf" );
+            // xhr.open( "GET", "../data/4cup.mmtf" );
+            xhr.open( "GET", "http://mmtf.rcsb.org/full/3pqr" );
             xhr.send();
         } );
 

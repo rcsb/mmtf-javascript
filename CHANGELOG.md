@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased]
+## [v0.2.3] - 2016-05-19
 ### Added
 - check left-alignment of chainIds & chainNames
 - param argument for MMTF.traverse to traverse only the first model
@@ -51,7 +51,7 @@ All notable changes to this project will be documented in this file, following t
 - Initial release
 
 
-[Unreleased]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.2...HEAD
+[v0.2.3]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.2...v0.2.3
 [v0.2.2]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.1.0...v0.2.0
