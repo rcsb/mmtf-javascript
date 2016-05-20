@@ -46,11 +46,29 @@ gulp.task('test', ['build'], function() {
     .pipe(qunit());
 });
 
+gulp.task('build-msgpack-encode', function(){
+  return gulp.src(['./src/msgpack-encode.js'], {read: false})
+    .pipe(rollup({
+      format: 'umd',
+      moduleName: 'encodeMsgpack'
+    }))
+    .pipe(gulp.dest('build'));
+});
+
 gulp.task('build-msgpack-decode', function(){
   return gulp.src(['./src/msgpack-decode.js'], {read: false})
     .pipe(rollup({
       format: 'umd',
       moduleName: 'decodeMsgpack'
+    }))
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('build-utf8-utils', function(){
+  return gulp.src('./src/utf8-utils.js', {read: false})
+    .pipe(rollup({
+      format: 'umd',
+      moduleName: 'Utf8Utils'
     }))
     .pipe(gulp.dest('build'));
 });
@@ -93,7 +111,8 @@ gulp.task('build-mmtf', function(){
 
 gulp.task('build', [
   'build-mmtf',
-  'build-msgpack-decode', 'build-mmtf-utils',
+  'build-utf8-utils', 'build-mmtf-utils',
+  'build-msgpack-encode', 'build-msgpack-decode',
   'build-mmtf-decode', 'build-mmtf-traverse'
 ]);
 
