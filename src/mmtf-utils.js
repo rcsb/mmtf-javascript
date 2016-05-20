@@ -133,10 +133,19 @@ function decodeIntegerToFloat( intArray, divisor, dataArray ){
     var invDiv = 1/divisor;
     if( !dataArray ) dataArray = new Float32Array( n );
     for( var i = 0; i < n; ++i ){
-        // multiply by inverse of the divisor which is faster the division
+        // multiply by inverse of the divisor which is faster then division
         dataArray[ i ] = intArray[ i ] * invDiv;
     }
     return dataArray;
+}
+
+function encodeFloatToInteger( floatArray, divisor, intArray ){
+    var n = floatArray.length;
+    if( !intArray ) intArray = new Int32Array( n );
+    for( var i = 0; i < n; ++i ){
+        intArray[ i ] = Math.round( floatArray[ i ] * divisor );
+    }
+    return intArray;
 }
 
 /**
@@ -172,6 +181,34 @@ function decodeRunLength( array, dataArray ){
     return dataArray;
 }
 
+function encodeRunLength( input ){
+    if( input.length === 0 ) return new input.constructor();
+    var i, il;
+    // calculate output size
+    var fullLength = 2;
+    for( i = 1, il = input.length; i < il; ++i ){
+        if( input[ i - 1 ] !== input[ i ] ){
+            fullLength += 2;
+        }
+    }
+    var output = new input.constructor( fullLength );
+    var offset = 0;
+    var runLength = 1;
+    for( i = 1, il = input.length; i < il; ++i ){
+        if( input[ i - 1 ] !== input[ i ] ){
+            output[ offset ] = input[ i - 1 ];
+            output[ offset + 1 ] = runLength;
+            runLength = 1;
+            offset += 2;
+        }else{
+            runLength += 1;
+        }
+    }
+    output[ offset ] = input[ input.length - 1 ];
+    output[ offset + 1 ] = runLength;
+    return output;
+}
+
 /**
  * perform delta decoding of the input array
  * by iterativly adding the ith element's value to the i+1th
@@ -185,6 +222,14 @@ function decodeRunLength( array, dataArray ){
 function decodeDelta( dataArray ){
     for( var i = 1, il = dataArray.length; i < il; ++i ){
         dataArray[ i ] += dataArray[ i - 1 ];
+    }
+    return dataArray;
+}
+
+function encodeDelta( inputArray, dataArray ){
+    if( !dataArray ) dataArray = new inputArray.constructor( inputArray.length );
+    for( var i = 1, il = dataArray.length; i < il; ++i ){
+        dataArray[ i ] = inputArray[ i ] - inputArray[ i - 1 ];
     }
     return dataArray;
 }
@@ -278,6 +323,8 @@ export {
     getUint8View, getInt8View,
     getInt16, makeInt16Buffer,
     getInt32, getInt32View, makeInt32Buffer,
-    decodeIntegerToFloat, decodeRunLength, decodeDelta,
+    decodeIntegerToFloat, encodeFloatToInteger,
+    decodeRunLength, encodeRunLength,
+    decodeDelta, encodeDelta,
     decodeSplitListDelta, decodeFloatSplitListDelta, decodeFloatRunLength
 };

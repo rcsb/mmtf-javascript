@@ -64,6 +64,31 @@ QUnit.test( "decodeIntegerToFloat", function( assert ) {
     assert.deepEqual( decodedFloatArray, expectedFloatArray, "Passed!" );
 });
 
+QUnit.test( "encodeIntegerToFloat", function( assert ) {
+    var inputFloatArray = new Float32Array([
+        0.12, 0.34, 5.43, 6.87, 0.02, 0.00, 46.89
+    ]);
+    var expectedIntArray = new Int32Array([
+        12, 34, 543, 687, 2, 0, 4689
+    ]);
+    var divisor = 100;
+    var encodedIntArray = MmtfUtils.encodeFloatToInteger( inputFloatArray, divisor );
+    assert.deepEqual( encodedIntArray, expectedIntArray, "Passed!" );
+});
+
+QUnit.test( "encodeIntegerToFloat int16", function( assert ) {
+    var inputFloatArray = new Float32Array([
+        0.12, 0.34, 5.43, 6.87, 0.02, 0.00, 46.89
+    ]);
+    var expectedIntArray = new Int16Array([
+        12, 34, 543, 687, 2, 0, 4689
+    ]);
+    var int16Array = new Int16Array( inputFloatArray.length );
+    var divisor = 100;
+    var encodedIntArray = MmtfUtils.encodeFloatToInteger( inputFloatArray, divisor, int16Array );
+    assert.deepEqual( encodedIntArray, expectedIntArray, "Passed!" );
+});
+
 QUnit.test( "decodeIntegerToFloat empty array", function( assert ) {
     var intArray = new Int32Array([]);
     var expectedFloatArray = new Float32Array([]);
@@ -84,6 +109,18 @@ QUnit.test( "decodeRunLength", function( assert ) {
     assert.deepEqual( decoded, expected, "Passed!" );
 });
 
+QUnit.test( "encodeRunLength", function( assert ) {
+    var input = new Int32Array([
+        0, 0, 10, 10, 10, 10, 3, 3, 3, 3, 3
+    ]);
+    var expected = new Int32Array([
+        0, 2, 10, 4, 3, 5
+    ]);
+    var encoded = MmtfUtils.encodeRunLength( input );
+    assert.equal( encoded.length, 6, "Passed!" );
+    assert.deepEqual( encoded, expected, "Passed!" );
+});
+
 QUnit.test( "decodeRunLength single value", function( assert ) {
     var runs = new Int32Array([
         0, 1
@@ -96,12 +133,32 @@ QUnit.test( "decodeRunLength single value", function( assert ) {
     assert.deepEqual( decoded, expected, "Passed!" );
 });
 
+QUnit.test( "encodeRunLength single value", function( assert ) {
+    var input = new Int32Array([
+        0
+    ]);
+    var expected = new Int32Array([
+        0, 1
+    ]);
+    var encoded = MmtfUtils.encodeRunLength( input );
+    assert.equal( encoded.length, 2, "Passed!" );
+    assert.deepEqual( encoded, expected, "Passed!" );
+});
+
 QUnit.test( "decodeRunLength empty array", function( assert ) {
     var runs = new Int32Array([]);
     var expected = new Int32Array([]);
     var decoded = MmtfUtils.decodeRunLength( runs );
     assert.equal( decoded.length, 0, "Passed!" );
     assert.deepEqual( decoded, expected, "Passed!" );
+});
+
+QUnit.test( "encodeRunLength empty input", function( assert ) {
+    var input = new Int32Array([]);
+    var expected = new Int32Array([]);
+    var encoded = MmtfUtils.encodeRunLength( input );
+    assert.equal( encoded.length, 0, "Passed!" );
+    assert.deepEqual( encoded, expected, "Passed!" );
 });
 
 QUnit.test( "decodeDelta", function( assert ) {
@@ -114,6 +171,18 @@ QUnit.test( "decodeDelta", function( assert ) {
     var decoded = MmtfUtils.decodeDelta( deltas );
     assert.equal( decoded.length, expected.length, "Passed!" );
     assert.deepEqual( decoded, expected, "Passed!" );
+});
+
+QUnit.test( "encodeDelta", function( assert ) {
+    var input = new Int32Array([
+        0, 2, 3, 5, 6, 7, 3, 1, 10
+    ]);
+    var expected = new Int32Array([
+        0, 2, 1, 2, 1, 1, -4, -2, 9
+    ]);
+    var encoded = MmtfUtils.encodeDelta( input );
+    assert.equal( encoded.length, expected.length, "Passed!" );
+    assert.deepEqual( encoded, expected, "Passed!" );
 });
 
 QUnit.test( "decodeDelta empty array", function( assert ) {
