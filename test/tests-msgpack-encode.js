@@ -217,9 +217,12 @@ QUnit.test( "str 8", function( assert ) {
     for( var i = 2; i < len; ++i ){
         dv.setUint8( i + 2, zeroCharCode, false );
     }
-    var data = new Uint8Array( len );
+    var data = [];
     data[ 0 ] = 2;
     data[ 1 ] = 3;
+    for( var i = 2; i < len; ++i ){
+        data[ i ] = 0;
+    }
     var result = encodeMsgpack( data.join( "" ) );
     assert.deepEqual( result, expected, "Passed!" );
 });
@@ -236,9 +239,12 @@ QUnit.test( "str 16", function( assert ) {
     for( var i = 2; i < len; ++i ){
         dv.setUint8( i + 3, zeroCharCode, false );
     }
-    var data = new Uint8Array( len );
+    var data = [];
     data[ 0 ] = 2;
     data[ 1 ] = 3;
+    for( var i = 2; i < len; ++i ){
+        data[ i ] = 0;
+    }
     var result = encodeMsgpack( data.join( "" ) );
     assert.deepEqual( result, expected, "Passed!" );
 });
@@ -255,9 +261,12 @@ QUnit.test( "str 32", function( assert ) {
     for( var i = 2; i < len; ++i ){
         dv.setUint8( i + 5, zeroCharCode, false );
     }
-    var data = new Uint8Array( len );
+    var data = [];
     data[ 0 ] = 2;
     data[ 1 ] = 3;
+    for( var i = 2; i < len; ++i ){
+        data[ i ] = 0;
+    }
     var result = encodeMsgpack( data.join( "" ) );
     assert.deepEqual( result, expected, "Passed!" );
 });
