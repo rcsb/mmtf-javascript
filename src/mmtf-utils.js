@@ -139,11 +139,11 @@ function decodeIntegerToFloat( intArray, divisor, dataArray ){
     return dataArray;
 }
 
-function encodeFloatToInteger( floatArray, divisor, intArray ){
+function encodeFloatToInteger( floatArray, factor, intArray ){
     var n = floatArray.length;
     if( !intArray ) intArray = new Int32Array( n );
     for( var i = 0; i < n; ++i ){
-        intArray[ i ] = Math.round( floatArray[ i ] * divisor );
+        intArray[ i ] = Math.round( floatArray[ i ] * factor );
     }
     return intArray;
 }
@@ -228,6 +228,7 @@ function decodeDelta( dataArray ){
 
 function encodeDelta( inputArray, dataArray ){
     if( !dataArray ) dataArray = new inputArray.constructor( inputArray.length );
+    dataArray[ 0 ] = inputArray[ 0 ];
     for( var i = 1, il = dataArray.length; i < il; ++i ){
         dataArray[ i ] = inputArray[ i ] - inputArray[ i - 1 ];
     }
@@ -272,6 +273,40 @@ function decodeSplitListDelta( bigArray, smallArray, dataArray ){
     return dataArray;
 }
 
+function encodeSplitListDelta( intArray, useInt8 ){
+    var treshold = useInt8 ? 0x7F : 0x7FFF;
+    var IntSmallArray = useInt8 ? Int8Array : Int16Array;
+    var deltaArray = encodeDelta( intArray );
+    var i, il;
+    var bigSize = 0;
+    var smallSize = 0;
+    for( i = 0, il = deltaArray.length; i < il; ++i ){
+        var value = deltaArray[ i ];
+        if( value > treshold || value < -treshold ){
+            bigSize += 2;
+        }else{
+            smallSize += 1;
+        }
+    }
+    var bigArray = new Int32Array( bigSize );
+    var smallArray = new IntSmallArray( smallSize );
+    var bigOffset = 0;
+    var smallOffset = 0;
+    for( i = 0, il = deltaArray.length; i < il; ++i ){
+        var value = deltaArray[ i ];
+        if( value > treshold || value < -treshold ){
+            bigArray[ bigOffset ] = value;
+            bigArray[ bigOffset + 1 ] = 0;
+            bigOffset += 2;
+        }else{
+            smallArray[ smallOffset ] = value;
+            smallOffset += 1;
+            bigArray[ bigOffset - 1 ] += 1;
+        }
+    }
+    return [ bigArray, smallArray ];
+}
+
 /**
  * perform split-list delta decoding followed (@see decodeSplitListDelta)
  * by decoding integers into floats using given divisor (@see decodeIntegerToFloat)
@@ -300,6 +335,11 @@ function decodeFloatSplitListDelta( bigArray, smallArray, divisor, dataArray ){
     return decodeIntegerToFloat( int32, divisor, dataArray );
 }
 
+function encodeFloatSplitListDelta( floatArray, factor, useInt8 ){
+    var intArray = encodeFloatToInteger( floatArray, factor );
+    return encodeSplitListDelta( intArray, useInt8 );
+}
+
 /**
  * perform run-length decoding followed (@see decodeRunLength)
  * by decoding integers into floats using given divisor (@see decodeIntegerToFloat)
@@ -319,6 +359,12 @@ function decodeFloatRunLength( bytes, divisor, dataArray ){
     return decodeIntegerToFloat( int32, divisor, dataArray );
 }
 
+function encodeFloatRunLength( floatArray, divisor, intArray ){
+    if( !intArray ) intArray = new Int32Array( floatArray.length );
+    intArray = encodeFloatToInteger( floatArray, divisor, intArray );
+    return encodeRunLength( intArray );
+}
+
 export {
     getUint8View, getInt8View,
     getInt16, makeInt16Buffer,
@@ -326,5 +372,7 @@ export {
     decodeIntegerToFloat, encodeFloatToInteger,
     decodeRunLength, encodeRunLength,
     decodeDelta, encodeDelta,
-    decodeSplitListDelta, decodeFloatSplitListDelta, decodeFloatRunLength
+    decodeSplitListDelta, encodeSplitListDelta,
+    decodeFloatSplitListDelta, encodeFloatSplitListDelta,
+    decodeFloatRunLength, encodeFloatRunLength
 };
