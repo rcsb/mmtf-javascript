@@ -9,6 +9,8 @@
  * @module MMTF
  */
 
+import encodeMsgpack from "./msgpack-encode.js";
+import encodeMmtf from "./mmtf-encode.js";
 import decodeMsgpack from "./msgpack-decode.js";
 import decodeMmtf from "./mmtf-decode.js";
 import traverseMmtf from "./mmtf-traverse.js";
@@ -19,6 +21,16 @@ import traverseMmtf from "./mmtf-traverse.js";
  * @type {String}
  */
 var version = "v0.2.3";
+
+/**
+ * Encode MMTF fields
+ * @static
+ * @param  {module:MmtfDecode.MmtfData} mmtfData - mmtf data
+ * @return {Uint8Array} encoded MMTF fields
+ */
+function encode( mmtfData ){
+    return encodeMsgpack( encodeMmtf( mmtfData ) );
+}
 
 /**
  * Decode MMTF fields
@@ -52,6 +64,7 @@ function decode( binOrDict, params ){
 }
 
 export {
+    encode,
     decode,
     /**
      * Traverse the MMTF structure data.

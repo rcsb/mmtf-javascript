@@ -82,6 +82,15 @@ gulp.task('build-mmtf-utils', function(){
     .pipe(gulp.dest('build'));
 });
 
+gulp.task('build-mmtf-encode', function(){
+  return gulp.src(['./src/mmtf-encode.js'], {read: false})
+    .pipe(rollup({
+      format: 'umd',
+      moduleName: 'encodeMmtf'
+    }))
+    .pipe(gulp.dest('build'));
+});
+
 gulp.task('build-mmtf-decode', function(){
   return gulp.src(['./src/mmtf-decode.js'], {read: false})
     .pipe(rollup({
@@ -110,10 +119,10 @@ gulp.task('build-mmtf', function(){
 });
 
 gulp.task('build', [
-  'build-mmtf',
   'build-utf8-utils', 'build-mmtf-utils',
   'build-msgpack-encode', 'build-msgpack-decode',
-  'build-mmtf-decode', 'build-mmtf-traverse'
+  'build-mmtf-encode', 'build-mmtf-decode',
+  'build-mmtf-traverse', 'build-mmtf'
 ]);
 
 gulp.task('compress', ['build'], function(){

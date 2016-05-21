@@ -9,8 +9,7 @@
  * @module MmtfDecode
  */
 
-import decodeMsgpack from "./msgpack-decode.js";
-
+import { PassThroughFields } from "./mmtf-constants.js";
 import {
     getUint8View, getInt8View, getInt32,
     decodeRunLength, decodeDelta,
@@ -154,15 +153,7 @@ function decodeMmtf( inputDict, params ){
     };
 
     // copy some fields over from the input dict
-    [
-        "mmtfVersion", "mmtfProducer",
-        "unitCell", "spaceGroup", "structureId", "title",
-        "depositionDate", "releaseDate",
-        "experimentalMethods", "resolution", "rFree", "rWork",
-        "bioAssemblyList", "entityList", "groupList",
-        "numBonds", "numAtoms",
-        "groupsPerChain", "chainsPerModel"
-    ].forEach( function( name ){
+    PassThroughFields.forEach( function( name ){
         if( inputDict[ name ] !== undefined ){
             outputDict[ name ] = inputDict[ name ];
         }

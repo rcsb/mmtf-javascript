@@ -214,12 +214,12 @@ function getFilledRequiredMmtfDict(){
         ],
 
         // atoms
-        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 10000, 1 ] ) ),
-        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 1000 ] ) ),
-        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 20000, 1 ] ) ),
-        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 2000 ] ) ),
-        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 30000, 1 ] ) ),
-        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 3000 ] ) ),
+        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100000, 1 ] ) ),
+        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 10000 ] ) ),
+        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 200000, 1 ] ) ),
+        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 20000 ] ) ),
+        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 300000, 1 ] ) ),
+        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 30000 ] ) ),
 
         // groups
         groupIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100, 1 ] ) ),

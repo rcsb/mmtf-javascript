@@ -227,17 +227,17 @@ function encodeRunLength( input ){
     for( i = 1, il = input.length; i < il; ++i ){
         if( input[ i - 1 ] !== input[ i ] ){
             dv.setInt32( offset, input[ i - 1 ] );
-            dv.setInt32( offset + 1, runLength );
+            dv.setInt32( offset + 4, runLength );
             // output[ offset ] = input[ i - 1 ];
             // output[ offset + 1 ] = runLength;
             runLength = 1;
-            offset += 2;
+            offset += 2 * 4;
         }else{
             runLength += 1;
         }
     }
     dv.setInt32( offset, input[ input.length - 1 ] );
-    dv.setInt32( offset + 1, runLength );
+    dv.setInt32( offset + 4, runLength );
     // output[ offset ] = input[ input.length - 1 ];
     // output[ offset + 1 ] = runLength;
     return buffer;

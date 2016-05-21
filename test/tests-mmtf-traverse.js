@@ -171,9 +171,9 @@ QUnit.test( "traverse mmtf data having only required fields", function( assert )
             "groupIndex": 0,
             "modelIndex": 0,
             "occupancy": null,
-            "xCoord": 10,
-            "yCoord": 20,
-            "zCoord": 30
+            "xCoord": 100,
+            "yCoord": 200,
+            "zCoord": 300
         },
         {
             "altLoc": null,
@@ -187,9 +187,9 @@ QUnit.test( "traverse mmtf data having only required fields", function( assert )
             "groupIndex": 0,
             "modelIndex": 0,
             "occupancy": null,
-            "xCoord": 11,
-            "yCoord": 22,
-            "zCoord": 33
+            "xCoord": 110,
+            "yCoord": 220,
+            "zCoord": 330
         },
         {
             "atomIndex1": 0,

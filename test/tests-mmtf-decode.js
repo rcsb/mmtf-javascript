@@ -192,9 +192,9 @@ QUnit.test( "filled required", function( assert ) {
                 groupName: "GLY"
             }
         ],
-        xCoordList: new Float32Array( [ 10, 11 ] ),
-        yCoordList: new Float32Array( [ 20, 22 ] ),
-        zCoordList: new Float32Array( [ 30, 33 ] ),
+        xCoordList: new Float32Array( [ 100, 110 ] ),
+        yCoordList: new Float32Array( [ 200, 220 ] ),
+        zCoordList: new Float32Array( [ 300, 330 ] ),
         groupIdList: new Int32Array( [ 100 ] ),
         groupTypeList: new Int32Array( [ 0 ] ),
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),

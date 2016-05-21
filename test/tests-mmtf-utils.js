@@ -162,10 +162,10 @@ QUnit.test( "decodeRunLength single value", function( assert ) {
 
 QUnit.test( "encodeRunLength single value", function( assert ) {
     var input = new Int32Array([
-        0
+        100
     ]);
     var expected = MmtfUtils.makeInt32Buffer([
-        0, 1
+        100, 1
     ]);
     var encoded = MmtfUtils.encodeRunLength( input );
     assert.deepEqual( encoded, expected, "Passed!" );
