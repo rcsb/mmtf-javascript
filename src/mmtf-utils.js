@@ -9,6 +9,13 @@
  * @module MmtfUtils
  */
 
+
+function getDataView( dataArray ){
+    return new DataView(
+        dataArray.buffer, dataArray.byteOffset, dataArray.byteLength
+    );
+}
+
 /**
  * get an Uint8Array view on the input array memory
  * @static
@@ -57,14 +64,14 @@ function getInt16( view, dataArray ){
  * @param  {Array|TypedArray} array - array of int16 values
  * @return {ArrayBuffer} big endian buffer
  */
-function makeInt16Buffer( array ){
+function makeInt16Buffer( array, output ){
     var n = array.length;
-    var buffer = new ArrayBuffer( 2 * n );
-    var dv = new DataView( buffer );
+    if( !output ) output = new Uint8Array( 2 * n );
+    var dv = new DataView( output.buffer, output.byteOffset, output.byteLength );
     for( var i = 0; i < n; ++i ){
         dv.setInt16( 2 * i, array[ i ] );
     }
-    return buffer;
+    return output.buffer;
 }
 
 /**
@@ -106,14 +113,24 @@ function getInt32View( dataArray ){
  * @param  {Array|TypedArray} array - array of int32 values
  * @return {ArrayBuffer} big endian buffer
  */
-function makeInt32Buffer( array ){
+function makeInt32Buffer( array, output ){
     var n = array.length;
-    var buffer = new ArrayBuffer( 4 * n );
-    var dv = new DataView( buffer );
+    if( !output ) output = new Uint8Array( 4 * n );
+    var dv = new DataView( output.buffer, output.byteOffset, output.byteLength );
     for( var i = 0; i < n; ++i ){
         dv.setInt32( 4 * i, array[ i ] );
     }
-    return buffer;
+    return output.buffer;
+}
+
+function makeFloat32Buffer( array, output ){
+    var n = array.length;
+    if( !output ) output = new Uint8Array( 4 * n );
+    var dv = new DataView( output.buffer, output.byteOffset, output.byteLength );
+    for( var i = 0; i < n; ++i ){
+        dv.setFloat32( 4 * i, array[ i ] );
+    }
+    return output.buffer;
 }
 
 /**
@@ -139,13 +156,25 @@ function decodeIntegerToFloat( intArray, divisor, dataArray ){
     return dataArray;
 }
 
-function encodeFloatToInteger( floatArray, factor, intArray ){
+function encodeFloatToInteger( floatArray, factor, bytesPerElement, littleEndian ){
+    if( !bytesPerElement ) bytesPerElement = 4;
     var n = floatArray.length;
-    if( !intArray ) intArray = new Int32Array( n );
-    for( var i = 0; i < n; ++i ){
-        intArray[ i ] = Math.round( floatArray[ i ] * factor );
+    var buffer = new ArrayBuffer( n * bytesPerElement );
+    var dv = new DataView( buffer );
+    var method = "setInt32";
+    if( bytesPerElement === 1 ){
+        method = "setInt8";
+    }else if( bytesPerElement === 2 ){
+        method = "setInt16";
     }
-    return intArray;
+    for( var i = 0; i < n; ++i ){
+        dv[ method ](
+            bytesPerElement * i,
+            Math.round( floatArray[ i ] * factor ),
+            littleEndian
+        );
+    }
+    return buffer;
 }
 
 /**
@@ -182,7 +211,7 @@ function decodeRunLength( array, dataArray ){
 }
 
 function encodeRunLength( input ){
-    if( input.length === 0 ) return new input.constructor();
+    if( input.length === 0 ) return new ArrayBuffer();
     var i, il;
     // calculate output size
     var fullLength = 2;
@@ -191,22 +220,27 @@ function encodeRunLength( input ){
             fullLength += 2;
         }
     }
-    var output = new input.constructor( fullLength );
+    var buffer = new ArrayBuffer( fullLength * 4 );
+    var dv = new DataView( buffer );
     var offset = 0;
     var runLength = 1;
     for( i = 1, il = input.length; i < il; ++i ){
         if( input[ i - 1 ] !== input[ i ] ){
-            output[ offset ] = input[ i - 1 ];
-            output[ offset + 1 ] = runLength;
+            dv.setInt32( offset, input[ i - 1 ] );
+            dv.setInt32( offset + 1, runLength );
+            // output[ offset ] = input[ i - 1 ];
+            // output[ offset + 1 ] = runLength;
             runLength = 1;
             offset += 2;
         }else{
             runLength += 1;
         }
     }
-    output[ offset ] = input[ input.length - 1 ];
-    output[ offset + 1 ] = runLength;
-    return output;
+    dv.setInt32( offset, input[ input.length - 1 ] );
+    dv.setInt32( offset + 1, runLength );
+    // output[ offset ] = input[ input.length - 1 ];
+    // output[ offset + 1 ] = runLength;
+    return buffer;
 }
 
 /**
@@ -304,7 +338,10 @@ function encodeSplitListDelta( intArray, useInt8 ){
             bigArray[ bigOffset - 1 ] += 1;
         }
     }
-    return [ bigArray, smallArray ];
+    return [
+        makeInt32Buffer( bigArray, bigArray ),
+        useInt8 ? smallArray : makeInt16Buffer( smallArray, smallArray )
+    ];
 }
 
 /**
@@ -336,7 +373,7 @@ function decodeFloatSplitListDelta( bigArray, smallArray, divisor, dataArray ){
 }
 
 function encodeFloatSplitListDelta( floatArray, factor, useInt8 ){
-    var intArray = encodeFloatToInteger( floatArray, factor );
+    var intArray = new Int32Array( encodeFloatToInteger( floatArray, factor, 4, true ) );
     return encodeSplitListDelta( intArray, useInt8 );
 }
 
@@ -359,16 +396,18 @@ function decodeFloatRunLength( bytes, divisor, dataArray ){
     return decodeIntegerToFloat( int32, divisor, dataArray );
 }
 
-function encodeFloatRunLength( floatArray, divisor, intArray ){
+function encodeFloatRunLength( floatArray, factor, intArray ){
     if( !intArray ) intArray = new Int32Array( floatArray.length );
-    intArray = encodeFloatToInteger( floatArray, divisor, intArray );
+    intArray = new Int32Array( encodeFloatToInteger( floatArray, factor, 4, true ) );
     return encodeRunLength( intArray );
 }
 
 export {
+    getDataView,
     getUint8View, getInt8View,
     getInt16, makeInt16Buffer,
     getInt32, getInt32View, makeInt32Buffer,
+    makeFloat32Buffer,
     decodeIntegerToFloat, encodeFloatToInteger,
     decodeRunLength, encodeRunLength,
     decodeDelta, encodeDelta,
