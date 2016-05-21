@@ -126,7 +126,11 @@ gulp.task('build', [
 ]);
 
 gulp.task('compress', ['build'], function(){
-  return gulp.src(['./build/*.js'])
+  return gulp.src([
+      './build/msgpack-encode.js', './build/msgpack-decode.js',
+      './build/mmtf-encode.js', './build/mmtf-decode.js',
+      './build/mmtf-traverse.js', './build/mmtf.js'
+    ])
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
