@@ -150,24 +150,24 @@ function decodeMsgpack(buffer) {
       length = dataView.getUint32(offset + 1);
       offset += 5;
       return bin(length);
-    // ext 8
-    case 0xc7:
-      length = dataView.getUint8(offset + 1);
-      extType = dataView.getUint8(offset + 2);
-      offset += 3;
-      return [extType, bin(length)];
-    // ext 16
-    case 0xc8:
-      length = dataView.getUint16(offset + 1);
-      extType = dataView.getUint8(offset + 3);
-      offset += 4;
-      return [extType, bin(length)];
-    // ext 32
-    case 0xc9:
-      length = dataView.getUint32(offset + 1);
-      extType = dataView.getUint8(offset + 5);
-      offset += 6;
-      return [extType, bin(length)];
+    // // ext 8
+    // case 0xc7:
+    //   length = dataView.getUint8(offset + 1);
+    //   extType = dataView.getUint8(offset + 2);
+    //   offset += 3;
+    //   return [extType, bin(length)];
+    // // ext 16
+    // case 0xc8:
+    //   length = dataView.getUint16(offset + 1);
+    //   extType = dataView.getUint8(offset + 3);
+    //   offset += 4;
+    //   return [extType, bin(length)];
+    // // ext 32
+    // case 0xc9:
+    //   length = dataView.getUint32(offset + 1);
+    //   extType = dataView.getUint8(offset + 5);
+    //   offset += 6;
+    //   return [extType, bin(length)];
     // float 32
     case 0xca:
       value = dataView.getFloat32(offset + 1);
@@ -193,13 +193,13 @@ function decodeMsgpack(buffer) {
       value = dataView.getUint32(offset + 1);
       offset += 5;
       return value;
-    // uint64
-    case 0xcf:
-      // FIXME not available/representable in JS
-      // largest possible int in JS is 2^53
-      // value = dataView.getUint64(offset + 1);
-      offset += 9;
-      return 0;
+    // // uint64
+    // case 0xcf:
+    //   // FIXME not available/representable in JS
+    //   // largest possible int in JS is 2^53
+    //   // value = dataView.getUint64(offset + 1);
+    //   offset += 9;
+    //   return 0;
     // int 8
     case 0xd0:
       value = dataView.getInt8(offset + 1);
@@ -215,39 +215,39 @@ function decodeMsgpack(buffer) {
       value = dataView.getInt32(offset + 1);
       offset += 5;
       return value;
-    // int 64
-    case 0xd3:
-      // FIXME not available/representable in JS
-      // largest possible int in JS is 2^53
-      // value = dataView.getInt64(offset + 1);
-      offset += 9;
-      return 0;
+    // // int 64
+    // case 0xd3:
+    //   // FIXME not available/representable in JS
+    //   // largest possible int in JS is 2^53
+    //   // value = dataView.getInt64(offset + 1);
+    //   offset += 9;
+    //   return 0;
 
-    // fixext 1
-    case 0xd4:
-      extType = dataView.getUint8(offset + 1);
-      offset += 2;
-      return [extType, bin(1)];
-    // fixext 2
-    case 0xd5:
-      extType = dataView.getUint8(offset + 1);
-      offset += 2;
-      return [extType, bin(2)];
-    // fixext 4
-    case 0xd6:
-      extType = dataView.getUint8(offset + 1);
-      offset += 2;
-      return [extType, bin(4)];
-    // fixext 8
-    case 0xd7:
-      extType = dataView.getUint8(offset + 1);
-      offset += 2;
-      return [extType, bin(8)];
-    // fixext 16
-    case 0xd8:
-      extType = dataView.getUint8(offset + 1);
-      offset += 2;
-      return [extType, bin(16)];
+    // // fixext 1
+    // case 0xd4:
+    //   extType = dataView.getUint8(offset + 1);
+    //   offset += 2;
+    //   return [extType, bin(1)];
+    // // fixext 2
+    // case 0xd5:
+    //   extType = dataView.getUint8(offset + 1);
+    //   offset += 2;
+    //   return [extType, bin(2)];
+    // // fixext 4
+    // case 0xd6:
+    //   extType = dataView.getUint8(offset + 1);
+    //   offset += 2;
+    //   return [extType, bin(4)];
+    // // fixext 8
+    // case 0xd7:
+    //   extType = dataView.getUint8(offset + 1);
+    //   offset += 2;
+    //   return [extType, bin(8)];
+    // // fixext 16
+    // case 0xd8:
+    //   extType = dataView.getUint8(offset + 1);
+    //   offset += 2;
+    //   return [extType, bin(16)];
     // str 8
     case 0xd9:
       length = dataView.getUint8(offset + 1);

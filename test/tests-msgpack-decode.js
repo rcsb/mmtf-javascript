@@ -105,43 +105,43 @@ QUnit.test( "bin 32", function( assert ) {
     assert.equal( result[ 2 ], 3, "Passed!" );
 });
 
-// todo throw error
-QUnit.test( "ext 8", function( assert ) {
-    var buffer = new Uint8Array( [ 0xc7, 1, 10, 3 ] );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 3, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "ext 8", function( assert ) {
+//     var buffer = new Uint8Array( [ 0xc7, 1, 10, 3 ] );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 3, "Passed!" );
+// });
 
-// todo throw error
-QUnit.test( "ext 16", function( assert ) {
-    var buffer = new Uint8Array( 7 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xc8 );
-    dv.setInt16( 1, 2, false );
-    dv.setUint8( 3, 10, false );
-    dv.setUint8( 4, 2, false );
-    dv.setUint8( 5, 3, false );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 2, "Passed!" );
-    assert.equal( result[ 1 ][ 1 ], 3, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "ext 16", function( assert ) {
+//     var buffer = new Uint8Array( 7 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xc8 );
+//     dv.setInt16( 1, 2, false );
+//     dv.setUint8( 3, 10, false );
+//     dv.setUint8( 4, 2, false );
+//     dv.setUint8( 5, 3, false );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 2, "Passed!" );
+//     assert.equal( result[ 1 ][ 1 ], 3, "Passed!" );
+// });
 
-// todo throw error
-QUnit.test( "ext 32", function( assert ) {
-    var buffer = new Uint8Array( 9 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xc9 );
-    dv.setInt32( 1, 2, false );
-    dv.setUint8( 5, 10, false );
-    dv.setUint8( 6, 2, false );
-    dv.setUint8( 7, 3, false );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 2, "Passed!" );
-    assert.equal( result[ 1 ][ 1 ], 3, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "ext 32", function( assert ) {
+//     var buffer = new Uint8Array( 9 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xc9 );
+//     dv.setInt32( 1, 2, false );
+//     dv.setUint8( 5, 10, false );
+//     dv.setUint8( 6, 2, false );
+//     dv.setUint8( 7, 3, false );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 2, "Passed!" );
+//     assert.equal( result[ 1 ][ 1 ], 3, "Passed!" );
+// });
 
 QUnit.test( "float 32", function( assert ) {
     var buffer = new Uint8Array( 5 );
@@ -188,14 +188,14 @@ QUnit.test( "uint 32", function( assert ) {
     assert.equal( result, 91112, "Passed!" );
 });
 
-// todo throw error
-QUnit.test( "uint 64", function( assert ) {
-    var buffer = new Uint8Array( 9 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xcf );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result, 0, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "uint 64", function( assert ) {
+//     var buffer = new Uint8Array( 9 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xcf );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result, 0, "Passed!" );
+// });
 
 QUnit.test( "int 8", function( assert ) {
     var buffer = new Uint8Array( 2 );
@@ -224,99 +224,99 @@ QUnit.test( "int 32", function( assert ) {
     assert.equal( result, -91112, "Passed!" );
 });
 
-QUnit.test( "int 64", function( assert ) {
-    var buffer = new Uint8Array( 9 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xd3 );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result, 0, "Passed!" );
-});
+// QUnit.test( "int 64", function( assert ) {
+//     var buffer = new Uint8Array( 9 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xd3 );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result, 0, "Passed!" );
+// });
 
-// todo throw error
-QUnit.test( "fixext 1", function( assert ) {
-    var buffer = new Uint8Array( 3 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xd4 );
-    dv.setUint8( 1, 10 );
-    dv.setUint8( 2, 1 );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "fixext 1", function( assert ) {
+//     var buffer = new Uint8Array( 3 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xd4 );
+//     dv.setUint8( 1, 10 );
+//     dv.setUint8( 2, 1 );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
+// });
 
-// todo throw error
-QUnit.test( "fixext 2", function( assert ) {
-    var buffer = new Uint8Array( 4 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xd5 );
-    dv.setUint8( 1, 10 );
-    dv.setUint8( 2, 1 );
-    dv.setUint8( 3, 2 );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
-    assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "fixext 2", function( assert ) {
+//     var buffer = new Uint8Array( 4 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xd5 );
+//     dv.setUint8( 1, 10 );
+//     dv.setUint8( 2, 1 );
+//     dv.setUint8( 3, 2 );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
+//     assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
+// });
 
-// todo throw error
-QUnit.test( "fixext 4", function( assert ) {
-    var buffer = new Uint8Array( 6 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xd6 );
-    dv.setUint8( 1, 10 );
-    dv.setUint8( 2, 1 );
-    dv.setUint8( 3, 2 );
-    dv.setUint8( 4, 3 );
-    dv.setUint8( 5, 4 );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
-    assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
-    assert.equal( result[ 1 ][ 2 ], 3, "Passed!" );
-    assert.equal( result[ 1 ][ 3 ], 4, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "fixext 4", function( assert ) {
+//     var buffer = new Uint8Array( 6 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xd6 );
+//     dv.setUint8( 1, 10 );
+//     dv.setUint8( 2, 1 );
+//     dv.setUint8( 3, 2 );
+//     dv.setUint8( 4, 3 );
+//     dv.setUint8( 5, 4 );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
+//     assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
+//     assert.equal( result[ 1 ][ 2 ], 3, "Passed!" );
+//     assert.equal( result[ 1 ][ 3 ], 4, "Passed!" );
+// });
 
-// todo throw error
-QUnit.test( "fixext 8", function( assert ) {
-    var buffer = new Uint8Array( 10 );
-    var dv = new DataView( buffer.buffer )
-    dv.setUint8( 0, 0xd7 );
-    dv.setUint8( 1, 10 );
-    dv.setUint8( 2, 1 );
-    dv.setUint8( 3, 2 );
-    dv.setUint8( 4, 3 );
-    dv.setUint8( 5, 4 );
-    dv.setUint8( 9, 99 );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
-    assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
-    assert.equal( result[ 1 ][ 2 ], 3, "Passed!" );
-    assert.equal( result[ 1 ][ 3 ], 4, "Passed!" );
-    assert.equal( result[ 1 ][ 7 ], 99, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "fixext 8", function( assert ) {
+//     var buffer = new Uint8Array( 10 );
+//     var dv = new DataView( buffer.buffer )
+//     dv.setUint8( 0, 0xd7 );
+//     dv.setUint8( 1, 10 );
+//     dv.setUint8( 2, 1 );
+//     dv.setUint8( 3, 2 );
+//     dv.setUint8( 4, 3 );
+//     dv.setUint8( 5, 4 );
+//     dv.setUint8( 9, 99 );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
+//     assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
+//     assert.equal( result[ 1 ][ 2 ], 3, "Passed!" );
+//     assert.equal( result[ 1 ][ 3 ], 4, "Passed!" );
+//     assert.equal( result[ 1 ][ 7 ], 99, "Passed!" );
+// });
 
-// todo throw error
-QUnit.test( "fixext 16", function( assert ) {
-    var buffer = new Uint8Array( 18 );
-    var dv = new DataView( buffer.buffer );
-    dv.setUint8( 0, 0xd8 );
-    dv.setUint8( 1, 10 );
-    dv.setUint8( 2, 1 );
-    dv.setUint8( 3, 2 );
-    dv.setUint8( 4, 3 );
-    dv.setUint8( 5, 4 );
-    dv.setUint8( 9, 99 );
-    dv.setUint8( 17, 199 );
-    var result = decodeMsgpack( buffer );
-    assert.equal( result[ 0 ], 10, "Passed!" );
-    assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
-    assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
-    assert.equal( result[ 1 ][ 2 ], 3, "Passed!" );
-    assert.equal( result[ 1 ][ 3 ], 4, "Passed!" );
-    assert.equal( result[ 1 ][ 7 ], 99, "Passed!" );
-    assert.equal( result[ 1 ][ 15 ], 199, "Passed!" );
-});
+// // todo throw error
+// QUnit.test( "fixext 16", function( assert ) {
+//     var buffer = new Uint8Array( 18 );
+//     var dv = new DataView( buffer.buffer );
+//     dv.setUint8( 0, 0xd8 );
+//     dv.setUint8( 1, 10 );
+//     dv.setUint8( 2, 1 );
+//     dv.setUint8( 3, 2 );
+//     dv.setUint8( 4, 3 );
+//     dv.setUint8( 5, 4 );
+//     dv.setUint8( 9, 99 );
+//     dv.setUint8( 17, 199 );
+//     var result = decodeMsgpack( buffer );
+//     assert.equal( result[ 0 ], 10, "Passed!" );
+//     assert.equal( result[ 1 ][ 0 ], 1, "Passed!" );
+//     assert.equal( result[ 1 ][ 1 ], 2, "Passed!" );
+//     assert.equal( result[ 1 ][ 2 ], 3, "Passed!" );
+//     assert.equal( result[ 1 ][ 3 ], 4, "Passed!" );
+//     assert.equal( result[ 1 ][ 7 ], 99, "Passed!" );
+//     assert.equal( result[ 1 ][ 15 ], 199, "Passed!" );
+// });
 
 QUnit.test( "str 8", function( assert ) {
     var buffer = new Uint8Array( [ 0xd9, 2, 65, 66 ] );
