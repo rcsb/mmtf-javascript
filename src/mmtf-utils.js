@@ -308,13 +308,19 @@ function decodeSplitListDelta( bigArray, smallArray, dataArray ){
 }
 
 function encodeSplitListDelta( intArray, useInt8 ){
+    if( intArray.length === 0 ){
+        return [
+            new ArrayBuffer(),
+            new ArrayBuffer()
+        ];
+    }
     var treshold = useInt8 ? 0x7F : 0x7FFF;
     var IntSmallArray = useInt8 ? Int8Array : Int16Array;
     var deltaArray = encodeDelta( intArray );
     var i, il;
-    var bigSize = 0;
+    var bigSize = 2;
     var smallSize = 0;
-    for( i = 0, il = deltaArray.length; i < il; ++i ){
+    for( i = 1, il = deltaArray.length; i < il; ++i ){
         var value = deltaArray[ i ];
         if( value > treshold || value < -treshold ){
             bigSize += 2;
@@ -326,7 +332,11 @@ function encodeSplitListDelta( intArray, useInt8 ){
     var smallArray = new IntSmallArray( smallSize );
     var bigOffset = 0;
     var smallOffset = 0;
-    for( i = 0, il = deltaArray.length; i < il; ++i ){
+    // always put the first value into the bigArray
+    bigArray[ bigOffset ] = deltaArray[ 0 ];
+    bigArray[ bigOffset + 1 ] = 0;
+    bigOffset += 2;
+    for( i = 1, il = deltaArray.length; i < il; ++i ){
         var value = deltaArray[ i ];
         if( value > treshold || value < -treshold ){
             bigArray[ bigOffset ] = value;
