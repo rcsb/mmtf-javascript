@@ -412,6 +412,76 @@ function encodeFloatRunLength( floatArray, factor, intArray ){
     return encodeRunLength( intArray );
 }
 
+/**
+ * [decodeRecursiveIndexing description]
+ * @return {[type]} [description]
+ */
+function decodeRecursiveIndexing( dataArray ){
+    var upperLimit = 0x7FFF;
+    var lowerLimit = -0x7FFF-1;
+    var n = dataArray.length;
+    var array = new Int32Array( n );
+    var i = 0;
+    var j = 0;
+    while( i < n ){
+        var value = 0;
+        while( dataArray[ i ] === upperLimit || dataArray[ i ] === lowerLimit ){
+            value += dataArray[ i ];
+            i += 1;
+            if( dataArray[ i ] === 0 ){
+                break;
+            }
+        }
+        value += dataArray[ i ];
+        i += 1;
+        array[ j ] = value;
+        j += 1;
+    }
+    return new Int32Array( array.buffer, 0, j );
+}
+
+function encodeRecursiveIndexing( intArray ){
+    var upperLimit = 0x7FFF;
+    var lowerLimit = -0x7FFF-1;
+    var i;
+    var n = intArray.length;
+    var size = 0;
+    for( i = 0; i < n; ++i ){
+        var value = intArray[ i ];
+        if( value === 0 ){
+            size += 1;
+        }else if( value === upperLimit || value === lowerLimit ){
+            size += 2;
+        }else if( value > 0) {
+            size += Math.ceil( value / upperLimit );
+        }else {
+            size += Math.ceil( value / lowerLimit );
+        }
+    }
+    var outArray = new Int16Array( size );
+    var j = 0;
+    for( i = 0; i < n; ++i ){
+        var value = intArray[ i ];
+        if( value >= 0) {
+            while( value >= upperLimit ){
+                outArray[ j ] = upperLimit;
+                j += 1;
+                value -= upperLimit;
+            }
+        }else{
+            while( value <= lowerLimit ){
+                outArray[ j ] = lowerLimit;
+                j += 1;
+                value -= lowerLimit;
+            }
+        }
+        outArray[ j ] = value;
+        j += 1;
+    }
+    return makeInt16Buffer( outArray, outArray );
+}
+
+
 export {
     getDataView,
     getUint8View, getInt8View,
@@ -423,5 +493,6 @@ export {
     decodeDelta, encodeDelta,
     decodeSplitListDelta, encodeSplitListDelta,
     decodeFloatSplitListDelta, encodeFloatSplitListDelta,
-    decodeFloatRunLength, encodeFloatRunLength
+    decodeFloatRunLength, encodeFloatRunLength,
+    decodeRecursiveIndexing, encodeRecursiveIndexing
 };
