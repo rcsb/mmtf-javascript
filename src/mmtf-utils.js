@@ -123,6 +123,19 @@ function makeInt32Buffer( array, output ){
     return output.buffer;
 }
 
+function getFloat32( view, dataArray ){
+    var o = view.byteOffset;
+    var n = view.byteLength;
+    var i, i4, il;
+    if( !dataArray ) dataArray = new Float32Array( n / 4 );
+    var dvo = new DataView( dataArray.buffer, dataArray.byteOffset, dataArray.byteLength );
+    var dvi = new DataView( view.buffer, view.byteOffset, view.byteLength );
+    for( i = 0, i4 = 0, il = n / 4; i < il; ++i, i4 += 4 ){
+        dvo.setFloat32( i4, dvi.getFloat32( i4 ), true );
+    }
+    return dataArray;
+}
+
 function makeFloat32Buffer( array, output ){
     var n = array.length;
     if( !output ) output = new Uint8Array( 4 * n );
@@ -416,30 +429,35 @@ function encodeFloatRunLength( floatArray, factor, intArray ){
  * [decodeRecursiveIndexing description]
  * @return {[type]} [description]
  */
-function decodeRecursiveIndexing( dataArray ){
+function decodeRecursiveIndexing( array, dataArray ){
     var upperLimit = 0x7FFF;
     var lowerLimit = -0x7FFF-1;
-    var n = dataArray.length;
-    var array = new Int32Array( n );
+    var n = array.length;
+    if( !dataArray ) dataArray = new Int32Array( n );
     var i = 0;
     var j = 0;
     while( i < n ){
         var value = 0;
-        while( dataArray[ i ] === upperLimit || dataArray[ i ] === lowerLimit ){
-            value += dataArray[ i ];
+        while( array[ i ] === upperLimit || array[ i ] === lowerLimit ){
+            value += array[ i ];
             i += 1;
-            if( dataArray[ i ] === 0 ){
+            if( array[ i ] === 0 ){
                 break;
             }
         }
-        value += dataArray[ i ];
+        value += array[ i ];
         i += 1;
-        array[ j ] = value;
+        dataArray[ j ] = value;
         j += 1;
     }
-    return new Int32Array( array.buffer, 0, j );
+    return new Int32Array( dataArray.buffer, 0, j );
 }
 
+/**
+ * [encodeRecursiveIndexing description]
+ * @param  {[type]} intArray [description]
+ * @return {[type]}          [description]
+ */
 function encodeRecursiveIndexing( intArray ){
     var upperLimit = 0x7FFF;
     var lowerLimit = -0x7FFF-1;
@@ -481,18 +499,24 @@ function encodeRecursiveIndexing( intArray ){
     return makeInt16Buffer( outArray, outArray );
 }
 
+function decodeFloatDeltaRecursiveIndexing( int16, divisor, dataArray ){
+    var int32 = decodeDelta( decodeRecursiveIndexing( int16, dataArray ) );
+    return decodeIntegerToFloat( int32, divisor, dataArray );
+}
+
 
 export {
     getDataView,
     getUint8View, getInt8View,
     getInt16, makeInt16Buffer,
     getInt32, getInt32View, makeInt32Buffer,
-    makeFloat32Buffer,
+    getFloat32, makeFloat32Buffer,
     decodeIntegerToFloat, encodeFloatToInteger,
     decodeRunLength, encodeRunLength,
     decodeDelta, encodeDelta,
     decodeSplitListDelta, encodeSplitListDelta,
     decodeFloatSplitListDelta, encodeFloatSplitListDelta,
     decodeFloatRunLength, encodeFloatRunLength,
-    decodeRecursiveIndexing, encodeRecursiveIndexing
+    decodeRecursiveIndexing, encodeRecursiveIndexing,
+    decodeFloatDeltaRecursiveIndexing
 };

@@ -9,11 +9,12 @@
  * @module MmtfDecode
  */
 
-import { PassThroughFields } from "./mmtf-constants.js";
+import { FieldNames } from "./mmtf-constants.js";
 import {
-    getUint8View, getInt8View, getInt32,
+    getUint8View, getInt8View, getInt16, getInt32, getFloat32,
     decodeRunLength, decodeDelta,
-    decodeFloatSplitListDelta, decodeFloatRunLength
+    decodeFloatSplitListDelta, decodeFloatRunLength,
+    decodeFloatDeltaRecursiveIndexing
 } from "./mmtf-utils.js";
 
 
@@ -116,6 +117,84 @@ import {
  */
 
 
+
+/**
+ * [decodingStrategies description]
+ * @type {Object}
+ */
+var decodingStrategies = {
+
+    1: function( bytes, size ){
+        return getFloat32( bytes );
+    },
+    2: function( bytes, size ){
+        return getInt8View( bytes );
+    },
+    3: function( bytes, size ){
+        return getInt16( bytes );
+    },
+    4: function( bytes, size ){
+        return getInt32( bytes );
+    },
+    5: function( bytes, size, param ){
+        var length = getInt32( param )[ 0 ];
+        return getUint8View( bytes );  // interpret as string array
+    },
+    6: function( bytes, size ){
+        var out = new Uint8Array( size );  // interpret as char array
+        return decodeRunLength( getInt32( bytes ), out );
+    },
+    7: function( bytes, size ){
+        return decodeRunLength( getInt32( bytes ) )
+    },
+    8: function( bytes, size ){
+        return decodeDelta( decodeRunLength( getInt32( bytes ) ) );
+    },
+    9: function( bytes, size, param ){
+        var divisor = getInt32( param )[ 0 ];
+        return decodeFloatRunLength( bytes, divisor );
+    },
+    10: function( bytes, size, param ){
+        var divisor = getInt32( param )[ 0 ];
+        return decodeFloatDeltaRecursiveIndexing( getInt16( bytes ), divisor );
+    },
+    11: function( bytes, size, param ){
+        var divisor = getInt32( param )[ 0 ];
+        return decodeIntegerToFloat( getInt16( bytes ), divisor );
+    },
+    12: function( bytes, size, param ){
+        var divisor = getInt32( param )[ 0 ];
+        return decodeIntegerRecursiveIndexing( getInt16( bytes ), divisor );
+    },
+    13: function( bytes, size, param ){
+        var divisor = getInt32( param )[ 0 ];
+        return decodeIntegerRecursiveIndexing( getInt8( bytes ), divisor );
+    }
+
+};
+
+
+function decodeData( data ){
+
+    if( data instanceof Uint8Array ){
+
+        var dv = new DataView( data.buffer, data.byteOffset, data.byteLength );
+        var type = dv.getInt32( 0 );
+        var size = dv.getInt32( 4 );
+        var param = data.subarray( 8, 12 );
+        var bytes = data.subarray( 12 );
+//console.log( type, size, getInt32(param), bytes )
+        return decodingStrategies[ type ]( bytes, size, param );
+
+    }else{
+
+        return data;
+
+    }
+
+}
+
+
 /**
  * Decode MMTF fields
  * @static
@@ -127,146 +206,132 @@ import {
 function decodeMmtf( inputDict, params ){
 
     params = params || {};
-
     var ignoreFields = params.ignoreFields;
+    var outputDict = {};
 
-    // helper function to tell if a field should be decoded
-    function decodeField( name ){
-        return ignoreFields ? ignoreFields.indexOf( name ) === -1 : true;
-    }
-
-    // hoisted loop variables
-    var i, il;
-
-    // get counts
-    var numBonds = inputDict.numBonds || 0;
-    var numAtoms = inputDict.numAtoms || 0;
-    var numGroups = inputDict.groupTypeList.length / 4;
-    var numChains = inputDict.chainIdList.length / 4;
-    var numModels = inputDict.chainsPerModel.length;
-
-    // initialize output dict
-    var outputDict = {
-        numGroups: numGroups,
-        numChains: numChains,
-        numModels: numModels
-    };
-
-    // copy some fields over from the input dict
-    PassThroughFields.forEach( function( name ){
-        if( inputDict[ name ] !== undefined ){
-            outputDict[ name ] = inputDict[ name ];
+    FieldNames.forEach( function( name ){
+        var ignore = ignoreFields ? ignoreFields.indexOf( name ) !== -1 : false;
+        if( !ignore && inputDict[ name ] !== undefined ){
+            outputDict[ name ] = decodeData( inputDict[ name ] );
         }
     } );
-
-    //////////////
-    // bond data
-
-    // decode inter group bond atom indices, i.e. get int32 array
-    var bondAtomListKey = "bondAtomList";
-    if( inputDict[ bondAtomListKey ] && decodeField( bondAtomListKey ) ){
-        outputDict[ bondAtomListKey ] = getInt32( inputDict[ bondAtomListKey ] );
-    }
-
-    // decode inter group bond orders, i.e. get uint8 array
-    var bondOrderListKey = "bondOrderList";
-    if( inputDict[ bondOrderListKey ] && decodeField( bondOrderListKey ) ){
-        outputDict[ bondOrderListKey ] = getUint8View( inputDict[ bondOrderListKey ] );
-    }
-
-    //////////////
-    // atom data
-
-    // split-list delta & integer decode x, y, z atom coords
-    outputDict.xCoordList = decodeFloatSplitListDelta(
-        inputDict.xCoordBig, inputDict.xCoordSmall, 1000
-    );
-    outputDict.yCoordList = decodeFloatSplitListDelta(
-        inputDict.yCoordBig, inputDict.yCoordSmall, 1000
-    );
-    outputDict.zCoordList = decodeFloatSplitListDelta(
-        inputDict.zCoordBig, inputDict.zCoordSmall, 1000
-    );
-
-    // split-list delta & integer decode b-factors
-    var bFactorListKey = "bFactorList";
-    var bFactorBigKey = "bFactorBig";
-    var bFactorSmallKey = "bFactorSmall";
-    if( inputDict[ bFactorBigKey ] && inputDict[ bFactorSmallKey ] && decodeField( bFactorListKey ) ){
-        outputDict[ bFactorListKey ] = decodeFloatSplitListDelta(
-            inputDict[ bFactorBigKey ], inputDict[ bFactorSmallKey ], 100
-        );
-    }
-
-    // delta & run-length decode atom ids
-    var atomIdListKey = "atomIdList";
-    if( inputDict[ atomIdListKey ] && decodeField( atomIdListKey ) ){
-        outputDict[ atomIdListKey ] = decodeDelta(
-            decodeRunLength( getInt32( inputDict[ atomIdListKey ] ) )
-        );
-    }
-
-    // run-length decode alternate labels
-    var altLocListKey = "altLocList";
-    if( inputDict[ altLocListKey ] && decodeField( altLocListKey ) ){
-        outputDict[ altLocListKey ] = decodeRunLength(
-            getInt32( inputDict[ altLocListKey ] ), new Uint8Array( numAtoms )
-        );
-    }
-
-    // run-length & integer decode occupancies
-    var occupancyListKey = "occupancyList";
-    if( inputDict[ occupancyListKey ] && decodeField( occupancyListKey ) ){
-        outputDict[ occupancyListKey ] = decodeFloatRunLength( inputDict[ occupancyListKey ], 100 );
-    }
-
-    ///////////////
-    // group data
-
-    // run-length & delta decode group numbers
-    outputDict.groupIdList = decodeDelta(
-        decodeRunLength( getInt32( inputDict.groupIdList ) )
-    );
-
-    // decode group types, i.e. get int32 array
-    outputDict.groupTypeList = getInt32( inputDict.groupTypeList );
-
-    // decode secondary structure, i.e. get int8 view
-    var secStructListKey = "secStructList";
-    if( inputDict[ secStructListKey ] && decodeField( secStructListKey ) ){
-        outputDict[ secStructListKey ] = getInt8View( inputDict[ secStructListKey ] );
-    }
-
-    // run-length decode insertion codes
-    var insCodeListKey = "insCodeList";
-    if( inputDict[ insCodeListKey ] && decodeField( insCodeListKey ) ){
-        outputDict[ insCodeListKey ] = decodeRunLength(
-            getInt32( inputDict[ insCodeListKey ] ), new Uint8Array( numGroups )
-        );
-    }
-
-    // run-length & delta decode sequence indices
-    var sequenceIndexListKey = "sequenceIndexList";
-    if( inputDict[ sequenceIndexListKey ] && decodeField( sequenceIndexListKey ) ){
-        outputDict[ sequenceIndexListKey ] = decodeDelta(
-            decodeRunLength( getInt32( inputDict[ sequenceIndexListKey ] ) )
-        );
-    }
-
-    ///////////////
-    // chain data
-
-    // decode chain ids, i.e. get int8 view
-    outputDict.chainIdList = getUint8View( inputDict.chainIdList );
-
-    // decode chain names, i.e. get int8 view
-    var chainNameListKey = "chainNameList";
-    if( inputDict[ chainNameListKey ] && decodeField( chainNameListKey ) ){
-        outputDict[ chainNameListKey ] = getUint8View( inputDict[ chainNameListKey ] );
-    }
 
     return outputDict;
 
 }
 
 export default decodeMmtf;
+
+
+
+
+
+
+
+
+
+// //////////////
+// // bond data
+
+// // decode inter group bond atom indices, i.e. get int32 array
+// var bondAtomListKey = "bondAtomList";
+// if( inputDict[ bondAtomListKey ] && decodeField( bondAtomListKey ) ){
+//     outputDict[ bondAtomListKey ] = getInt32( inputDict[ bondAtomListKey ] );
+// }
+
+// // decode inter group bond orders, i.e. get uint8 array
+// var bondOrderListKey = "bondOrderList";
+// if( inputDict[ bondOrderListKey ] && decodeField( bondOrderListKey ) ){
+//     outputDict[ bondOrderListKey ] = getUint8View( inputDict[ bondOrderListKey ] );
+// }
+
+// //////////////
+// // atom data
+
+// // split-list delta & integer decode x, y, z atom coords
+// outputDict.xCoordList = decodeFloatSplitListDelta(
+//     inputDict.xCoordBig, inputDict.xCoordSmall, 1000
+// );
+// outputDict.yCoordList = decodeFloatSplitListDelta(
+//     inputDict.yCoordBig, inputDict.yCoordSmall, 1000
+// );
+// outputDict.zCoordList = decodeFloatSplitListDelta(
+//     inputDict.zCoordBig, inputDict.zCoordSmall, 1000
+// );
+
+// // split-list delta & integer decode b-factors
+// var bFactorListKey = "bFactorList";
+// var bFactorBigKey = "bFactorBig";
+// var bFactorSmallKey = "bFactorSmall";
+// if( inputDict[ bFactorBigKey ] && inputDict[ bFactorSmallKey ] && decodeField( bFactorListKey ) ){
+//     outputDict[ bFactorListKey ] = decodeFloatSplitListDelta(
+//         inputDict[ bFactorBigKey ], inputDict[ bFactorSmallKey ], 100
+//     );
+// }
+
+// // delta & run-length decode atom ids
+// var atomIdListKey = "atomIdList";
+// if( inputDict[ atomIdListKey ] && decodeField( atomIdListKey ) ){
+//     outputDict[ atomIdListKey ] = decodeDelta(
+//         decodeRunLength( getInt32( inputDict[ atomIdListKey ] ) )
+//     );
+// }
+
+// // run-length decode alternate labels
+// var altLocListKey = "altLocList";
+// if( inputDict[ altLocListKey ] && decodeField( altLocListKey ) ){
+//     outputDict[ altLocListKey ] = decodeRunLength(
+//         getInt32( inputDict[ altLocListKey ] ), new Uint8Array( numAtoms )
+//     );
+// }
+
+// // run-length & integer decode occupancies
+// var occupancyListKey = "occupancyList";
+// if( inputDict[ occupancyListKey ] && decodeField( occupancyListKey ) ){
+//     outputDict[ occupancyListKey ] = decodeFloatRunLength( inputDict[ occupancyListKey ], 100 );
+// }
+
+// ///////////////
+// // group data
+
+// // run-length & delta decode group numbers
+// outputDict.groupIdList = decodeDelta(
+//     decodeRunLength( getInt32( inputDict.groupIdList ) )
+// );
+
+// // decode group types, i.e. get int32 array
+// outputDict.groupTypeList = getInt32( inputDict.groupTypeList );
+
+// // decode secondary structure, i.e. get int8 view
+// var secStructListKey = "secStructList";
+// if( inputDict[ secStructListKey ] && decodeField( secStructListKey ) ){
+//     outputDict[ secStructListKey ] = getInt8View( inputDict[ secStructListKey ] );
+// }
+
+// // run-length decode insertion codes
+// var insCodeListKey = "insCodeList";
+// if( inputDict[ insCodeListKey ] && decodeField( insCodeListKey ) ){
+//     outputDict[ insCodeListKey ] = decodeRunLength(
+//         getInt32( inputDict[ insCodeListKey ] ), new Uint8Array( numGroups )
+//     );
+// }
+
+// // run-length & delta decode sequence indices
+// var sequenceIndexListKey = "sequenceIndexList";
+// if( inputDict[ sequenceIndexListKey ] && decodeField( sequenceIndexListKey ) ){
+//     outputDict[ sequenceIndexListKey ] = decodeDelta(
+//         decodeRunLength( getInt32( inputDict[ sequenceIndexListKey ] ) )
+//     );
+// }
+
+// ///////////////
+// // chain data
+
+// // decode chain ids, i.e. get int8 view
+// outputDict.chainIdList = getUint8View( inputDict.chainIdList );
+
+// // decode chain names, i.e. get int8 view
+// var chainNameListKey = "chainNameList";
+// if( inputDict[ chainNameListKey ] && decodeField( chainNameListKey ) ){
+//     outputDict[ chainNameListKey ] = getUint8View( inputDict[ chainNameListKey ] );
+// }

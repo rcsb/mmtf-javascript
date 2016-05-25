@@ -1,4 +1,31 @@
 
+
+function encBytes( type, size, param, bytes ){
+    var buffer = new ArrayBuffer( 12 + bytes.byteLength );
+    var out = new Uint8Array( buffer );
+    var dv = new DataView( buffer );
+    dv.setInt32( 0, type );
+    dv.setInt32( 4, size );
+    if( param ) out.set( param, 8 );
+    out.set( bytes, 12 );
+    return out;
+}
+
+function int32Bytes( val ){
+    return new Uint8Array( MmtfUtils.makeInt32Buffer( val ) );
+}
+
+function int16Bytes( val ){
+    return new Uint8Array( MmtfUtils.makeInt16Buffer( val ) );
+}
+
+var divisor100 = int32Bytes( [ 100 ] );
+var divisor1000 = int32Bytes( [ 1000 ] );
+
+var makeInt16Buffer = MmtfUtils.makeInt16Buffer;
+var makeInt32Buffer = MmtfUtils.makeInt32Buffer;
+
+
 function getEmptyFullMmtfDict(){
     return {
         // meta
@@ -23,37 +50,36 @@ function getEmptyFullMmtfDict(){
         // counts
         numBonds: 0,
         numAtoms: 0,
+        numGroups: 0,
+        numChains: 0,
+        numModels: 0,
 
         // lists
         groupList: [],
 
         // bonds
-        bondAtomList: new Uint8Array( 0 ),
-        bondOrderList: new Uint8Array( 0 ),
+        bondAtomList: encBytes( 4, 0, undefined, int32Bytes([]) ),
+        bondOrderList: encBytes( 2, 0, undefined, new Uint8Array( 0 ) ),
 
         // atoms
-        xCoordBig: new Uint8Array( 0 ),
-        xCoordSmall: new Uint8Array( 0 ),
-        yCoordBig: new Uint8Array( 0 ),
-        yCoordSmall: new Uint8Array( 0 ),
-        zCoordBig: new Uint8Array( 0 ),
-        zCoordSmall: new Uint8Array( 0 ),
-        bFactorBig: new Uint8Array( 0 ),
-        bFactorSmall: new Uint8Array( 0 ),
-        atomIdList: new Uint8Array( 0 ),
-        altLocList: new Uint8Array( 0 ),
-        occupancyList: new Uint8Array( 0 ),
+        xCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
+        yCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
+        zCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
+        bFactorList: encBytes( 10, 0, int32Bytes([ 100 ]), int16Bytes([]) ),
+        atomIdList: encBytes( 8, 0, undefined, int32Bytes([]) ),
+        altLocList: encBytes( 6, 0, undefined, new Uint8Array([]) ),
+        occupancyList: encBytes( 9, 0, int32Bytes([ 100 ]), int32Bytes([]) ),
 
         // groups
-        groupIdList: new Uint8Array( 0 ),
-        groupTypeList: new Uint8Array( 0 ),
-        secStructList: new Uint8Array( 0 ),
-        insCodeList: new Uint8Array( 0 ),
-        sequenceIndexList: new Uint8Array( 0 ),
+        groupIdList: encBytes( 8, 0, undefined, int32Bytes([]) ),
+        groupTypeList: encBytes( 4, 0, undefined, int32Bytes([]) ),
+        secStructList: encBytes( 2, 0, undefined, new Uint8Array([]) ),
+        insCodeList: encBytes( 6, 0, undefined, new Uint8Array([]) ),
+        sequenceIndexList: encBytes( 8, 0, undefined, int32Bytes([]) ),
 
         // chains
-        chainIdList: new Uint8Array( 0 ),
-        chainNameList: new Uint8Array( 0 ),
+        chainIdList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
+        chainNameList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
         groupsPerChain: [],
 
         // models
@@ -70,24 +96,24 @@ function getEmptyRequiredMmtfDict(){
         // counts
         numBonds: 0,
         numAtoms: 0,
+        numGroups: 0,
+        numChains: 0,
+        numModels: 0,
 
         // lists
         groupList: [],
 
         // atoms
-        xCoordBig: new Uint8Array( 0 ),
-        xCoordSmall: new Uint8Array( 0 ),
-        yCoordBig: new Uint8Array( 0 ),
-        yCoordSmall: new Uint8Array( 0 ),
-        zCoordBig: new Uint8Array( 0 ),
-        zCoordSmall: new Uint8Array( 0 ),
+        xCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
+        yCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
+        zCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
 
         // groups
-        groupIdList: new Uint8Array( 0 ),
-        groupTypeList: new Uint8Array( 0 ),
+        groupIdList: encBytes( 8, 0, undefined, int32Bytes([]) ),
+        groupTypeList: encBytes( 4, 0, undefined, int32Bytes([]) ),
 
         // chains
-        chainIdList: new Uint8Array( 0 ),
+        chainIdList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
         groupsPerChain: [],
 
         // models
@@ -140,6 +166,9 @@ function getFilledFullMmtfDict(){
         // counts
         numBonds: 1,
         numAtoms: 2,
+        numGroups: 1,
+        numChains: 1,
+        numModels: 1,
 
         // lists
         groupList: [
@@ -156,32 +185,28 @@ function getFilledFullMmtfDict(){
         ],
 
         // bonds
-        bondAtomList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0, 1, 0, 0 ] ) ),
-        bondOrderList: new Uint8Array( new Uint8Array( [ 2, 0 ] ).buffer ),
+        bondAtomList: encBytes( 4, 4, undefined, int32Bytes([ 0, 1, 0, 0 ]) ),
+        bondOrderList: encBytes( 2, 2, undefined, new Uint8Array( new Int8Array([ 2, 0 ]).buffer ) ),
 
         // atoms
-        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 50000, 1 ] ) ),
-        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 2000 ] ) ),
-        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 60000, 1 ] ) ),
-        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 3000 ] ) ),
-        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 70000, 1 ] ) ),
-        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 4000 ] ) ),
-        bFactorBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 9999, 1 ] ) ),
-        bFactorSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 1 ] ) ),
-        atomIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 1, 2 ] ) ),
-        altLocList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 65, 1, 66, 1 ] ) ),
-        occupancyList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 60, 1, 40, 1 ] ) ),
+        xCoordList: encBytes( 10, 2, int32Bytes([ 1000 ]), int16Bytes([ 5000, 100 ]) ),
+        yCoordList: encBytes( 10, 2, int32Bytes([ 1000 ]), int16Bytes([ 6000, 100 ]) ),
+        zCoordList: encBytes( 10, 2, int32Bytes([ 1000 ]), int16Bytes([ 7000, 100 ]) ),
+        bFactorList: encBytes( 10, 2, int32Bytes([ 100 ]), int16Bytes([ 9999, 1 ]) ),
+        atomIdList: encBytes( 8, 2, undefined, int32Bytes([ 1, 2 ]) ),
+        altLocList: encBytes( 6, 2, undefined, int32Bytes([ 65, 1, 66, 1 ]) ),
+        occupancyList: encBytes( 9, 2, int32Bytes([ 100 ]), int32Bytes([ 60, 1, 40, 1 ]) ),
 
         // groups
-        groupIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100, 1 ] ) ),
-        groupTypeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0 ] ) ),
-        secStructList: new Uint8Array( new Int8Array( [ -1 ] ).buffer ),
-        insCodeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 88, 1 ] ) ),
-        sequenceIndexList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0, 1 ] ) ),
+        groupIdList: encBytes( 8, 1, undefined, int32Bytes([ 100, 1 ]) ),
+        groupTypeList: encBytes( 4, 1, undefined, int32Bytes([ 0 ]) ),
+        secStructList: encBytes( 2, 1, undefined, new Uint8Array( new Int8Array([ -1 ]).buffer ) ),
+        insCodeList: encBytes( 6, 1, undefined, int32Bytes([ 88, 1 ]) ),
+        sequenceIndexList: encBytes( 8, 1, undefined, int32Bytes([ 0, 1 ]) ),
 
         // chains
-        chainIdList: new Uint8Array( [ 68, 65, 0, 0 ] ),
-        chainNameList: new Uint8Array( [ 66, 0, 0, 0 ] ),
+        chainIdList: encBytes( 5, 1, undefined, new Uint8Array([ 68, 65, 0, 0 ]) ),
+        chainNameList: encBytes( 5, 1, undefined, new Uint8Array([ 66, 0, 0, 0 ]) ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -198,6 +223,9 @@ function getFilledRequiredMmtfDict(){
         // counts
         numBonds: 1,
         numAtoms: 2,
+        numGroups: 1,
+        numChains: 1,
+        numModels: 1,
 
         // lists
         groupList: [
@@ -214,19 +242,22 @@ function getFilledRequiredMmtfDict(){
         ],
 
         // atoms
-        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100000, 1 ] ) ),
-        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 10000 ] ) ),
-        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 200000, 1 ] ) ),
-        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 20000 ] ) ),
-        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 300000, 1 ] ) ),
-        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 30000 ] ) ),
+        xCoordList: encBytes(
+            10, 3, int32Bytes([ 1000 ]), int16Bytes([ 10000, 1, 2 ])
+        ),
+        yCoordList: encBytes(
+            10, 3, int32Bytes([ 1000 ]), int16Bytes([ 20000, 1, 2 ])
+        ),
+        zCoordList: encBytes(
+            10, 3, int32Bytes([ 1000 ]), int16Bytes([ 30000, 1, 2 ])
+        ),
 
         // groups
-        groupIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100, 1 ] ) ),
-        groupTypeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0 ] ) ),
+        groupIdList: encBytes( 8, 1, undefined, int32Bytes([ 100, 1 ]) ),
+        groupTypeList: encBytes( 4, 1, undefined, int32Bytes([ 0 ]) ),
 
         // chains
-        chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
+        chainIdList: encBytes( 5, 1, undefined, new Uint8Array([ 65, 0, 0, 0 ]) ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -291,7 +322,7 @@ function getEmptyFullDecodedMmtfDict(){
         bFactorList: new Float32Array( 0 ),
         bioAssemblyList: [],
         bondAtomList: new Int32Array( 0 ),
-        bondOrderList: new Uint8Array( 0 ),
+        bondOrderList: new Int8Array( 0 ),
         chainIdList: new Uint8Array( 0 ),
         chainNameList: new Uint8Array( 0 ),
         chainsPerModel: [],
@@ -406,15 +437,15 @@ function getFilledFullDecodedMmtfDict(){
             }
         ],
         bondAtomList: new Int32Array( [ 0, 1, 0, 0 ] ),
-        bondOrderList: new Uint8Array( [ 2, 0 ] ),
+        bondOrderList: new Int8Array( [ 2, 0 ] ),
 
         altLocList: new Uint8Array( [ 65, 66 ] ),
         atomIdList: new Int32Array( [ 1, 2 ] ),
         bFactorList: new Float32Array( [ 99.99, 100.00 ] ),
         occupancyList: new Float32Array( [ 0.6, 0.4 ] ),
-        xCoordList: new Float32Array( [ 50, 52 ] ),
-        yCoordList: new Float32Array( [ 60, 63 ] ),
-        zCoordList: new Float32Array( [ 70, 74 ] ),
+        xCoordList: new Float32Array( [ 5, 5.1 ] ),
+        yCoordList: new Float32Array( [ 6, 6.1 ] ),
+        zCoordList: new Float32Array( [ 7, 7.1 ] ),
 
         groupIdList: new Int32Array( [ 100 ] ),
         groupTypeList: new Int32Array( [ 0 ] ),
@@ -451,9 +482,9 @@ function getFilledRequiredDecodedMmtfDict(){
                 groupName: "GLY"
             }
         ],
-        xCoordList: new Float32Array( [ 100, 110 ] ),
-        yCoordList: new Float32Array( [ 200, 220 ] ),
-        zCoordList: new Float32Array( [ 300, 330 ] ),
+        xCoordList: new Float32Array( [ 10, 10.001, 10.003 ] ),
+        yCoordList: new Float32Array( [ 20, 20.001, 20.003 ] ),
+        zCoordList: new Float32Array( [ 30, 30.001, 30.003 ] ),
         groupIdList: new Int32Array( [ 100 ] ),
         groupTypeList: new Int32Array( [ 0 ] ),
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),

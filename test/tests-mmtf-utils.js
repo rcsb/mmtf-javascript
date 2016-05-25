@@ -42,7 +42,7 @@ QUnit.test( "getInt16", function( assert ) {
     dv.setInt16( 0, 18902 );
     dv.setInt16( 2 * 2, -4467 );
     var view2 = new Uint8Array( buffer, 0, 8 );
-    var int16 = MmtfUtils.getInt16( view2, undefined, true );
+    var int16 = MmtfUtils.getInt16( view2 );
     assert.equal( int16[0], 18902, "Passed!" );
     assert.equal( int16[1], 0, "Passed!" );
     assert.equal( int16[2], -4467, "Passed!" );
@@ -54,10 +54,22 @@ QUnit.test( "getInt32", function( assert ) {
     dv.setInt32( 0, 3418902 );
     dv.setInt32( 4 * 2, -743467 );
     var view2 = new Uint8Array( buffer, 0, 16 );
-    var int32 = MmtfUtils.getInt32( view2, undefined, true );
+    var int32 = MmtfUtils.getInt32( view2 );
     assert.equal( int32[0], 3418902, "Passed!" );
     assert.equal( int32[1], 0, "Passed!" );
     assert.equal( int32[2], -743467, "Passed!" );
+});
+
+QUnit.test( "getFloat32", function( assert ) {
+    var buffer = new ArrayBuffer( 4 * 3 );
+    var dv = new DataView( buffer );
+    dv.setFloat32( 0, 3418.1 );
+    dv.setFloat32( 4 * 2, -7437.2 );
+    var view2 = new Uint8Array( buffer, 0, 4 * 3 );
+    var float32 = MmtfUtils.getFloat32( view2 );
+    assert.close( float32[0], 3418.1, 0.001, "Passed!" );
+    assert.equal( float32[1], 0, "Passed!" );
+    assert.close( float32[2], -7437.2, 0.001, "Passed!" );
 });
 
 QUnit.test( "makeFloat32Buffer", function( assert ) {
@@ -405,7 +417,6 @@ QUnit.test( "encodeFloatRunLength empty array", function( assert ) {
     assert.deepEqual( encoded, expected, "Passed!" );
 });
 
-
 QUnit.test( "decodeRecursiveIndexing", function( assert ) {
     var input = new Int16Array([
         0x7FFF, 0, 0x7FFF, 1, 0x7FFF - 1,
@@ -416,7 +427,7 @@ QUnit.test( "decodeRecursiveIndexing", function( assert ) {
         -0x7FFF - 1, -0x7FFF - 2, -0x7FFF
     ]);
     var decoded = MmtfUtils.decodeRecursiveIndexing( input );
-    assert.deepEqual( decoded, expected, "Passed!" );
+    assert.deepEqual( new Int32Array( decoded ), expected, "Passed!" );
 });
 
 QUnit.test( "encodeRecursiveIndexing", function( assert ) {
@@ -429,11 +440,23 @@ QUnit.test( "encodeRecursiveIndexing", function( assert ) {
         -0x7FFF - 1, 0, -0x7FFF - 1, -1, -0x7FFF
     ]);
     var encoded = MmtfUtils.encodeRecursiveIndexing( input );
-    console.log( MmtfUtils.getInt16( new Uint8Array( expected ) ) )
-    console.log( MmtfUtils.getInt16( new Uint8Array( encoded ) ) )
+    // console.log( MmtfUtils.getInt16( new Uint8Array( expected ) ) )
+    // console.log( MmtfUtils.getInt16( new Uint8Array( encoded ) ) )
     assert.deepEqual(
         MmtfUtils.getInt16( new Uint8Array( encoded ) ),
         MmtfUtils.getInt16( new Uint8Array( expected ) ),
         "Passed!"
     );
+});
+
+QUnit.test( "decodeFloatDeltaRecursiveIndexing", function( assert ) {
+    var input = new Int16Array([
+        1212, 89, 13789  // deltas from 1212, 1301, 15090
+    ]);
+    var expected = new Float32Array([
+        12.12, 13.01, 150.90
+    ]);
+    var divisor = 100;
+    var decoded = MmtfUtils.decodeFloatDeltaRecursiveIndexing( input, divisor );
+    assert.deepEqual( decoded, expected, "Passed!" );
 });

@@ -9,7 +9,7 @@
  * @module MmtfEncode
  */
 
-import { PassThroughFields } from "./mmtf-constants.js";
+import { FieldNames } from "./mmtf-constants.js";
 import {
     getUint8View, getInt8View, getInt32, makeInt32Buffer,
     encodeRunLength, encodeDelta, encodeFloatToInteger,
@@ -24,7 +24,7 @@ function encodeMmtf( inputDict ){
     };
 
     // copy some fields over from the input dict
-    PassThroughFields.forEach( function( name ){
+    FieldNames.forEach( function( name ){
         if( inputDict[ name ] !== undefined ){
             outputDict[ name ] = inputDict[ name ];
         }
