@@ -11,10 +11,11 @@
 
 import { FieldNames } from "./mmtf-constants.js";
 import {
-    getUint8View, getInt8View, getInt16, getInt32, getFloat32,
-    decodeRunLength, decodeDelta,
-    decodeFloatSplitListDelta, decodeFloatRunLength,
-    decodeFloatDeltaRecursiveIndexing
+    getUint8View, getInt8View,
+    decodeInt16, decodeInt32, decodeFloat32,
+    decodeInteger, decodeRun, decodeDelta, decodePacking,
+    decodeDeltaRun, decodeIntegerRun, decodeIntegerPacking, decodeIntegerDeltaPacking,
+    decodeBytes
 } from "./mmtf-utils.js";
 
 
@@ -125,74 +126,48 @@ import {
 var decodingStrategies = {
 
     1: function( bytes, size ){
-        return getFloat32( bytes );
+        return decodeFloat32( bytes );
     },
     2: function( bytes, size ){
         return getInt8View( bytes );
     },
     3: function( bytes, size ){
-        return getInt16( bytes );
+        return decodeInt16( bytes );
     },
     4: function( bytes, size ){
-        return getInt32( bytes );
+        return decodeInt32( bytes );
     },
     5: function( bytes, size, param ){
-        var length = getInt32( param )[ 0 ];
+        // var length = decodeInt32( param )[ 0 ];
         return getUint8View( bytes );  // interpret as string array
     },
     6: function( bytes, size ){
-        var out = new Uint8Array( size );  // interpret as char array
-        return decodeRunLength( getInt32( bytes ), out );
+        // interpret as char array
+        return decodeRun( decodeInt32( bytes ), new Uint8Array( size ) );
     },
     7: function( bytes, size ){
-        return decodeRunLength( getInt32( bytes ) )
+        return decodeRun( decodeInt32( bytes ) )
     },
     8: function( bytes, size ){
-        return decodeDelta( decodeRunLength( getInt32( bytes ) ) );
+        return decodeDeltaRun( decodeInt32( bytes ) );
     },
     9: function( bytes, size, param ){
-        var divisor = getInt32( param )[ 0 ];
-        return decodeFloatRunLength( bytes, divisor );
+        return decodeIntegerRun( decodeInt32( bytes ), decodeInt32( param )[ 0 ] );
     },
     10: function( bytes, size, param ){
-        var divisor = getInt32( param )[ 0 ];
-        return decodeFloatDeltaRecursiveIndexing( getInt16( bytes ), divisor );
+        return decodeIntegerDeltaPacking( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
     },
     11: function( bytes, size, param ){
-        var divisor = getInt32( param )[ 0 ];
-        return decodeIntegerToFloat( getInt16( bytes ), divisor );
+        return decodeInteger( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
     },
     12: function( bytes, size, param ){
-        var divisor = getInt32( param )[ 0 ];
-        return decodeIntegerRecursiveIndexing( getInt16( bytes ), divisor );
+        return decodeIntegerPacking( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
     },
     13: function( bytes, size, param ){
-        var divisor = getInt32( param )[ 0 ];
-        return decodeIntegerRecursiveIndexing( getInt8( bytes ), divisor );
+        return decodeIntegerPacking( getInt8View( bytes ), decodeInt32( param )[ 0 ] );
     }
 
 };
-
-
-function decodeData( data ){
-
-    if( data instanceof Uint8Array ){
-
-        var dv = new DataView( data.buffer, data.byteOffset, data.byteLength );
-        var type = dv.getInt32( 0 );
-        var size = dv.getInt32( 4 );
-        var param = data.subarray( 8, 12 );
-        var bytes = data.subarray( 12 );
-//console.log( type, size, getInt32(param), bytes )
-        return decodingStrategies[ type ]( bytes, size, param );
-
-    }else{
-
-        return data;
-
-    }
-
-}
 
 
 /**
@@ -211,8 +186,16 @@ function decodeMmtf( inputDict, params ){
 
     FieldNames.forEach( function( name ){
         var ignore = ignoreFields ? ignoreFields.indexOf( name ) !== -1 : false;
-        if( !ignore && inputDict[ name ] !== undefined ){
-            outputDict[ name ] = decodeData( inputDict[ name ] );
+        var data = inputDict[ name ];
+        if( !ignore && data !== undefined ){
+            if( data instanceof Uint8Array ){
+                var info = decodeBytes( data );
+                outputDict[ name ] = decodingStrategies[ info[ 0 ] ](
+                    info[ 1 ], info[ 2 ], info[ 3 ]
+                );
+            }else{
+                outputDict[ name ] = data;
+            }
         }
     } );
 

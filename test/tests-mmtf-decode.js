@@ -11,7 +11,7 @@ QUnit.test( "empty full", function( assert ) {
     var decodedMmtf = decodeMmtf( dict );
     // checkMmtf( decodedMmtf, assert );
     var expectedMmtf = getEmptyFullDecodedMmtfDict();
-    console.log(decodedMmtf,expectedMmtf)
+    // console.log(decodedMmtf,expectedMmtf)
     assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });
 

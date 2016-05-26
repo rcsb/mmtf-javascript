@@ -11,10 +11,93 @@
 
 import { FieldNames } from "./mmtf-constants.js";
 import {
-    getUint8View, getInt8View, getInt32, makeInt32Buffer,
-    encodeRunLength, encodeDelta, encodeFloatToInteger,
-    encodeFloatSplitListDelta, encodeFloatRunLength
+    getUint8View,
+    encodeInt16, encodeInt32, encodeFloat32,
+    encodeRun, encodeDelta, encodeInteger, encodePacking,
+    encodeIntegerDelta, encodeIntegerRun, encodeIntegerPacking, encodeIntegerDeltaPacking,
+    encodeBytes
 } from "./mmtf-utils.js";
+
+
+/**
+ * [encodingStrategies description]
+ * @type {Object}
+ */
+var encodingStrategies = {
+
+    1: function( float32 ){
+        var size = float32.length;
+        var bytes = encodeFloat32( float32 );
+        return encodeBytes( 1, size, undefined, bytes );
+    },
+    2: function( int8 ){
+        var size = int8.length;
+        var bytes = getUint8View( int8 );
+        return encodeBytes( 2, size, undefined, bytes );
+    },
+    3: function( int16 ){
+        var size = int16.length;
+        var bytes = encodeInt16( int16 );
+        return encodeBytes( 3, size, undefined, bytes );
+    },
+    4: function( int32 ){
+        var size = int32.length;
+        var bytes = encodeInt32( int32 );
+        return encodeBytes( 4, size, undefined, bytes );
+    },
+    5: function( stringBytes, length ){
+        var size = stringBytes.length / length;
+        var param = encodeInt32([ length ]);
+        var bytes = getUint8View( stringBytes );
+        return encodeBytes( 5, size, param, bytes );
+    },
+    6: function( charBytes ){
+        var size = charBytes.length;
+        var bytes = encodeRun( charBytes );
+        return encodeBytes( 6, size, undefined, bytes );
+    },
+    7: function( int32 ){
+        var size = int32.length;
+        var bytes = encodeInt32( encodeRun( int32 ) );
+        return encodeBytes( 7, size, undefined, bytes );
+    },
+    8: function( int32 ){
+        var size = int32.length;
+        var bytes = encodeInt32( encodeDeltaRun( int32 ) );
+        return encodeBytes( 8, size, undefined, bytes );
+    },
+    9: function( float32, factor ){
+        var size = float32.length;
+        var param = encodeInt32([ factor ]);
+        var bytes = encodeInt32( encodeIntegerRun( float32, factor ) );
+        return encodeBytes( 9, size, param, bytes );
+    },
+    10: function( float32, factor ){
+        var size = float32.length;
+        var param = encodeInt32([ factor ]);
+        var bytes = encodeInt16( encodeIntegerDeltaPacking( float32, factor ) );
+        return encodeBytes( 10, size, param, bytes );
+    },
+    11: function( float32, factor ){
+        var size = float32.length;
+        var param = encodeInt32([ factor ]);
+        var bytes = encodeInt16( encodeInteger( float32, factor, new Int16Array( size ) ) );
+        return encodeBytes( 11, size, param, bytes );
+    },
+    12: function( float32, factor ){
+        var size = float32.length;
+        var param = encodeInt32([ factor ]);
+        var bytes = encodeInt16( encodeIntegerPacking( float32, factor ) );
+        return encodeBytes( 12, size, param, bytes );
+    },
+    13: function( float32, factor ){
+        var size = float32.length;
+        var param = encodeInt32([ factor ]);
+        var bytes = getUint8View( encodeIntegerPacking( float32, factor, true ) );
+        return encodeBytes( 13, size, param, bytes );
+    }
+
+};
 
 
 function encodeMmtf( inputDict ){

@@ -1,29 +1,14 @@
 
 
-function encBytes( type, size, param, bytes ){
-    var buffer = new ArrayBuffer( 12 + bytes.byteLength );
-    var out = new Uint8Array( buffer );
-    var dv = new DataView( buffer );
-    dv.setInt32( 0, type );
-    dv.setInt32( 4, size );
-    if( param ) out.set( param, 8 );
-    out.set( bytes, 12 );
-    return out;
-}
+var encBytes = function( type, size, param, bytes ){
+    return new Uint8Array( MmtfUtils.encodeBytes.apply( null, arguments ) );
+};
+var encInt16 = MmtfUtils.encodeInt16;
+var encInt32 = MmtfUtils.encodeInt32;
 
-function int32Bytes( val ){
-    return new Uint8Array( MmtfUtils.makeInt32Buffer( val ) );
-}
 
-function int16Bytes( val ){
-    return new Uint8Array( MmtfUtils.makeInt16Buffer( val ) );
-}
-
-var divisor100 = int32Bytes( [ 100 ] );
-var divisor1000 = int32Bytes( [ 1000 ] );
-
-var makeInt16Buffer = MmtfUtils.makeInt16Buffer;
-var makeInt32Buffer = MmtfUtils.makeInt32Buffer;
+var div100 = MmtfUtils.encodeInt32([ 100 ]);
+var div1000 = MmtfUtils.encodeInt32([ 1000 ]);
 
 
 function getEmptyFullMmtfDict(){
@@ -58,24 +43,24 @@ function getEmptyFullMmtfDict(){
         groupList: [],
 
         // bonds
-        bondAtomList: encBytes( 4, 0, undefined, int32Bytes([]) ),
-        bondOrderList: encBytes( 2, 0, undefined, new Uint8Array( 0 ) ),
+        bondAtomList: encBytes( 4, 0, undefined, encInt32([]) ),
+        bondOrderList: encBytes( 2, 0, undefined, new Uint8Array([]) ),
 
         // atoms
-        xCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
-        yCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
-        zCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
-        bFactorList: encBytes( 10, 0, int32Bytes([ 100 ]), int16Bytes([]) ),
-        atomIdList: encBytes( 8, 0, undefined, int32Bytes([]) ),
+        xCoordList: encBytes( 10, 0, encInt32([ 1000 ]), encInt16([]) ),
+        yCoordList: encBytes( 10, 0, encInt32([ 1000 ]), encInt16([]) ),
+        zCoordList: encBytes( 10, 0, encInt32([ 1000 ]), encInt16([]) ),
+        bFactorList: encBytes( 10, 0, encInt32([ 100 ]), encInt16([]) ),
+        atomIdList: encBytes( 8, 0, undefined, encInt32([]) ),
         altLocList: encBytes( 6, 0, undefined, new Uint8Array([]) ),
-        occupancyList: encBytes( 9, 0, int32Bytes([ 100 ]), int32Bytes([]) ),
+        occupancyList: encBytes( 9, 0, encInt32([ 100 ]), encInt32([]) ),
 
         // groups
-        groupIdList: encBytes( 8, 0, undefined, int32Bytes([]) ),
-        groupTypeList: encBytes( 4, 0, undefined, int32Bytes([]) ),
+        groupIdList: encBytes( 8, 0, undefined, encInt32([]) ),
+        groupTypeList: encBytes( 4, 0, undefined, encInt32([]) ),
         secStructList: encBytes( 2, 0, undefined, new Uint8Array([]) ),
         insCodeList: encBytes( 6, 0, undefined, new Uint8Array([]) ),
-        sequenceIndexList: encBytes( 8, 0, undefined, int32Bytes([]) ),
+        sequenceIndexList: encBytes( 8, 0, undefined, encInt32([]) ),
 
         // chains
         chainIdList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
@@ -104,13 +89,13 @@ function getEmptyRequiredMmtfDict(){
         groupList: [],
 
         // atoms
-        xCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
-        yCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
-        zCoordList: encBytes( 10, 0, int32Bytes([ 1000 ]), int16Bytes([]) ),
+        xCoordList: encBytes( 10, 0, encInt32([ 1000 ]), encInt16([]) ),
+        yCoordList: encBytes( 10, 0, encInt32([ 1000 ]), encInt16([]) ),
+        zCoordList: encBytes( 10, 0, encInt32([ 1000 ]), encInt16([]) ),
 
         // groups
-        groupIdList: encBytes( 8, 0, undefined, int32Bytes([]) ),
-        groupTypeList: encBytes( 4, 0, undefined, int32Bytes([]) ),
+        groupIdList: encBytes( 8, 0, undefined, encInt32([]) ),
+        groupTypeList: encBytes( 4, 0, undefined, encInt32([]) ),
 
         // chains
         chainIdList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
@@ -185,24 +170,24 @@ function getFilledFullMmtfDict(){
         ],
 
         // bonds
-        bondAtomList: encBytes( 4, 4, undefined, int32Bytes([ 0, 1, 0, 0 ]) ),
+        bondAtomList: encBytes( 4, 4, undefined, encInt32([ 0, 1, 0, 0 ]) ),
         bondOrderList: encBytes( 2, 2, undefined, new Uint8Array( new Int8Array([ 2, 0 ]).buffer ) ),
 
         // atoms
-        xCoordList: encBytes( 10, 2, int32Bytes([ 1000 ]), int16Bytes([ 5000, 100 ]) ),
-        yCoordList: encBytes( 10, 2, int32Bytes([ 1000 ]), int16Bytes([ 6000, 100 ]) ),
-        zCoordList: encBytes( 10, 2, int32Bytes([ 1000 ]), int16Bytes([ 7000, 100 ]) ),
-        bFactorList: encBytes( 10, 2, int32Bytes([ 100 ]), int16Bytes([ 9999, 1 ]) ),
-        atomIdList: encBytes( 8, 2, undefined, int32Bytes([ 1, 2 ]) ),
-        altLocList: encBytes( 6, 2, undefined, int32Bytes([ 65, 1, 66, 1 ]) ),
-        occupancyList: encBytes( 9, 2, int32Bytes([ 100 ]), int32Bytes([ 60, 1, 40, 1 ]) ),
+        xCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 5000, 100 ]) ),
+        yCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 6000, 100 ]) ),
+        zCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 7000, 100 ]) ),
+        bFactorList: encBytes( 10, 2, encInt32([ 100 ]), encInt16([ 9999, 1 ]) ),
+        atomIdList: encBytes( 8, 2, undefined, encInt32([ 1, 2 ]) ),
+        altLocList: encBytes( 6, 2, undefined, encInt32([ 65, 1, 66, 1 ]) ),
+        occupancyList: encBytes( 9, 2, encInt32([ 100 ]), encInt32([ 60, 1, 40, 1 ]) ),
 
         // groups
-        groupIdList: encBytes( 8, 1, undefined, int32Bytes([ 100, 1 ]) ),
-        groupTypeList: encBytes( 4, 1, undefined, int32Bytes([ 0 ]) ),
+        groupIdList: encBytes( 8, 1, undefined, encInt32([ 100, 1 ]) ),
+        groupTypeList: encBytes( 4, 1, undefined, encInt32([ 0 ]) ),
         secStructList: encBytes( 2, 1, undefined, new Uint8Array( new Int8Array([ -1 ]).buffer ) ),
-        insCodeList: encBytes( 6, 1, undefined, int32Bytes([ 88, 1 ]) ),
-        sequenceIndexList: encBytes( 8, 1, undefined, int32Bytes([ 0, 1 ]) ),
+        insCodeList: encBytes( 6, 1, undefined, encInt32([ 88, 1 ]) ),
+        sequenceIndexList: encBytes( 8, 1, undefined, encInt32([ 0, 1 ]) ),
 
         // chains
         chainIdList: encBytes( 5, 1, undefined, new Uint8Array([ 68, 65, 0, 0 ]) ),
@@ -243,18 +228,18 @@ function getFilledRequiredMmtfDict(){
 
         // atoms
         xCoordList: encBytes(
-            10, 3, int32Bytes([ 1000 ]), int16Bytes([ 10000, 1, 2 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 10000, 1, 2 ])
         ),
         yCoordList: encBytes(
-            10, 3, int32Bytes([ 1000 ]), int16Bytes([ 20000, 1, 2 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 20000, 1, 2 ])
         ),
         zCoordList: encBytes(
-            10, 3, int32Bytes([ 1000 ]), int16Bytes([ 30000, 1, 2 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 30000, 1, 2 ])
         ),
 
         // groups
-        groupIdList: encBytes( 8, 1, undefined, int32Bytes([ 100, 1 ]) ),
-        groupTypeList: encBytes( 4, 1, undefined, int32Bytes([ 0 ]) ),
+        groupIdList: encBytes( 8, 1, undefined, encInt32([ 100, 1 ]) ),
+        groupTypeList: encBytes( 4, 1, undefined, encInt32([ 0 ]) ),
 
         // chains
         chainIdList: encBytes( 5, 1, undefined, new Uint8Array([ 65, 0, 0, 0 ]) ),
