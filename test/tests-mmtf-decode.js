@@ -21,6 +21,10 @@ QUnit.test( "empty required", function( assert ) {
     var decodedMmtf = decodeMmtf( dict );
     // checkMmtf( decodedMmtf, assert );
     var expectedMmtf = getEmptyRequiredDecodedMmtfDict();
+    // console.log(decodedMmtf,expectedMmtf)
+    // for(var name in decodedMmtf){
+    //     console.log( name, decodedMmtf[name], expectedMmtf[name] )
+    // }
     assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });
 
@@ -40,5 +44,9 @@ QUnit.test( "filled required", function( assert ) {
     var decodedMmtf = decodeMmtf( dict );
     // checkMmtf( decodedMmtf, assert );
     var expectedMmtf = getFilledRequiredDecodedMmtfDict();
+    // console.log(decodedMmtf,expectedMmtf)
+    // for(var name in decodedMmtf){
+    //     console.log( name, decodedMmtf[name], expectedMmtf[name] )
+    // }
     assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });

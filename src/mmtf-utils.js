@@ -67,7 +67,6 @@ function getFloat32View( typedArray ){
 }
 
 
-
 /**
  * get an Int16Array copy of the the input array data
  * @static
@@ -453,7 +452,7 @@ function encodeBytes( type, size, param, bytes ){
     dv.setInt32( 4, size );
     if( param ) out.set( param, 8 );
     out.set( bytes, 12 );
-    return out.buffer;
+    return out;
 }
 
 

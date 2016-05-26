@@ -55,27 +55,28 @@ function encode(value, view, offset) {
     }
   }
 
-  if (value instanceof ArrayBuffer) {
+  if (value instanceof Uint8Array) {
     var length = value.byteLength;
+    var bytes = new Uint8Array(view.buffer);
     // bin 8
     if (length < 0x100) {
       view.setUint8(offset, 0xc4);
       view.setUint8(offset + 1, length);
-      (new Uint8Array(view.buffer)).set(new Uint8Array(value), offset + 2);
+      bytes.set(value, offset + 2);
       return 2 + length;
     }
     // bin 16
     if (length < 0x10000) {
       view.setUint8(offset, 0xc5);
       view.setUint16(offset + 1, length);
-      (new Uint8Array(view.buffer)).set(new Uint8Array(value), offset + 3);
+      bytes.set(value, offset + 3);
       return 3 + length;
     }
     // bin 32
     if (length < 0x100000000) {
       view.setUint8(offset, 0xc6);
       view.setUint32(offset + 1, length);
-      (new Uint8Array(view.buffer)).set(new Uint8Array(value), offset + 5);
+      bytes.set(value, offset + 5);
       return 5 + length;
     }
   }
@@ -224,7 +225,7 @@ function encodedSize(value) {
     }
   }
 
-  if (value instanceof ArrayBuffer) {
+  if (value instanceof Uint8Array) {
     var length = value.byteLength;
     if (length < 0x100) {
       return 2 + length;

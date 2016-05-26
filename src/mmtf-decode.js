@@ -9,7 +9,7 @@
  * @module MmtfDecode
  */
 
-import { FieldNames } from "./mmtf-constants.js";
+import { AllFields } from "./mmtf-constants.js";
 import {
     getUint8View, getInt8View,
     decodeInt16, decodeInt32, decodeFloat32,
@@ -184,7 +184,7 @@ function decodeMmtf( inputDict, params ){
     var ignoreFields = params.ignoreFields;
     var outputDict = {};
 
-    FieldNames.forEach( function( name ){
+    AllFields.forEach( function( name ){
         var ignore = ignoreFields ? ignoreFields.indexOf( name ) !== -1 : false;
         var data = inputDict[ name ];
         if( !ignore && data !== undefined ){

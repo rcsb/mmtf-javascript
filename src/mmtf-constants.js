@@ -5,7 +5,7 @@
  */
 
 
-var FieldNames = [
+var PassThroughFields = [
     "mmtfVersion", "mmtfProducer",
     "unitCell", "spaceGroup", "structureId", "title",
     "depositionDate", "releaseDate",
@@ -13,18 +13,25 @@ var FieldNames = [
     "bioAssemblyList", "entityList", "groupList",
     "numBonds", "numAtoms", "numGroups", "numChains", "numModels",
     "groupsPerChain", "chainsPerModel",
+];
 
+var EncodedFields = [
+	// required
     "xCoordList", "yCoordList", "zCoordList",
     "groupIdList", "groupTypeList",
     "chainIdList",
-
+    // optional
     "bFactorList", "atomIdList", "altLocList", "occupancyList",
     "secStructList", "insCodeList", "sequenceIndexList",
     "chainNameList",
     "bondAtomList", "bondOrderList"
 ];
 
+var AllFields = PassThroughFields.concat( EncodedFields );
+
 
 export {
-    FieldNames
+	PassThroughFields,
+	EncodedFields,
+    AllFields
 };

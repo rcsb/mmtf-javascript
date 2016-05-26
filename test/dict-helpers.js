@@ -1,14 +1,10 @@
 
-
-var encBytes = function( type, size, param, bytes ){
-    return new Uint8Array( MmtfUtils.encodeBytes.apply( null, arguments ) );
+var encBytes = MmtfUtils.encodeBytes;
+var encInt8 = function( array ){
+    return MmtfUtils.getUint8View( new Int8Array( array ) );
 };
 var encInt16 = MmtfUtils.encodeInt16;
 var encInt32 = MmtfUtils.encodeInt32;
-
-
-var div100 = MmtfUtils.encodeInt32([ 100 ]);
-var div1000 = MmtfUtils.encodeInt32([ 1000 ]);
 
 
 function getEmptyFullMmtfDict(){
@@ -171,7 +167,7 @@ function getFilledFullMmtfDict(){
 
         // bonds
         bondAtomList: encBytes( 4, 4, undefined, encInt32([ 0, 1, 0, 0 ]) ),
-        bondOrderList: encBytes( 2, 2, undefined, new Uint8Array( new Int8Array([ 2, 0 ]).buffer ) ),
+        bondOrderList: encBytes( 2, 2, undefined, encInt8([ 2, 0 ]) ),
 
         // atoms
         xCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 5000, 100 ]) ),
@@ -185,13 +181,13 @@ function getFilledFullMmtfDict(){
         // groups
         groupIdList: encBytes( 8, 1, undefined, encInt32([ 100, 1 ]) ),
         groupTypeList: encBytes( 4, 1, undefined, encInt32([ 0 ]) ),
-        secStructList: encBytes( 2, 1, undefined, new Uint8Array( new Int8Array([ -1 ]).buffer ) ),
+        secStructList: encBytes( 2, 1, undefined, encInt8([ -1 ]) ),
         insCodeList: encBytes( 6, 1, undefined, encInt32([ 88, 1 ]) ),
         sequenceIndexList: encBytes( 8, 1, undefined, encInt32([ 0, 1 ]) ),
 
         // chains
-        chainIdList: encBytes( 5, 1, undefined, new Uint8Array([ 68, 65, 0, 0 ]) ),
-        chainNameList: encBytes( 5, 1, undefined, new Uint8Array([ 66, 0, 0, 0 ]) ),
+        chainIdList: encBytes( 5, 1, encInt32([ 4 ]), new Uint8Array([ 68, 65, 0, 0 ]) ),
+        chainNameList: encBytes( 5, 1, encInt32([ 4 ]), new Uint8Array([ 66, 0, 0, 0 ]) ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -242,7 +238,7 @@ function getFilledRequiredMmtfDict(){
         groupTypeList: encBytes( 4, 1, undefined, encInt32([ 0 ]) ),
 
         // chains
-        chainIdList: encBytes( 5, 1, undefined, new Uint8Array([ 65, 0, 0, 0 ]) ),
+        chainIdList: encBytes( 5, 1, encInt32([ 4 ]), new Uint8Array([ 65, 0, 0, 0 ]) ),
         groupsPerChain: [ 1 ],
 
         // models
@@ -259,6 +255,9 @@ function getMultiModelMmtfDict(){
         // counts
         numBonds: 4,
         numAtoms: 4,
+        numGroups: 2,
+        numChains: 2,
+        numModels: 2,
 
         // lists
         groupList: [
@@ -275,23 +274,26 @@ function getMultiModelMmtfDict(){
         ],
 
         // bonds
-        bondAtomList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 1, 0, 3, 2 ] ) ),
-        bondOrderList: new Uint8Array( new Uint8Array( [ 1, 1 ] ).buffer ),
+        bondAtomList: encBytes( 4, 4, undefined, encInt32([ 1, 0, 3, 2 ]) ),
+        bondOrderList: encBytes( 2, 2, undefined, encInt8([ 1, 1 ]) ),
 
         // atoms
-        xCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 10000, 1, 40000, 1 ] ) ),
-        xCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 1000, 1000 ] ) ),
-        yCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 20000, 1, 50000, 1 ] ) ),
-        yCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 2000, 2000 ] ) ),
-        zCoordBig: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 30000, 1, 60000, 1 ] ) ),
-        zCoordSmall: new Uint8Array( MmtfUtils.makeInt16Buffer( [ 3000, 3000 ] ) ),
+        xCoordList: encBytes(
+            10, 3, encInt32([ 1000 ]), encInt16([ 10000, 1, 100, 1 ])
+        ),
+        yCoordList: encBytes(
+            10, 3, encInt32([ 1000 ]), encInt16([ 20000, 1, 100, 1 ])
+        ),
+        zCoordList: encBytes(
+            10, 3, encInt32([ 1000 ]), encInt16([ 30000, 1, 100, 1 ])
+        ),
 
         // groups
-        groupIdList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 100, 1, 1, 1 ] ) ),
-        groupTypeList: new Uint8Array( MmtfUtils.makeInt32Buffer( [ 0, 0 ] ) ),
+        groupIdList: encBytes( 8, 1, undefined, encInt32([ 100, 1, 1, 1 ]) ),
+        groupTypeList: encBytes( 4, 1, undefined, encInt32([ 0, 0 ]) ),
 
         // chains
-        chainIdList: new Uint8Array( [ 65, 0, 0, 0, 66, 0, 0, 0 ] ),
+        chainIdList: encBytes( 5, 1, encInt32([ 4 ]), new Uint8Array([ 65, 0, 0, 0, 66, 0, 0, 0 ]) ),
         groupsPerChain: [ 1, 1 ],
 
         // models
