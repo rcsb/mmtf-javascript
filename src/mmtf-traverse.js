@@ -67,7 +67,7 @@ function fromCharCode( charCodeArray ){
  * @param {?Integer} atomData.atomId - atom id
  * @param {String} atomData.element - IUPAC element name, 0 to 3 characters
  * @param {String} atomData.atomName - name of the atom, 0 to 5 characters
- * @param {Integer} atomData.atomCharge - formal charge of the atom
+ * @param {Integer} atomData.formalCharge - formal charge of the atom
  * @param {Float} atomData.xCoord - x coordinate in Å
  * @param {Float} atomData.yCoord - y coordinate in Å
  * @param {Float} atomData.zCoord - z coordinate in Å
@@ -231,7 +231,7 @@ function traverseMmtf( mmtfData, eventCallbacks, params ){
                             atomId: atomId,
                             element: groupData.elementList[ k ],
                             atomName: groupData.atomNameList[ k ],
-                            atomCharge: groupData.atomChargeList[ k ],
+                            formalCharge: groupData.formalChargeList[ k ],
                             xCoord: mmtfData.xCoordList[ atomIndex ],
                             yCoord: mmtfData.yCoordList[ atomIndex ],
                             zCoord: mmtfData.zCoordList[ atomIndex ],

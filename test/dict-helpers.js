@@ -154,7 +154,7 @@ function getFilledFullMmtfDict(){
         // lists
         groupList: [
             {
-                atomChargeList: [ 2, 1 ],
+                formalChargeList: [ 2, 1 ],
                 elementList: [ "C", "N" ],
                 atomNameList: [ "C", "N" ],
                 bondAtomList: [ 0, 1 ],
@@ -211,7 +211,7 @@ function getFilledRequiredMmtfDict(){
         // lists
         groupList: [
             {
-                atomChargeList: [ 1, 0 ],
+                formalChargeList: [ 1, 0 ],
                 elementList: [ "C", "N" ],
                 atomNameList: [ "C", "N" ],
                 bondAtomList: [ 0, 1 ],
@@ -262,7 +262,7 @@ function getMultiModelMmtfDict(){
         // lists
         groupList: [
             {
-                atomChargeList: [ 1, 0 ],
+                formalChargeList: [ 1, 0 ],
                 elementList: [ "C", "N" ],
                 atomNameList: [ "C", "N" ],
                 bondAtomList: [ 0, 1 ],
@@ -413,7 +413,7 @@ function getFilledFullDecodedMmtfDict(){
         numModels: 1,
         groupList: [
             {
-                atomChargeList: [ 2, 1 ],
+                formalChargeList: [ 2, 1 ],
                 elementList: [ "C", "N" ],
                 atomNameList: [ "C", "N" ],
                 bondAtomList: [ 0, 1 ],
@@ -459,7 +459,7 @@ function getFilledRequiredDecodedMmtfDict(){
         numModels: 1,
         groupList: [
             {
-                atomChargeList: [ 1, 0 ],
+                formalChargeList: [ 1, 0 ],
                 elementList: [ "C", "N" ],
                 atomNameList: [ "C", "N" ],
                 bondAtomList: [ 0, 1 ],

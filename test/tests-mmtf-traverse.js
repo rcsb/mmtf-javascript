@@ -32,7 +32,7 @@ QUnit.test( "onAtom", function( assert ) {
             modelIndex: 0,
             element: "C",
             atomName: "C",
-            atomCharge: 2,
+            formalCharge: 2,
             xCoord: 5,
             yCoord: 6,
             zCoord: 7,
@@ -48,7 +48,7 @@ QUnit.test( "onAtom", function( assert ) {
             modelIndex: 0,
             element: "N",
             atomName: "N",
-            atomCharge: 1,
+            formalCharge: 1,
             xCoord: 5.099999904632568,
             yCoord: 6.099999904632568,
             zCoord: 7.099999904632568,
@@ -161,7 +161,7 @@ QUnit.test( "traverse mmtf data having only required fields", function( assert )
         },
         {
             "altLoc": null,
-            "atomCharge": 1,
+            "formalCharge": 1,
             "atomId": null,
             "atomIndex": 0,
             "atomName": "C",
@@ -177,7 +177,7 @@ QUnit.test( "traverse mmtf data having only required fields", function( assert )
         },
         {
             "altLoc": null,
-            "atomCharge": 0,
+            "formalCharge": 0,
             "atomId": null,
             "atomIndex": 1,
             "atomName": "N",
@@ -229,7 +229,7 @@ QUnit.test( "traverse atoms before group-bonds", function( assert ) {
     var expected = [
         {
             "altLoc": "A",
-            "atomCharge": 2,
+            "formalCharge": 2,
             "atomId": 1,
             "atomIndex": 0,
             "atomName": "C",
@@ -245,7 +245,7 @@ QUnit.test( "traverse atoms before group-bonds", function( assert ) {
         },
         {
             "altLoc": "B",
-            "atomCharge": 1,
+            "formalCharge": 1,
             "atomId": 2,
             "atomIndex": 1,
             "atomName": "N",
@@ -365,7 +365,7 @@ QUnit.test( "traverse firstModelOnly", function( assert ) {
         },
         {
             "altLoc": null,
-            "atomCharge": 1,
+            "formalCharge": 1,
             "atomId": null,
             "atomIndex": 0,
             "atomName": "C",
@@ -381,7 +381,7 @@ QUnit.test( "traverse firstModelOnly", function( assert ) {
         },
         {
             "altLoc": null,
-            "atomCharge": 0,
+            "formalCharge": 0,
             "atomId": null,
             "atomIndex": 1,
             "atomName": "N",

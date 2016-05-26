@@ -65,7 +65,7 @@ function checkDictFields( dict, reqFields, optFields, label, assert ){
 
 function checkGroupListFields( groupList, assert ){
     var reqGroupTypeFields = [
-        "atomChargeList", "elementList", "atomNameList",
+        "formalChargeList", "elementList", "atomNameList",
         "bondAtomList", "bondOrderList",
         "groupName", "singleLetterCode", "chemCompType"
     ];
@@ -230,13 +230,13 @@ function checkGroupListTypes( groupList, assert ){
     var regexpSingleLetter = /^[A-Z]{1,1}$/;
     groupList.forEach( function( groupType ){
         assert.ok(
-            Array.isArray( groupType.atomChargeList ),
-            "groupType.atomChargeList must be an array"
+            Array.isArray( groupType.formalChargeList ),
+            "groupType.formalChargeList must be an array"
         );
-        for( var i = 0, il = groupType.atomChargeList.length; i < il; ++i ){
+        for( var i = 0, il = groupType.formalChargeList.length; i < il; ++i ){
             assert.ok(
-                Number.isInteger( groupType.atomChargeList[ i ] ),
-                "groupType.atomChargeList atom charges must be integers"
+                Number.isInteger( groupType.formalChargeList[ i ] ),
+                "groupType.formalChargeList atom charges must be integers"
             );
         }
         assert.ok(
@@ -742,7 +742,7 @@ function checkMmtfTypes( decodedMmtf, assert ){
 //
 function checkGroupListConsistency( groupList, assert ){
     var groupTypeFields = [
-        "atomChargeList", "elementList", "atomNameList", "bondAtomList", "bondOrderList"
+        "formalChargeList", "elementList", "atomNameList", "bondAtomList", "bondOrderList"
     ];
     groupList.forEach( function( groupType ){
         groupTypeFields.forEach( function( name ){
@@ -752,12 +752,12 @@ function checkGroupListConsistency( groupList, assert ){
             );
         } );
         assert.ok(
-            groupType.atomChargeList.length === groupType.atomNameList.length,
-            "atomChargeList.length must equal atomNameList.length"
+            groupType.formalChargeList.length === groupType.atomNameList.length,
+            "formalChargeList.length must equal atomNameList.length"
         );
         assert.ok(
-            groupType.atomChargeList.length === groupType.elementList.length,
-            "atomChargeList.length must equal elementList.length"
+            groupType.formalChargeList.length === groupType.elementList.length,
+            "formalChargeList.length must equal elementList.length"
         );
         assert.ok(
             groupType.bondOrderList.length * 2 === groupType.bondAtomList.length,

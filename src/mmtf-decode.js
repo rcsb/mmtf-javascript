@@ -57,7 +57,7 @@ import {
  * @property {Integer[]} bioAssemblyList.transformList.chainIndexList - Pointers into chain data fields
  * @property {Float[]} bioAssemblyList.transformList.matrix - 4x4 transformation matrix
  * @property {GroupType[]} groupList - List of groupType objects
- * @property {Integer[]} groupList.atomChargeList - List of atom formal charges
+ * @property {Integer[]} groupList.formalChargeList - List of atom formal charges
  * @property {String[]} groupList.elementList - List of elements
  * @property {String[]} groupList.atomNameList - List of atom names
  * @property {Integer[]} groupList.bondAtomList - List of bonded atom indices
