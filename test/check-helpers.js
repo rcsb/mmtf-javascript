@@ -15,19 +15,8 @@ function loadFile( url, onload, onerror ){
     xhr.send();
 }
 
-function getRunLengthSize( runLengthEncodedArray ){
-    var fullLength = 0;
-    for( var i = 0, il = runLengthEncodedArray.length; i < il; i+=2 ){
-        fullLength += runLengthEncodedArray[ i + 1 ];
-    }
-    return fullLength;
-}
-
-function getSplitListSize( bigArray, smallArray ){
-    return (
-        ( MmtfUtils.getInt32( bigArray ).length / 2 ) +
-        MmtfUtils.getInt16( smallArray ).length
-    );
+function getSize( bytes ){
+    return MmtfUtils.decodeBytes( bytes )[ 2 ];
 }
 
 function isDate( str ){
@@ -114,13 +103,13 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // header
 
         // counts
-        "numBonds", "numAtoms",
+        "numBonds", "numAtoms", "numGroups", "numChains", "numModels",
         // lists
         "groupList",
         // bonds
 
         // atoms
-        "xCoordBig", "xCoordSmall", "yCoordBig", "yCoordSmall", "zCoordBig", "zCoordSmall",
+        "xCoordList", "yCoordList", "zCoordList",
         // groups
         "groupIdList", "groupTypeList",
         // chains
@@ -141,7 +130,7 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // bonds
         "bondAtomList", "bondOrderList",
         // atoms
-        "bFactorBig", "bFactorSmall", "atomIdList", "altLocList", "occupancyList",
+        "bFactorList", "atomIdList", "altLocList", "occupancyList",
         // groups
         "secStructList", "insCodeList", "sequenceIndexList",
         // chains
@@ -378,6 +367,18 @@ function checkCommonTypes( decodedDict, assert ){
         Number.isInteger( decodedDict.numAtoms ),
         "numAtoms must be an integer"
     );
+    assert.ok(
+        Number.isInteger( decodedDict.numGroups ),
+        "numGroups must be an integer"
+    );
+    assert.ok(
+        Number.isInteger( decodedDict.numChains ),
+        "numChains must be an integer"
+    );
+    assert.ok(
+        Number.isInteger( decodedDict.numModels ),
+        "numModels must be an integer"
+    );
 
     // lists
     assert.ok(
@@ -488,28 +489,16 @@ function checkMsgpackTypes( decodedMsgpack, assert ){
 
     // atoms
     assert.ok(
-        decodedMsgpack.xCoordBig instanceof Uint8Array,
-        "xCoordBig must be a Uint8Array instance"
+        decodedMsgpack.xCoordList instanceof Uint8Array,
+        "xCoordList must be a Uint8Array instance"
     );
     assert.ok(
-        decodedMsgpack.xCoordSmall instanceof Uint8Array,
-        "xCoordSmall must be a Uint8Array instance"
+        decodedMsgpack.yCoordList instanceof Uint8Array,
+        "yCoordList must be a Uint8Array instance"
     );
     assert.ok(
-        decodedMsgpack.yCoordBig instanceof Uint8Array,
-        "yCoordBig must be a Uint8Array instance"
-    );
-    assert.ok(
-        decodedMsgpack.yCoordSmall instanceof Uint8Array,
-        "yCoordSmall must be a Uint8Array instance"
-    );
-    assert.ok(
-        decodedMsgpack.zCoordBig instanceof Uint8Array,
-        "zCoordBig must be a Uint8Array instance"
-    );
-    assert.ok(
-        decodedMsgpack.zCoordSmall instanceof Uint8Array,
-        "zCoordSmall must be a Uint8Array instance"
+        decodedMsgpack.zCoordList instanceof Uint8Array,
+        "zCoordList must be a Uint8Array instance"
     );
 
     // groups
@@ -630,8 +619,8 @@ function checkMmtfTypes( decodedMmtf, assert ){
     }
     if( decodedMmtf.bondOrderList !== undefined ){
         assert.ok(
-            decodedMmtf.bondOrderList instanceof Uint8Array,
-            "bondOrderList must be a Uint8Array instance"
+            decodedMmtf.bondOrderList instanceof Int8Array,
+            "bondOrderList must be a Int8Array instance"
         );
     }
 
@@ -772,47 +761,51 @@ function checkMsgpackConsistency( decodedMsgpack, assert ){
 
     // check bond data sizes for consistency
     if( decodedMsgpack.bondAtomList !== undefined && decodedMsgpack.bondOrderList !== undefined ){
-    	assert.equal( decodedMsgpack.bondAtomList.length/4, decodedMsgpack.bondOrderList.length*2, "bondAtomList, bondOrderList" );
+    	assert.equal(
+            getSize( decodedMsgpack.bondAtomList ) / 2,
+            getSize( decodedMsgpack.bondOrderList ),
+            "bondAtomList, bondOrderList"
+        );
     }
 
     // atom data sizes
-    assert.equal( getSplitListSize( decodedMsgpack.xCoordBig, decodedMsgpack.xCoordSmall ), decodedMsgpack.numAtoms, "numAtoms, xCoord" );
-    assert.equal( getSplitListSize( decodedMsgpack.yCoordBig, decodedMsgpack.yCoordSmall ), decodedMsgpack.numAtoms, "numAtoms, yCoord" );
-    assert.equal( getSplitListSize( decodedMsgpack.zCoordBig, decodedMsgpack.zCoordSmall ), decodedMsgpack.numAtoms, "numAtoms, zCoord" );
+    assert.equal( getSize( decodedMsgpack.xCoordList ), decodedMsgpack.numAtoms, "numAtoms, xCoord" );
+    assert.equal( getSize( decodedMsgpack.yCoordList ), decodedMsgpack.numAtoms, "numAtoms, yCoord" );
+    assert.equal( getSize( decodedMsgpack.zCoordList ), decodedMsgpack.numAtoms, "numAtoms, zCoord" );
     if( decodedMsgpack.bFactorBig !== undefined ){
-        assert.equal( getSplitListSize( decodedMsgpack.bFactorBig, decodedMsgpack.bFactorSmall ), decodedMsgpack.numAtoms, "numAtoms, bFactor" );
+        assert.equal( getSize( decodedMsgpack.bFactorList ), decodedMsgpack.numAtoms, "numAtoms, bFactor" );
     }
     if( decodedMsgpack.atomIdList !== undefined ){
-        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.atomIdList ) ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
+        assert.equal( getSize( decodedMsgpack.atomIdList ), decodedMsgpack.numAtoms, "numatoms, atomIdList" );
     }
     if( decodedMsgpack.altLocList !== undefined ){
-        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.altLocList ) ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
+        assert.equal( getSize( decodedMsgpack.altLocList ), decodedMsgpack.numAtoms, "numatoms, altLocList" );
     }
     if( decodedMsgpack.occupancyList !== undefined ){
-        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.occupancyList ) ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
+        assert.equal( getSize( decodedMsgpack.occupancyList ), decodedMsgpack.numAtoms, "numatoms, occupancyList" );
     }
 
     // group data sizes
-    var numGroups = decodedMsgpack.groupTypeList.length / 4;
-    assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.groupIdList ) ), numGroups, "numGroups, groupIdList" );
+    var numGroups = decodedMsgpack.numGroups;
+    assert.equal( getSize( decodedMsgpack.groupIdList ), numGroups, "numGroups, groupIdList" );
     if( decodedMsgpack.insCodeList !== undefined ){
-        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.insCodeList ) ), numGroups, "numgroups, insCodeList" );
+        assert.equal( getSize( decodedMsgpack.insCodeList ), numGroups, "numGroups, insCodeList" );
     }
     if( decodedMsgpack.secStructList !== undefined ){
-        assert.equal( decodedMsgpack.secStructList.length, numGroups, "numGroups, secStructList" );
+        assert.equal( getSize( decodedMsgpack.secStructList ), numGroups, "numGroups, secStructList" );
     }
     if( decodedMsgpack.sequenceIndexList !== undefined ){
-        assert.equal( getRunLengthSize( MmtfUtils.getInt32( decodedMsgpack.sequenceIndexList ) ), numGroups, "numGroups, sequenceIndexList" );
+        assert.equal( getSize( decodedMsgpack.sequenceIndexList ), numGroups, "numGroups, sequenceIndexList" );
     }
 
     // chain data sizes
-    var numChains = decodedMsgpack.groupsPerChain.length;
-    assert.equal( decodedMsgpack.chainIdList.length / 4, numChains, "numChains, chainIdList" );
+    var numChains = decodedMsgpack.numChains;
+    assert.equal( getSize( decodedMsgpack.chainIdList ), numChains, "numChains, chainIdList" );
     if( decodedMsgpack.chainNameList !== undefined ){
-        assert.equal( decodedMsgpack.chainNameList.length / 4, numChains, "numChains, chainNameList" );
+        assert.equal( getSize( decodedMsgpack.chainNameList ), numChains, "numChains, chainNameList" );
     }
     if( decodedMsgpack.chainSeqList !== undefined ){
-        assert.equal( decodedMsgpack.chainSeqList.length, numChains, "numChains, chainSeqList" );
+        assert.equal( getSize( decodedMsgpack.chainSeqList ), numChains, "numChains, chainSeqList" );
     }
 }
 

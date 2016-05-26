@@ -203,7 +203,7 @@ function getFilledRequiredMmtfDict(){
 
         // counts
         numBonds: 1,
-        numAtoms: 2,
+        numAtoms: 3,
         numGroups: 1,
         numChains: 1,
         numModels: 1,
@@ -453,7 +453,7 @@ function getFilledRequiredDecodedMmtfDict(){
         mmtfVersion: "0.1",
         mmtfProducer: "unittest",
         numBonds: 1,
-        numAtoms: 2,
+        numAtoms: 3,
         numGroups: 1,
         numChains: 1,
         numModels: 1,
