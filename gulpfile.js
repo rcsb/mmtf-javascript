@@ -24,7 +24,7 @@ gulp.task('doc', function() {
       "dateFormat": "MMMM Do YYYY, h:mm:ss a"
     },
     "opts": {
-      "destination": "./docs/api/"
+      "destination": "./build/docs/api/"
     }
   }
   return gulp.src(['./docs/api-overview.md', './src/*.js'], {read: false})
