@@ -59,8 +59,8 @@ function getEmptyFullMmtfDict(){
         sequenceIndexList: encBytes( 8, 0, undefined, encInt32([]) ),
 
         // chains
-        chainIdList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
-        chainNameList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
+        chainIdList: encBytes( 5, 0, encInt32([ 4 ]), new Uint8Array([]) ),
+        chainNameList: encBytes( 5, 0, encInt32([ 4 ]), new Uint8Array([]) ),
         groupsPerChain: [],
 
         // models
@@ -94,7 +94,7 @@ function getEmptyRequiredMmtfDict(){
         groupTypeList: encBytes( 4, 0, undefined, encInt32([]) ),
 
         // chains
-        chainIdList: encBytes( 5, 0, undefined, new Uint8Array([]) ),
+        chainIdList: encBytes( 5, 0, encInt32([ 4 ]), new Uint8Array([]) ),
         groupsPerChain: [],
 
         // models
