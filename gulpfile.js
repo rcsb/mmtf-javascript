@@ -8,6 +8,8 @@ var qunit = require('gulp-qunit');
 var uglify = require('gulp-uglify');
 var del = require('del');
 var jsdoc = require("gulp-jsdoc3");
+var watch = require('gulp-watch');
+var batch = require('gulp-batch');
 
 gulp.task('doc', function() {
   var config = {
@@ -124,6 +126,12 @@ gulp.task('build', [
   'build-mmtf-encode', 'build-mmtf-decode',
   'build-mmtf-traverse', 'build-mmtf'
 ]);
+
+gulp.task('watch', function () {
+  watch('./src/*.js', batch(function (events, done) {
+    gulp.start('build', done);
+  }));
+});
 
 gulp.task('compress', ['build'], function(){
   return gulp.src([
