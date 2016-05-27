@@ -36,10 +36,10 @@ QUnit.test( "onAtom", function( assert ) {
             xCoord: 5,
             yCoord: 6,
             zCoord: 7,
-            bFactor: 99.98999786376953,
+            bFactor: 99,
             atomId: 1,
             altLoc: "A",
-            occupancy: 0.6000000238418579
+            occupancy: 1
         },
         {
             atomIndex: 1,
@@ -49,13 +49,13 @@ QUnit.test( "onAtom", function( assert ) {
             element: "N",
             atomName: "N",
             formalCharge: 1,
-            xCoord: 5.099999904632568,
-            yCoord: 6.099999904632568,
-            zCoord: 7.099999904632568,
+            xCoord: 6,
+            yCoord: 7,
+            zCoord: 8,
             bFactor: 100,
             atomId: 2,
             altLoc: "B",
-            occupancy: 0.4000000059604645
+            occupancy: 1
         }
     ];
     var i = 0;
@@ -187,9 +187,9 @@ QUnit.test( "traverse mmtf data having only required fields", function( assert )
             "groupIndex": 0,
             "modelIndex": 0,
             "occupancy": null,
-            "xCoord": 10.00100040435791,
-            "yCoord": 20.000999450683594,
-            "zCoord": 30.000999450683594
+            "xCoord": 11,
+            "yCoord": 21,
+            "zCoord": 31
         },
         {
             "atomIndex1": 0,
@@ -233,12 +233,12 @@ QUnit.test( "traverse atoms before group-bonds", function( assert ) {
             "atomId": 1,
             "atomIndex": 0,
             "atomName": "C",
-            "bFactor": 99.98999786376953,
+            "bFactor": 99,
             "chainIndex": 0,
             "element": "C",
             "groupIndex": 0,
             "modelIndex": 0,
-            "occupancy": 0.6000000238418579,
+            "occupancy": 1,
             "xCoord": 5,
             "yCoord": 6,
             "zCoord": 7
@@ -254,10 +254,10 @@ QUnit.test( "traverse atoms before group-bonds", function( assert ) {
             "element": "N",
             "groupIndex": 0,
             "modelIndex": 0,
-            "occupancy": 0.4000000059604645,
-            "xCoord": 5.099999904632568,
-            "yCoord": 6.099999904632568,
-            "zCoord": 7.099999904632568
+            "occupancy": 1,
+            "xCoord": 6,
+            "yCoord": 7,
+            "zCoord": 8
         },
         {
             "atomIndex1": 0,
@@ -391,9 +391,9 @@ QUnit.test( "traverse firstModelOnly", function( assert ) {
             "groupIndex": 0,
             "modelIndex": 0,
             "occupancy": null,
-            "xCoord": 10.00100040435791,
-            "yCoord": 20.000999450683594,
-            "zCoord": 30.000999450683594
+            "xCoord": 11,
+            "yCoord": 21,
+            "zCoord": 31
         },
         {
             "atomIndex1": 0,

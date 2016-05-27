@@ -313,7 +313,8 @@ function decodePacking( int16or8, output ){
         output[ j ] = value;
         j += 1;
     }
-    return new output.constructor( output.buffer, output.byteOffset, j );
+    // return new output.constructor( output.buffer, output.byteOffset, j );
+    return output.slice( 0, j );
 }
 
 /**

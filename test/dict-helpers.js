@@ -170,13 +170,13 @@ function getFilledFullMmtfDict(){
         bondOrderList: encBytes( 2, 2, undefined, encInt8([ 2, 0 ]) ),
 
         // atoms
-        xCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 5000, 100 ]) ),
-        yCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 6000, 100 ]) ),
-        zCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 7000, 100 ]) ),
-        bFactorList: encBytes( 10, 2, encInt32([ 100 ]), encInt16([ 9999, 1 ]) ),
+        xCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 5000, 1000 ]) ),
+        yCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 6000, 1000 ]) ),
+        zCoordList: encBytes( 10, 2, encInt32([ 1000 ]), encInt16([ 7000, 1000 ]) ),
+        bFactorList: encBytes( 10, 2, encInt32([ 100 ]), encInt16([ 9900, 100 ]) ),
         atomIdList: encBytes( 8, 2, undefined, encInt32([ 1, 2 ]) ),
         altLocList: encBytes( 6, 2, undefined, encInt32([ 65, 1, 66, 1 ]) ),
-        occupancyList: encBytes( 9, 2, encInt32([ 100 ]), encInt32([ 60, 1, 40, 1 ]) ),
+        occupancyList: encBytes( 9, 2, encInt32([ 100 ]), encInt32([ 100, 2 ]) ),
 
         // groups
         groupIdList: encBytes( 8, 1, undefined, encInt32([ 100, 1 ]) ),
@@ -224,13 +224,13 @@ function getFilledRequiredMmtfDict(){
 
         // atoms
         xCoordList: encBytes(
-            10, 3, encInt32([ 1000 ]), encInt16([ 10000, 1, 2 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 10000, 1000, 2000 ])
         ),
         yCoordList: encBytes(
-            10, 3, encInt32([ 1000 ]), encInt16([ 20000, 1, 2 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 20000, 1000, 2000 ])
         ),
         zCoordList: encBytes(
-            10, 3, encInt32([ 1000 ]), encInt16([ 30000, 1, 2 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 30000, 1000, 2000 ])
         ),
 
         // groups
@@ -279,13 +279,13 @@ function getMultiModelMmtfDict(){
 
         // atoms
         xCoordList: encBytes(
-            10, 3, encInt32([ 1000 ]), encInt16([ 10000, 1, 100, 1 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 10000, 1000, -2000, 2000 ])
         ),
         yCoordList: encBytes(
-            10, 3, encInt32([ 1000 ]), encInt16([ 20000, 1, 100, 1 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 20000, 1000, -2000, 2000 ])
         ),
         zCoordList: encBytes(
-            10, 3, encInt32([ 1000 ]), encInt16([ 30000, 1, 100, 1 ])
+            10, 3, encInt32([ 1000 ]), encInt16([ 30000, 1000, -2000, 2000 ])
         ),
 
         // groups
@@ -428,11 +428,11 @@ function getFilledFullDecodedMmtfDict(){
 
         altLocList: new Uint8Array( [ 65, 66 ] ),
         atomIdList: new Int32Array( [ 1, 2 ] ),
-        bFactorList: new Float32Array( [ 99.99, 100.00 ] ),
-        occupancyList: new Float32Array( [ 0.6, 0.4 ] ),
-        xCoordList: new Float32Array( [ 5, 5.1 ] ),
-        yCoordList: new Float32Array( [ 6, 6.1 ] ),
-        zCoordList: new Float32Array( [ 7, 7.1 ] ),
+        bFactorList: new Float32Array( [ 99, 100 ] ),
+        occupancyList: new Float32Array( [ 1, 1 ] ),
+        xCoordList: new Float32Array( [ 5, 6 ] ),
+        yCoordList: new Float32Array( [ 6, 7 ] ),
+        zCoordList: new Float32Array( [ 7, 8 ] ),
 
         groupIdList: new Int32Array( [ 100 ] ),
         groupTypeList: new Int32Array( [ 0 ] ),
@@ -469,9 +469,9 @@ function getFilledRequiredDecodedMmtfDict(){
                 groupName: "GLY"
             }
         ],
-        xCoordList: new Float32Array( [ 10, 10.001, 10.003 ] ),
-        yCoordList: new Float32Array( [ 20, 20.001, 20.003 ] ),
-        zCoordList: new Float32Array( [ 30, 30.001, 30.003 ] ),
+        xCoordList: new Float32Array( [ 10, 11, 13 ] ),
+        yCoordList: new Float32Array( [ 20, 21, 23 ] ),
+        zCoordList: new Float32Array( [ 30, 31, 33 ] ),
         groupIdList: new Int32Array( [ 100 ] ),
         groupTypeList: new Int32Array( [ 0 ] ),
         chainIdList: new Uint8Array( [ 65, 0, 0, 0 ] ),
