@@ -296,9 +296,18 @@ function decodePacking( int16or8, output ){
     var upperLimit = int16or8 instanceof Int8Array ? 0x7F : 0x7FFF;
     var lowerLimit = -upperLimit - 1;
     var n = int16or8.length;
-    if( !output ) output = new Int32Array( n );
-    var i = 0;
-    var j = 0;
+    var i, j;
+    if( !output ){
+        var fullLength = 0;
+        for( i = 0; i < n; ++i ){
+            if( int16or8[ i ] < upperLimit && int16or8[ i ] > lowerLimit ){
+                ++fullLength;
+            }
+        }
+        output = new Int32Array( fullLength );
+    }
+    i = 0;
+    j = 0;
     while( i < n ){
         var value = 0;
         while( int16or8[ i ] === upperLimit || int16or8[ i ] === lowerLimit ){
@@ -313,8 +322,7 @@ function decodePacking( int16or8, output ){
         output[ j ] = value;
         j += 1;
     }
-    // return new output.constructor( output.buffer, output.byteOffset, j );
-    return output.slice( 0, j );
+    return output;
 }
 
 /**
