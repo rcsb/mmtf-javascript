@@ -128,6 +128,7 @@ gulp.task('build', [
 ]);
 
 gulp.task('watch', function () {
+  gulp.start('build');
   watch('./src/*.js', batch(function (events, done) {
     gulp.start('build', done);
   }));
