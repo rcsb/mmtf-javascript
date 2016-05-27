@@ -184,7 +184,6 @@ function decodeMmtf( inputDict, params ){
         var data = inputDict[ name ];
         if( !ignore && data !== undefined ){
             if( data instanceof Uint8Array ){
-                var info = decodeBytes( data );
                 outputDict[ name ] = performDecoding.apply( null, decodeBytes( data ) );
             }else{
                 outputDict[ name ] = data;
