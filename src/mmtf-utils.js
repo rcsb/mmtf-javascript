@@ -218,7 +218,7 @@ function decodeRun( array, output ){
         var length = array[ i + 1 ];  // number of repeats
         for( var j = 0; j < length; ++j ){
             output[ dataOffset ] = value;
-            dataOffset += 1;
+            ++dataOffset;
         }
     }
     return output;
@@ -244,7 +244,7 @@ function encodeRun( array ){
             runLength = 1;
             offset += 2;
         }else{
-            runLength += 1;
+            ++runLength;
         }
     }
     output[ offset ] = array[ array.length - 1 ];
@@ -312,15 +312,15 @@ function decodePacking( int16or8, output ){
         var value = 0;
         while( int16or8[ i ] === upperLimit || int16or8[ i ] === lowerLimit ){
             value += int16or8[ i ];
-            i += 1;
+            ++i;
             if( int16or8[ i ] === 0 ){
                 break;
             }
         }
         value += int16or8[ i ];
-        i += 1;
+        ++i;
         output[ j ] = value;
-        j += 1;
+        ++j;
     }
     return output;
 }
@@ -340,7 +340,7 @@ function encodePacking( intArray, useInt8 ){
     for( i = 0; i < n; ++i ){
         var value = intArray[ i ];
         if( value === 0 ){
-            size += 1;
+            ++size;
         }else if( value === upperLimit || value === lowerLimit ){
             size += 2;
         }else if( value > 0) {
@@ -356,18 +356,18 @@ function encodePacking( intArray, useInt8 ){
         if( value >= 0) {
             while( value >= upperLimit ){
                 output[ j ] = upperLimit;
-                j += 1;
+                ++j;
                 value -= upperLimit;
             }
         }else{
             while( value <= lowerLimit ){
                 output[ j ] = lowerLimit;
-                j += 1;
+                ++j;
                 value -= lowerLimit;
             }
         }
         output[ j ] = value;
-        j += 1;
+        ++j;
     }
     return output;
 }
