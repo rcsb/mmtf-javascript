@@ -103,6 +103,18 @@ function integerPacking8( float32, factor ){
     return encodeBytes( 13, size, param, bytes );
 }
 
+function packing16( int32, factor ){
+    var size = int32.length;
+    var bytes = encodeInt16( encodePacking( int32 ) );
+    return encodeBytes( 14, size, undefined, bytes );
+}
+
+function packing8( int32, factor ){
+    var size = int32.length;
+    var bytes = getUint8View( encodePacking( int32, true ) );
+    return encodeBytes( 15, size, undefined, bytes );
+}
+
 
 function encodeMmtf( inputDict ){
 

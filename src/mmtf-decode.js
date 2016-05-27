@@ -118,53 +118,48 @@ import {
  */
 
 
-
 /**
- * [decodingStrategies description]
- * @type {Object}
+ * [performDecoding description]
+ * @param  {[type]} bytes [description]
+ * @param  {[type]} size  [description]
+ * @param  {[type]} param [description]
+ * @return {[type]}       [description]
  */
-var decodingStrategies = {
+function performDecoding( type, bytes, size, param ){
 
-    1: function( bytes, size ){
-        return decodeFloat32( bytes );
-    },
-    2: function( bytes, size ){
-        return getInt8View( bytes );
-    },
-    3: function( bytes, size ){
-        return decodeInt16( bytes );
-    },
-    4: function( bytes, size ){
-        return decodeInt32( bytes );
-    },
-    5: function( bytes, size, param ){
-        // var length = decodeInt32( param )[ 0 ];
-        return getUint8View( bytes );  // interpret as string array
-    },
-    6: function( bytes, size ){
-        // interpret as char array
-        return decodeRun( decodeInt32( bytes ), new Uint8Array( size ) );
-    },
-    7: function( bytes, size ){
-        return decodeRun( decodeInt32( bytes ) )
-    },
-    8: function( bytes, size ){
-        return decodeDeltaRun( decodeInt32( bytes ) );
-    },
-    9: function( bytes, size, param ){
-        return decodeIntegerRun( decodeInt32( bytes ), decodeInt32( param )[ 0 ] );
-    },
-    10: function( bytes, size, param ){
-        return decodeIntegerDeltaPacking( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
-    },
-    11: function( bytes, size, param ){
-        return decodeInteger( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
-    },
-    12: function( bytes, size, param ){
-        return decodeIntegerPacking( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
-    },
-    13: function( bytes, size, param ){
-        return decodeIntegerPacking( getInt8View( bytes ), decodeInt32( param )[ 0 ] );
+    switch( type ){
+        case 1:
+            return decodeFloat32( bytes );
+        case 2:
+            return getInt8View( bytes );
+        case 3:
+            return decodeInt16( bytes );
+        case 4:
+            return decodeInt32( bytes );
+        case 5:
+            // var length = decodeInt32( param )[ 0 ];
+            return getUint8View( bytes );  // interpret as string array
+        case 6:
+            // interpret as char array
+            return decodeRun( decodeInt32( bytes ), new Uint8Array( size ) );
+        case 7:
+            return decodeRun( decodeInt32( bytes ) )
+        case 8:
+            return decodeDeltaRun( decodeInt32( bytes ) );
+        case 9:
+            return decodeIntegerRun( decodeInt32( bytes ), decodeInt32( param )[ 0 ] );
+        case 10:
+            return decodeIntegerDeltaPacking( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
+        case 11:
+            return decodeInteger( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
+        case 12:
+            return decodeIntegerPacking( decodeInt16( bytes ), decodeInt32( param )[ 0 ] );
+        case 13:
+            return decodeIntegerPacking( getInt8View( bytes ), decodeInt32( param )[ 0 ] );
+        case 14:
+            return decodePacking( decodeInt16( bytes ) );
+        case 15:
+            return decodePacking( getInt8View( bytes ) );
     }
 
 };
@@ -190,9 +185,7 @@ function decodeMmtf( inputDict, params ){
         if( !ignore && data !== undefined ){
             if( data instanceof Uint8Array ){
                 var info = decodeBytes( data );
-                outputDict[ name ] = decodingStrategies[ info[ 0 ] ](
-                    info[ 1 ], info[ 2 ], info[ 3 ]
-                );
+                outputDict[ name ] = performDecoding.apply( null, decodeBytes( data ) );
             }else{
                 outputDict[ name ] = data;
             }
