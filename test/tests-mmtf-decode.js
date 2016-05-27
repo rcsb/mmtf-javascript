@@ -11,8 +11,8 @@ QUnit.test( "empty full", function( assert ) {
     var decodedMmtf = decodeMmtf( dict );
     checkMmtf( decodedMmtf, assert );
     var expectedMmtf = getEmptyFullDecodedMmtfDict();
-    // console.log(decodedMmtf,expectedMmtf)
-    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
+    equalDict( decodedMmtf, expectedMmtf, assert );
+    // assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });
 
 QUnit.test( "empty required", function( assert ) {
@@ -21,11 +21,8 @@ QUnit.test( "empty required", function( assert ) {
     var decodedMmtf = decodeMmtf( dict );
     checkMmtf( decodedMmtf, assert );
     var expectedMmtf = getEmptyRequiredDecodedMmtfDict();
-    // console.log(decodedMmtf,expectedMmtf)
-    // for(var name in decodedMmtf){
-    //     console.log( name, decodedMmtf[name], expectedMmtf[name] )
-    // }
-    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
+    equalDict( decodedMmtf, expectedMmtf, assert );
+    // assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });
 
 QUnit.test( "filled full", function( assert ) {
@@ -35,7 +32,8 @@ QUnit.test( "filled full", function( assert ) {
     var decodedMmtf = decodeMmtf( dict );
     checkMmtf( decodedMmtf, assert );
     var expectedMmtf = getFilledFullDecodedMmtfDict();
-    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
+    equalDict( decodedMmtf, expectedMmtf, assert );
+    // assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });
 
 QUnit.test( "filled required", function( assert ) {
@@ -44,9 +42,6 @@ QUnit.test( "filled required", function( assert ) {
     var decodedMmtf = decodeMmtf( dict );
     checkMmtf( decodedMmtf, assert );
     var expectedMmtf = getFilledRequiredDecodedMmtfDict();
-    // console.log(decodedMmtf,expectedMmtf)
-    // for(var name in decodedMmtf){
-    //     console.log( name, decodedMmtf[name], expectedMmtf[name] )
-    // }
-    assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
+    equalDict( decodedMmtf, expectedMmtf, assert );
+    // assert.deepEqual( decodedMmtf, expectedMmtf, "Passed!" );
 });

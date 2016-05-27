@@ -300,7 +300,7 @@ QUnit.test( "decodePacking", function( assert ) {
         -0x7FFF - 1, -0x7FFF - 2, -0x7FFF
     ]);
     var decoded = MmtfUtils.decodePacking( input );
-    assert.deepEqual( new Int32Array( decoded ), expected, "Passed!" );
+    assert.deepEqual( decoded, expected, "Passed!" );
 });
 
 QUnit.test( "encodePacking", function( assert ) {
@@ -435,12 +435,12 @@ QUnit.test( "encodeIntegerPacking", function( assert ) {
     var input = new Float32Array([
         -2, 4, 1, 2, 1, 1, -4, -2, 9
     ]);
-    var expected = new Int32Array([
+    var expected = new Int16Array([
         -20, 40, 10, 20, 10, 10, -40, -20, 90
     ]);
     var encoded = MmtfUtils.encodeIntegerPacking( input, 10 );
     assert.equal( encoded.length, expected.length, "Passed!" );
-    assert.deepEqual( new Int32Array( encoded ), expected, "Passed!" );
+    assert.deepEqual( encoded, expected, "Passed!" );
 });
 
 

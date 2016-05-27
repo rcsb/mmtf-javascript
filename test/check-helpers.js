@@ -30,6 +30,32 @@ function isDate( str ){
     );
 }
 
+function isTypedArray( arr ){
+    return arr instanceof Float32Array ||
+        arr instanceof Float64Array ||
+        arr instanceof Int8Array ||
+        arr instanceof Int16Array ||
+        arr instanceof Int32Array ||
+        arr instanceof Uint8Array ||
+        arr instanceof Uint8ClampedArray ||
+        arr instanceof Uint16Array ||
+        arr instanceof Uint32Array
+}
+
+function equalDict( dict, expected, assert ){
+    for(var name in dict){
+        if( isTypedArray( dict[name] ) ){
+            assert.deepEqual(
+                new dict[name].constructor( dict[name] ),
+                new expected[name].constructor( expected[name] ),
+                name
+            );
+        }else{
+            assert.deepEqual( dict[name], expected[name], name );
+        }
+    }
+}
+
 //////////////////
 // checks fields
 //
