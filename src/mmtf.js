@@ -96,5 +96,10 @@ export {
      * @param {Boolean} [params.firstModelOnly] - traverse only the first model
      */
     traverseMmtf as traverse,
-    version
+    version,
+
+    encodeMsgpack,
+    encodeMmtf,
+    decodeMsgpack,
+    decodeMmtf
 };

@@ -120,11 +120,18 @@ gulp.task('build-mmtf', function(){
     .pipe(gulp.dest('build'));
 });
 
+gulp.task('build-es6-mmtf', function(){
+  return gulp.src('./src/mmtf.js', {read: false})
+    .pipe(rollup({format: 'es6'}))
+    .pipe(rename('mmtf.es6.js'))
+    .pipe(gulp.dest('build'));
+});
+
 gulp.task('build', [
   'build-utf8-utils', 'build-mmtf-utils',
   'build-msgpack-encode', 'build-msgpack-decode',
   'build-mmtf-encode', 'build-mmtf-decode',
-  'build-mmtf-traverse', 'build-mmtf'
+  'build-mmtf-traverse', 'build-mmtf', 'build-es6-mmtf'
 ]);
 
 gulp.task('watch', function () {
