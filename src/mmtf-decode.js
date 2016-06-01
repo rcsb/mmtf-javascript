@@ -56,6 +56,8 @@ import {
  * @property {Transform[]} bioAssemblyList.transformList - List of transform objects
  * @property {Integer[]} bioAssemblyList.transformList.chainIndexList - Pointers into chain data fields
  * @property {Float[]} bioAssemblyList.transformList.matrix - 4x4 transformation matrix
+ * @property {Array[]} [ncsOperatorList] - List of ncs operator matrices
+ * @property {Float[]} ncsOperatorList. - 4x4 transformation matrix
  * @property {GroupType[]} groupList - List of groupType objects
  * @property {Integer[]} groupList.formalChargeList - List of atom formal charges
  * @property {String[]} groupList.elementList - List of elements
@@ -120,10 +122,10 @@ import {
 
 /**
  * [performDecoding description]
- * @param  {[type]} bytes [description]
- * @param  {[type]} size  [description]
- * @param  {[type]} param [description]
- * @return {[type]}       [description]
+ * @param  {Integer} bytes [description]
+ * @param  {Integer} size  [description]
+ * @param  {Uint8Array} param [description]
+ * @return {TypedArray}       [description]
  */
 function performDecoding( type, bytes, size, param ){
 

@@ -288,9 +288,9 @@ function encodeDelta( array, output ){
 
 /**
  * [decodePacking description]
- * @param  {[type]} int16or8 [description]
- * @param  {[type]} output   [description]
- * @return {[type]}          [description]
+ * @param  {Int16Array|Int8Array} int16or8 [description]
+ * @param  {Int32Array} output   [description]
+ * @return {Int32Array}          [description]
  */
 function decodePacking( int16or8, output ){
     var upperLimit = int16or8 instanceof Int8Array ? 0x7F : 0x7FFF;

@@ -10,7 +10,7 @@ var PassThroughFields = [
     "unitCell", "spaceGroup", "structureId", "title",
     "depositionDate", "releaseDate",
     "experimentalMethods", "resolution", "rFree", "rWork",
-    "bioAssemblyList", "entityList", "groupList",
+    "bioAssemblyList", "ncsOperatorList", "entityList", "groupList",
     "numBonds", "numAtoms", "numGroups", "numChains", "numModels",
     "groupsPerChain", "chainsPerModel",
 ];

@@ -147,8 +147,9 @@ function checkMsgpackFields( decodedMsgpack, assert ){
         // meta
 
         // header
-        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
-        "depositionDate", "releaseDate", "resolution", "rFree", "rWork", "entityList",
+        "title", "structureId", "bioAssemblyList", "ncsOperatorList", "unitCell", "spaceGroup",
+        "experimentalMethods", "depositionDate", "releaseDate", "resolution", "rFree", "rWork",
+        "entityList",
         // counts
 
         // lists
@@ -202,8 +203,9 @@ function checkMmtfFields( decodedMmtf, assert ){
     ];
     var optTopLevelFields = [
         // header
-        "title", "structureId", "bioAssemblyList", "unitCell", "spaceGroup", "experimentalMethods",
-        "depositionDate", "releaseDate", "resolution", "rFree", "rWork", "entityList",
+        "title", "structureId", "bioAssemblyList", "ncsOperatorList", "unitCell", "spaceGroup",
+        "experimentalMethods", "depositionDate", "releaseDate", "resolution", "rFree", "rWork",
+        "entityList",
         // counts
 
         // lists
@@ -352,6 +354,15 @@ function checkBioAssemblyListTypes( bioAssemblyList, assert ){
     } );
 }
 
+function checkNcsOperatorListTypes( ncsOperatorList, assert ){
+    ncsOperatorList.forEach( function( ncsOperator ){
+        assert.ok(
+            Array.isArray( ncsOperator ),
+            "ncsOperator must be an array"
+        );
+    } );
+}
+
 function checkEntityListTypes( entityList, assert ){
     entityList.forEach( function( entity ){
         assert.ok(
@@ -418,6 +429,13 @@ function checkCommonTypes( decodedDict, assert ){
             "when given, bioAssemblyList must be an array"
         );
         checkBioAssemblyListTypes( decodedDict.bioAssemblyList, assert );
+    }
+    if( decodedDict.ncsOperatorList !== undefined ){
+        assert.ok(
+            Array.isArray( decodedDict.ncsOperatorList ),
+            "when given, ncsOperatorList must be an array"
+        );
+        checkNcsOperatorListTypes( decodedDict.ncsOperatorList, assert );
     }
     if( decodedDict.entityList !== undefined ){
         assert.ok(

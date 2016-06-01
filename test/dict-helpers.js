@@ -17,6 +17,7 @@ function getEmptyFullMmtfDict(){
         unitCell: [ 0, 0, 0, 0, 0, 0 ],
         spaceGroup: "",
         bioAssemblyList: [],
+        ncsOperatorList: [],
         structureId: "",
         title: "",
         depositionDate: "0000-00-00",
@@ -125,6 +126,14 @@ function getFilledFullMmtfDict(){
                     }
                 ]
             },
+        ],
+        ncsOperatorList: [
+            [
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            ]
         ],
         structureId: "1XYZ",
         title: "Full Test",
@@ -308,6 +317,7 @@ function getEmptyFullDecodedMmtfDict(){
         atomIdList: new Int32Array( 0 ),
         bFactorList: new Float32Array( 0 ),
         bioAssemblyList: [],
+        ncsOperatorList: [],
         bondAtomList: new Int32Array( 0 ),
         bondOrderList: new Int8Array( 0 ),
         chainIdList: new Uint8Array( 0 ),
@@ -388,6 +398,14 @@ function getFilledFullDecodedMmtfDict(){
                     }
                 ]
             },
+        ],
+        ncsOperatorList: [
+            [
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            ]
         ],
         title: "Full Test",
         depositionDate: "2012-10-20",

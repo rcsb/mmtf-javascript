@@ -6,7 +6,7 @@ QUnit.module( "mmtf decoding" );
 
 QUnit.test( "empty full", function( assert ) {
     var dict = getEmptyFullMmtfDict();
-    assert.equal( Object.keys( dict ).length, 38, "Wrong number of fields in msgpack" );
+    assert.equal( Object.keys( dict ).length, 39, "Wrong number of fields in msgpack" );
     checkMsgpack( dict, assert );
     var decodedMmtf = decodeMmtf( dict );
     checkMmtf( decodedMmtf, assert );
@@ -27,7 +27,7 @@ QUnit.test( "empty required", function( assert ) {
 
 QUnit.test( "filled full", function( assert ) {
     var dict = getFilledFullMmtfDict();
-    assert.equal( Object.keys( dict ).length, 38, "Wrong number of fields in msgpack" );
+    assert.equal( Object.keys( dict ).length, 39, "Wrong number of fields in msgpack" );
     checkMsgpack( dict, assert );
     var decodedMmtf = decodeMmtf( dict );
     checkMmtf( decodedMmtf, assert );
