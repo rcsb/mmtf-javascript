@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [Unreleased]
+### Added
+- support for mmtf version 0.2
+- encoding support (MMTF.encode)
+- ncsOperatorList field
+- es6 build
+
+### Changed
+- groupList[].atomCharge renamed to .formalCharge
+
+### Removed
+- support for mmtf version 0.1
+- api docs from repsitory (now written to build/docs/api/)
+
+
 ## [v0.2.3] - 2016-05-19
 ### Added
 - check left-alignment of chainIds & chainNames
@@ -51,6 +66,7 @@ All notable changes to this project will be documented in this file, following t
 - Initial release
 
 
+[Unreleased]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.3...HEAD
 [v0.2.3]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.2...v0.2.3
 [v0.2.2]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.0...v0.2.1
