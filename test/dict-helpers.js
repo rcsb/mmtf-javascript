@@ -114,6 +114,7 @@ function getFilledFullMmtfDict(){
         spaceGroup: "P1",
         bioAssemblyList: [
             {
+                name: "BU1",
                 transformList: [
                     {
                         chainIndexList: [ 0 ],
@@ -386,6 +387,7 @@ function getFilledFullDecodedMmtfDict(){
         spaceGroup: "P1",
         bioAssemblyList: [
             {
+                name: "BU1",
                 transformList: [
                     {
                         chainIndexList: [ 0 ],

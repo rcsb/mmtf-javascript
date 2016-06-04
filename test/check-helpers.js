@@ -93,7 +93,7 @@ function checkGroupListFields( groupList, assert ){
 
 function checkBioAssemblyFields( bioAssemblyList, assert ){
     var reqAssemblyFields = [
-        "transformList"
+        "transformList", "name"
     ];
     var reqTransformFields = [
         "chainIndexList", "matrix"
@@ -244,7 +244,7 @@ function checkGroupListTypes( groupList, assert ){
     var regexpElement = /^[A-Z]{1,1}[a-z]{0,2}|$/;
     var regexpAtomname = /^.{0,5}$/;
     var regexpGroupname = /^.{0,5}$/;
-    var regexpSingleLetter = /^[A-Z]{1,1}$/;
+    var regexpSingleLetter = /^[A-Z\?]{1,1}$/;
     groupList.forEach( function( groupType ){
         assert.ok(
             Array.isArray( groupType.formalChargeList ),
@@ -336,6 +336,10 @@ function checkBioAssemblyListTypes( bioAssemblyList, assert ){
         assert.ok(
             Array.isArray( assembly.transformList ),
             "assembly.transformList must be an array"
+        );
+        assert.ok(
+            typeof assembly.name === 'string',
+            "assembly.name must be a string"
         );
         assembly.transformList.forEach( function( transform ){
             assert.ok(

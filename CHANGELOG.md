@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file, following t
 - ncsOperatorList field
 - es6 build
 - MMTF.fetch & MMTF.fetchReduced helper methods
+- bioAssemblyList[].name field
 
 ### Changed
 - groupList[].atomCharge renamed to .formalCharge
