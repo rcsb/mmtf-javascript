@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file, following t
 
 ## [Unreleased]
 ### Added
-- support for mmtf version 0.2
+- support for mmtf version 0.2 (new decoding functions)
 - encoding support (MMTF.encode)
 - ncsOperatorList field
 - es6 build
+- MMTF.fetch & MMTF.fetchReduced helper methods
 
 ### Changed
 - groupList[].atomCharge renamed to .formalCharge

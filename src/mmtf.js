@@ -23,6 +23,27 @@ import traverseMmtf from "./mmtf-traverse.js";
 var version = "v0.2.3";
 
 /**
+ * Version name
+ * @private
+ * @type {String}
+ */
+var baseUrl = "http://mmtf.rcsb.org/v0.2/";
+
+/**
+ * URL of the RCSB webservice to obtain MMTF files
+ * @static
+ * @type {String}
+ */
+var fetchUrl = baseUrl + "full/";
+
+/**
+ * URL of the RCSB webservice to obtain reduced MMTF files
+ * @static
+ * @type {String}
+ */
+var fetchReducedUrl = baseUrl + "reduced/";
+
+/**
  * Encode MMTF fields
  * @static
  * @param  {module:MmtfDecode.MmtfData} mmtfData - mmtf data
@@ -63,6 +84,81 @@ function decode( binOrDict, params ){
     return decodeMmtf( inputDict, params );
 }
 
+/**
+ * @callback module:MMTF.onLoad
+ * @param {module:MmtfDecode.MmtfData} mmtfData - decoded mmtf data object
+ */
+
+/**
+ * helper method to fetch binary files from an URL
+ * @private
+ * @param  {String} pdbid - PDB ID to fetch
+ * @param  {String} baseUrl - URL to fetch from
+ * @param  {module:MMTF.onLoad} onLoad - callback( mmtfData )
+ * @param  {Function} onError - callback( error )
+ * @return {undefined}
+ */
+function _fetch( pdbid, baseUrl, onLoad, onError ){
+    var xhr = new XMLHttpRequest();
+    function _onLoad(){
+        try{
+            var mmtfData = decode( xhr.response );
+            onLoad( mmtfData );
+        }catch( error ){
+            onError( error );
+        }
+    }
+    xhr.addEventListener( "load", _onLoad, true );
+    xhr.addEventListener( "error", onError, true );
+    xhr.responseType = "arraybuffer";
+    xhr.open( "GET", baseUrl + pdbid.toUpperCase() );
+    xhr.send();
+}
+
+/**
+ * Fetch MMTF file from RCSB webservice which contains
+ * @static
+ * @example
+ * MMTF.fetch(
+ *     "3PQR",
+ *     // onLoad callback
+ *     function( mmtfData ){ console.log( mmtfData ) },
+ *     // onError callback
+ *     function( error ){ console.error( error ) }
+ * );
+ *
+ * @param  {String} pdbid - PDB ID to fetch
+ * @param  {module:MMTF.onLoad} onLoad - callback( mmtfData )
+ * @param  {Function} onError - callback( error )
+ * @return {undefined}
+ */
+function fetch( pdbid, onLoad, onError ){
+    _fetch( pdbid, fetchUrl, onLoad, onError );
+}
+
+/**
+ * Fetch reduced MMTF file from RCSB webservice which contains
+ * protein C-alpha, nucleotide phosphate and ligand atoms
+ * @static
+ * @example
+ * MMTF.fetchReduced(
+ *     "3PQR",
+ *     // onLoad callback
+ *     function( mmtfData ){ console.log( mmtfData ) },
+ *     // onError callback
+ *     function( error ){ console.error( error ) }
+ * );
+ *
+ * @param  {String} pdbid - PDB ID to fetch
+ * @param  {module:MMTF.onLoad} onLoad - callback( mmtfData )
+ * @param  {Function} onError - callback( error )
+ * @return {undefined}
+ */
+function fetchReduced( pdbid, onLoad, onError ){
+    _fetch( pdbid, fetchReducedUrl, onLoad, onError );
+}
+
+
 export {
     encode,
     decode,
@@ -96,7 +192,12 @@ export {
      * @param {Boolean} [params.firstModelOnly] - traverse only the first model
      */
     traverseMmtf as traverse,
+    fetch,
+    fetchReduced,
+
     version,
+    fetchUrl,
+    fetchReducedUrl,
 
     encodeMsgpack,
     encodeMmtf,

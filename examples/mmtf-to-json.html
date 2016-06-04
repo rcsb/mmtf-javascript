@@ -28,19 +28,10 @@
         }
 
         document.addEventListener( "DOMContentLoaded", function(){
-
-            // request mmtf file as binary data (arraybuffer)
-            var xhr = new XMLHttpRequest();
-            xhr.addEventListener( "load", function onload(){
-                // decode the binary response data
-                var mmtfData = MMTF.decode( this.response );
+            MMTF.fetch( "4CUP", function( mmtfData ){
                 // convert the mmtf data to JSON and show in the #json element
                 document.getElementById( "json" ).innerText = JSON.stringify( mmtfData, replacer, '\t' );
-            }, true );
-            xhr.responseType = "arraybuffer";
-            xhr.open( "GET", "../data/4cup.mmtf" );
-            xhr.send();
-
+            } );
         } );
 
     </script>

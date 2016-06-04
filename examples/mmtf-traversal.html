@@ -70,11 +70,7 @@
                 print( "altLoc", atomData.altLoc, 3 );
                 print( "occupancy", atomData.occupancy, 3 );
             }
-            // request mmtf file as binary data (arraybuffer)
-            var xhr = new XMLHttpRequest();
-            xhr.addEventListener( "load", function onload(){
-                // decode the binary response data
-                var mmtfData = MMTF.decode( this.response );
+            MMTF.fetch( "4CUP", function( mmtfData ){
                 var callbackDict = {
                     onModel: onModel,
                     onChain: onChain,
@@ -85,11 +81,7 @@
                 MMTF.traverse( mmtfData, callbackDict );
                 // flush printed lines to screen
                 flush();
-            }, true );
-            xhr.responseType = "arraybuffer";
-            // xhr.open( "GET", "../data/4cup.mmtf" );
-            xhr.open( "GET", "http://mmtf.rcsb.org/full/3pqr" );
-            xhr.send();
+            } );
         } );
 
     </script>

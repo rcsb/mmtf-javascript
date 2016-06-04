@@ -20,8 +20,7 @@
         }
 
         function loadStructure( pdbid, reduced ){
-            var flag = reduced ? "reduced" : "full";
-            var name = flag + " " + pdbid;
+            var name = ( reduced ? "reduced" : "full" ) + " " + pdbid;
             print( "Loading " + name + " ..." );
             function onload(){
                 if( this.status === 200 || this.status === 304 || this.status === 0 ){
@@ -46,7 +45,7 @@
             function onerror(){
                 print( "Error loading " + name + "." );
             }
-            var baseUrl = "http://mmtf.rcsb.org/" + flag + "/";
+            var baseUrl = reduced ? MMTF.fetchReducedUrl : MMTF.fetchUrl;
             var xhr = new XMLHttpRequest();
             xhr.addEventListener( "load", onload, true );
             xhr.addEventListener( "error", onerror, true );
