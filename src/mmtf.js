@@ -20,7 +20,7 @@ import traverseMmtf from "./mmtf-traverse.js";
  * @static
  * @type {String}
  */
-var version = "v0.2.3";
+var version = "v0.3.0";
 
 /**
  * Version name

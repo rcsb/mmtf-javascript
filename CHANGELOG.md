@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased]
+## [v0.3.0] - 2016-06-08
 ### Added
 - support for mmtf version 0.2 (new decoding functions)
 - encoding support (MMTF.encode)
@@ -16,7 +16,7 @@ All notable changes to this project will be documented in this file, following t
 
 ### Removed
 - support for mmtf version 0.1
-- api docs from repsitory (now written to build/docs/api/)
+- api docs from repository (now written to build/docs/api/)
 
 
 ## [v0.2.3] - 2016-05-19
@@ -68,7 +68,7 @@ All notable changes to this project will be documented in this file, following t
 - Initial release
 
 
-[Unreleased]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.3...HEAD
+[v0.3.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.3...v0.3.0
 [v0.2.3]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.2...v0.2.3
 [v0.2.2]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.0...v0.2.1
