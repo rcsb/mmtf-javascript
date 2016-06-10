@@ -313,9 +313,6 @@ function decodePacking( int16or8, output ){
         while( int16or8[ i ] === upperLimit || int16or8[ i ] === lowerLimit ){
             value += int16or8[ i ];
             ++i;
-            if( int16or8[ i ] === 0 ){
-                break;
-            }
         }
         value += int16or8[ i ];
         ++i;
