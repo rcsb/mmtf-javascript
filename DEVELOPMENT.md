@@ -9,6 +9,7 @@ Change the version number in:
 - README.md
 - CHANGELOG.md
 - src/mmtf.js
+- docs/api-overview.md
 
 Make sure the distribution files are up-to-date.
 

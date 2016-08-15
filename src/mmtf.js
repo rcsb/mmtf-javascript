@@ -20,14 +20,14 @@ import traverseMmtf from "./mmtf-traverse.js";
  * @static
  * @type {String}
  */
-var version = "v0.3.0";
+var version = "v1.0.0";
 
 /**
  * Version name
  * @private
  * @type {String}
  */
-var baseUrl = "http://mmtf.rcsb.org/v0.2/";
+var baseUrl = "http://mmtf.rcsb.org/v1.0/";
 
 /**
  * URL of the RCSB webservice to obtain MMTF files

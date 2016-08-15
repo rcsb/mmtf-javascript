@@ -1,7 +1,7 @@
 
 ## Files
 
-The file `dist/mmtf.js` provides the [MMTF](module-MMTF.html) module in [UMD](https://github.com/umdjs/umd) format to work in node.js and browsers. This library version supports *v0.2* of the [MMTF specification](https://github.com/rcsb/mmtf/blob/master/spec.md).
+The file `dist/mmtf.js` provides the [MMTF](module-MMTF.html) module in [UMD](https://github.com/umdjs/umd) format to work in node.js and browsers. This library version supports *v1.0* of the [MMTF specification](https://github.com/rcsb/mmtf/blob/v1.0/spec.md).
 
 
 ## Fetching
