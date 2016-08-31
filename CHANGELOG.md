@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [Unreleased]
+### Changed
+- don't set protocol in base url to allow https
+
+
 ## [v1.0.0] - 2016-08-15
 ### Changed
 - use mmtf version 1.0 url
@@ -72,6 +78,7 @@ All notable changes to this project will be documented in this file, following t
 - Initial release
 
 
+[Unreleased]: https://github.com/rcsb/mmtf-javascript/compare/v1.0.0...HEAD
 [v1.0.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.3.0...v1.0.0
 [v0.3.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.3...v0.3.0
 [v0.2.3]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.2...v0.2.3
