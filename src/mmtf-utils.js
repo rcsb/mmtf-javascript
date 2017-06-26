@@ -338,12 +338,12 @@ function encodePacking( intArray, useInt8 ){
         var value = intArray[ i ];
         if( value === 0 ){
             ++size;
-        }else if( value === upperLimit || value === lowerLimit ){
-            size += 2;
         }else if( value > 0) {
             size += Math.ceil( value / upperLimit );
+            if (value % upperLimit === 0) size += 1;
         }else {
             size += Math.ceil( value / lowerLimit );
+            if (value % lowerLimit === 0) size += 1;
         }
     }
     var output = useInt8 ? new Int8Array( size ) : new Int16Array( size );
