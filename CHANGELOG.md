@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased]
+## [v1.0.1] - 2017-06-26
 ### Changed
 - don't set protocol in base url to allow https
+- fixed size calculation in encodePacking
 
 
 ## [v1.0.0] - 2016-08-15
@@ -78,7 +79,7 @@ All notable changes to this project will be documented in this file, following t
 - Initial release
 
 
-[Unreleased]: https://github.com/rcsb/mmtf-javascript/compare/v1.0.0...HEAD
+[v1.0.1]: https://github.com/rcsb/mmtf-javascript/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.3.0...v1.0.0
 [v0.3.0]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.3...v0.3.0
 [v0.2.3]: https://github.com/rcsb/mmtf-javascript/compare/v0.2.2...v0.2.3
